@@ -1,0 +1,4193 @@
+<!DOCTYPE html>
+<!-- GIGSYNC_VERIFIED_BUILD_0618 -->
+<html lang="tr" id="html-root">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>GigSync</title>
+  <meta name="theme-color" content="#0F0F10" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="Gig_Sync_Logo.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Bebas+Neue&family=DM+Mono:wght@300;400;500&family=Inter:wght@400;500;600;700&display=swap"
+    rel="stylesheet" />
+
+  <script>
+    // Cache Buster & SW Unregister
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.getRegistrations().then(function (registrations) {
+        for (let registration of registrations) { registration.unregister(); }
+      });
+    }
+    console.log("GIGSYNC_BUILD_STABLE_V1");
+  </script>
+
+  <style>
+    @font-face {
+      font-family: 'FrizQuadrata';
+      src: url('friz-quadrata-regular.ttf') format('truetype');
+      font-weight: 400;
+    }
+
+    :root {
+      --bg: #060912;
+      --surface: #0d1220;
+      --surface2: #131929;
+      --surface3: #1a2235;
+      --border: #1e2a40;
+      --border2: #263347;
+      --accent: #4f8ef7;
+      --accent2: #7eb3ff;
+      --accent-glow: rgba(79, 142, 247, .2);
+      --text: #e8edf5;
+      --text-muted: #4a5870;
+      --text-dim: #1e2a3a;
+      --green: #34d98e;
+      --red: #f05b5b;
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-mono: 'DM Mono', monospace;
+      --font-body: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --base-size: 15px;
+    }
+
+    /* ── THEMES ── */
+    body.theme-orange {
+      --bg: #0e0a06;
+      --surface: #1a1208;
+      --surface2: #231a0e;
+      --surface3: #2c2115;
+      --border: #3d2e1a;
+      --border2: #4d3a22;
+      --accent: #f97316;
+      --accent2: #fb923c;
+      --accent-glow: rgba(249, 115, 22, .2);
+      --text: #f5ede4;
+      --text-muted: #7a5f45;
+      --text-dim: #2d1f0e;
+    }
+
+    body.theme-gold {
+      --bg: #0c0a00;
+      --surface: #191400;
+      --surface2: #221c00;
+      --surface3: #2b2300;
+      --border: #3d3200;
+      --border2: #4d3f00;
+      --accent: #f5c400;
+      --accent2: #fdd835;
+      --accent-glow: rgba(245, 196, 0, .2);
+      --text: #f5f0d8;
+      --text-muted: #7a6e3a;
+      --text-dim: #2d2700;
+    }
+
+    body.theme-light {
+      --bg: #FAF7F0;             /* Kirli/krem beyaz */
+      --surface: #FCFAF5;        /* Yumuşak fildişi/krem yüzey */
+      --surface2: #F2ECE0;       /* Seçili öğeler için krem tonu */
+      --surface3: #EAE2D3;       /* Girdi ve kutucuk alanları */
+      --border: #DFD7C7;         /* Yumuşak fildişi-gri kenarlık */
+      --border2: #CDC3B0;
+      --accent: #1C1917;         /* Kömür siyahı aksan */
+      --accent2: #44403C;
+      --accent-glow: rgba(28, 25, 23, .12);
+      --text: #1C1917;           /* Kömür siyahı ana metin */
+      --text-muted: #78716C;     /* Eskitilmiş koyu gri metin */
+      --text-dim: #A8A29E;       /* Silik metinler */
+      --green: #15803d;          /* Uyumlu yeşil */
+      --red: #b91c1c;            /* Uyumlu kırmızı */
+    }
+
+    body.theme-stage {
+      --bg: #000000;
+      --surface: #0a0a0a;
+      --surface2: #111111;
+      --surface3: #1a1a1a;
+      --border: #2a2a2a;
+      --border2: #333333;
+      --accent: #ffffff;
+      --accent2: #cccccc;
+      --accent-glow: rgba(255, 255, 255, .1);
+      --text: #ffffff;
+      --text-muted: #888888;
+      --text-dim: #333333;
+      --base-size: 17px;
+    }
+
+    body.theme-stage .btn-primary {
+      color: #000 !important;
+    }
+
+    body.theme-stage .fab {
+      color: #000 !important;
+    }
+
+    body.theme-stage .btn-secondary {
+      color: #fff !important;
+    }
+
+    /* Stage mode — MAXIMUM readable text everywhere */
+    body.theme-stage * {
+      letter-spacing: 0 !important;
+    }
+
+    body.theme-stage p,
+    body.theme-stage div,
+    body.theme-stage span {
+      font-size: inherit;
+    }
+
+    body.theme-stage {
+      font-size: 28px !important;
+    }
+
+    body.theme-stage .song-row {
+      padding: 16px 14px !important;
+      margin-bottom: 12px !important;
+    }
+
+    body.theme-stage .song-row-title {
+      font-size: 22px !important;
+      font-weight: 500 !important;
+    }
+
+    body.theme-stage .song-row-meta {
+      font-size: 16px !important;
+    }
+
+    body.theme-stage .song-row-key {
+      font-size: 22px !important;
+      min-width: 40px !important;
+    }
+
+    body.theme-stage .song-num {
+      font-size: 26px !important;
+      min-width: 30px !important;
+    }
+
+    body.theme-stage .setlist-card {
+      padding: 18px 16px !important;
+      margin-bottom: 12px !important;
+    }
+
+    body.theme-stage .setlist-card-name {
+      font-size: 22px !important;
+      font-weight: 500 !important;
+    }
+
+    body.theme-stage .setlist-card-meta {
+      font-size: 16px !important;
+    }
+
+    body.theme-stage .setlist-card-songs {
+      font-size: 14px !important;
+    }
+
+    body.theme-stage .lib-item {
+      padding: 14px 0 !important;
+    }
+
+    body.theme-stage .lib-item-title {
+      font-size: 22px !important;
+      font-weight: 500 !important;
+    }
+
+    body.theme-stage .lib-item-meta {
+      font-size: 16px !important;
+    }
+
+    body.theme-stage .lib-key {
+      font-size: 20px !important;
+    }
+
+    body.theme-stage .btn {
+      font-size: 20px !important;
+      height: 60px !important;
+    }
+
+    body.theme-stage .btn-sm {
+      font-size: 18px !important;
+      height: 48px !important;
+    }
+
+    body.theme-stage .btn-xs {
+      font-size: 16px !important;
+      height: 38px !important;
+    }
+
+    body.theme-stage .btn-icon {
+      width: 48px !important;
+      height: 48px !important;
+    }
+
+    body.theme-stage .home-tab {
+      font-size: 15px !important;
+      padding: 18px !important;
+    }
+
+    body.theme-stage .form-input {
+      font-size: 20px !important;
+      padding: 16px !important;
+    }
+
+    body.theme-stage .form-label {
+      font-size: 13px !important;
+    }
+
+    body.theme-stage .home-name {
+      font-size: 16px !important;
+    }
+
+    body.theme-stage .logo {
+      font-size: 22px !important;
+    }
+
+    body.theme-stage .live-badge {
+      font-size: 14px !important;
+      padding: 6px 12px !important;
+    }
+
+    body.theme-stage .home-header {
+      padding: 20px !important;
+    }
+
+    body.theme-stage .lib-search {
+      font-size: 20px !important;
+      padding: 14px !important;
+    }
+
+    body.theme-stage #lib-count {
+      font-size: 16px !important;
+    }
+
+    body.theme-stage .leader-title {
+      font-size: 28px !important;
+    }
+
+    body.theme-stage .leader-sub {
+      font-size: 15px !important;
+    }
+
+    body.theme-stage .sheet-title {
+      font-size: 32px !important;
+    }
+
+    body.theme-stage .sec-lbl {
+      font-size: 14px !important;
+    }
+
+    body.theme-stage .member-n {
+      font-size: 20px !important;
+    }
+
+    body.theme-stage .room-name {
+      font-size: 22px !important;
+    }
+
+    body.theme-stage .now-label {
+      font-size: 16px !important;
+      letter-spacing: 4px !important;
+    }
+
+    body.theme-stage .now-title {
+      font-size: clamp(60px, 17vw, 112px) !important;
+    }
+
+    body.theme-stage .now-key {
+      font-size: clamp(56px, 15vw, 100px) !important;
+    }
+
+    body.theme-stage .now-artist {
+      font-size: 18px !important;
+    }
+
+    body.theme-stage .next-lbl {
+      font-size: 14px !important;
+    }
+
+    body.theme-stage .next-title {
+      font-size: 30px !important;
+    }
+
+    body.theme-stage .next-key {
+      font-size: 24px !important;
+    }
+
+    body.theme-stage .wait-txt {
+      font-size: 16px !important;
+    }
+
+    body.theme-stage .share-code {
+      font-size: 60px !important;
+    }
+
+    /* Stage Mode — yeni kart sistemi (drag-row) */
+    /* ── STAGE MODE — HER ŞEY KOCAMAN ── */
+    /* Drag-row kartları */
+    body.theme-stage .drag-row {
+      padding: 24px 20px !important;
+      margin-bottom: 16px !important;
+    }
+    body.theme-stage .drag-row > div:nth-child(2) > div:first-child {
+      font-size: 32px !important;
+      font-weight: 700 !important;
+      line-height: 1.2 !important;
+    }
+    body.theme-stage .drag-row > div:nth-child(2) > div:nth-child(2) {
+      font-size: 18px !important;
+      margin-top: 4px !important;
+    }
+    body.theme-stage .drag-row > div:nth-child(3) {
+      font-size: 32px !important;
+      min-width: 56px !important;
+      font-weight: 600 !important;
+    }
+    body.theme-stage .drag-row > div:first-child {
+      font-size: 28px !important;
+      min-width: 40px !important;
+      font-weight: 600 !important;
+    }
+    body.theme-stage .drag-handle svg {
+      width: 22px !important;
+      height: 28px !important;
+    }
+
+    /* Header / leader / home */
+    body.theme-stage .leader-title {
+      font-size: 38px !important;
+      font-weight: 700 !important;
+    }
+    body.theme-stage .leader-sub {
+      font-size: 20px !important;
+    }
+    body.theme-stage .home-name {
+      font-size: 24px !important;
+      font-weight: 600 !important;
+    }
+    body.theme-stage .logo {
+      font-size: 24px !important;
+    }
+    body.theme-stage #role-badge {
+      font-size: 16px !important;
+      padding: 6px 14px !important;
+      font-weight: 700 !important;
+    }
+    body.theme-stage .home-header {
+      padding: 16px 18px !important;
+    }
+
+    /* Butonlar — devasa */
+    body.theme-stage .btn {
+      font-size: 22px !important;
+      font-weight: 600 !important;
+      min-height: 56px !important;
+    }
+    body.theme-stage .btn-sm {
+      font-size: 20px !important;
+      height: 56px !important;
+    }
+    body.theme-stage .btn-xs {
+      font-size: 16px !important;
+      height: 42px !important;
+    }
+    body.theme-stage .btn-icon {
+      width: 56px !important;
+      height: 56px !important;
+    }
+    body.theme-stage .btn-icon svg {
+      width: 24px !important;
+      height: 24px !important;
+    }
+    body.theme-stage .leader-bottom .btn {
+      font-size: 24px !important;
+      height: 70px !important;
+      padding: 0 24px !important;
+      font-weight: 700 !important;
+    }
+    body.theme-stage .leader-bottom .btn svg {
+      width: 22px !important;
+      height: 22px !important;
+    }
+
+    /* Modal başlıkları */
+    body.theme-stage .sheet-title {
+      font-size: 40px !important;
+      font-weight: 700 !important;
+    }
+    body.theme-stage .form-label {
+      font-size: 18px !important;
+      font-weight: 600 !important;
+    }
+    body.theme-stage .form-input {
+      font-size: 22px !important;
+      padding: 18px !important;
+      min-height: 60px !important;
+    }
+    body.theme-stage .sec-lbl {
+      font-size: 18px !important;
+      font-weight: 700 !important;
+    }
+    body.theme-stage .form-group {
+      margin-bottom: 18px !important;
+    }
+
+    /* Repertuar / Library */
+    body.theme-stage .lib-search {
+      font-size: 22px !important;
+      padding: 18px !important;
+    }
+    body.theme-stage #lib-list .lib-item-title {
+      font-size: 26px !important;
+      font-weight: 600 !important;
+    }
+    body.theme-stage #lib-list .lib-item-meta {
+      font-size: 16px !important;
+    }
+    body.theme-stage #lib-list .lib-key {
+      font-size: 22px !important;
+    }
+    body.theme-stage #add-list > div > div:nth-child(1) > div:first-child {
+      font-size: 28px !important;
+      font-weight: 600 !important;
+    }
+    body.theme-stage #add-list > div > div:nth-child(1) > div:nth-child(2) {
+      font-size: 16px !important;
+    }
+    body.theme-stage #add-list > div > div:nth-child(2) {
+      font-size: 22px !important;
+    }
+    body.theme-stage #add-list > div > div:nth-child(3) {
+      font-size: 32px !important;
+    }
+    body.theme-stage #add-list > div {
+      padding: 18px 20px !important;
+      margin-bottom: 12px !important;
+    }
+
+    /* Member ekranı — ekstra büyük */
+    body.theme-stage .now-title {
+      font-size: clamp(80px, 22vw, 160px) !important;
+    }
+    body.theme-stage .now-key {
+      font-size: clamp(70px, 18vw, 130px) !important;
+    }
+    body.theme-stage .now-label {
+      font-size: 20px !important;
+      letter-spacing: 6px !important;
+    }
+    body.theme-stage .now-artist {
+      font-size: 24px !important;
+    }
+    body.theme-stage .next-title {
+      font-size: 44px !important;
+    }
+    body.theme-stage .next-key {
+      font-size: 26px !important;
+    }
+    body.theme-stage .next-lbl {
+      font-size: 18px !important;
+    }
+    body.theme-stage .room-name {
+      font-size: 28px !important;
+      font-weight: 700 !important;
+    }
+    body.theme-stage .room-band {
+      font-size: 20px !important;
+    }
+    body.theme-stage .live-pill {
+      font-size: 18px !important;
+      padding: 10px 22px !important;
+      font-weight: 700 !important;
+    }
+    body.theme-stage .wait-txt {
+      font-size: 18px !important;
+    }
+
+    /* Toast */
+    body.theme-stage .toast {
+      font-size: 20px !important;
+      padding: 18px 28px !important;
+    }
+
+    /* FAB */
+    body.theme-stage .fab {
+      width: 88px !important;
+      height: 88px !important;
+    }
+    body.theme-stage .fab svg {
+      width: 38px !important;
+      height: 38px !important;
+    }
+
+    /* Setlist card (home) */
+    body.theme-stage .setlist-card {
+      padding: 22px 18px !important;
+      margin-bottom: 14px !important;
+    }
+    body.theme-stage .setlist-card-name {
+      font-size: 30px !important;
+      font-weight: 700 !important;
+    }
+    body.theme-stage .setlist-card-meta {
+      font-size: 18px !important;
+    }
+    body.theme-stage .setlist-card-songs {
+      font-size: 16px !important;
+    }
+
+    /* Oda kodu (büyük olsun) */
+    body.theme-stage #room-code-display {
+      font-size: 72px !important;
+      letter-spacing: 18px !important;
+    }
+
+    /* Üyeler listesi */
+    body.theme-stage #members-list > div {
+      padding: 16px !important;
+      font-size: 20px !important;
+    }
+
+    /* Tema butonları (settings) */
+    body.theme-stage .theme-btn {
+      padding: 18px !important;
+    }
+    body.theme-stage .theme-btn > div:first-child {
+      font-size: 18px !important;
+    }
+
+    /* ── GREY SLATE ── */
+    body.theme-grey {
+      --bg: #0f1014;
+      --surface: #16181e;
+      --surface2: #1e2028;
+      --surface3: #26282f;
+      --border: #2e3038;
+      --border2: #383a44;
+      --accent: #94a3b8;
+      --accent2: #cbd5e1;
+      --accent-glow: rgba(148, 163, 184, .15);
+      --text: #e2e8f0;
+      --text-muted: #64748b;
+      --text-dim: #1e2028;
+      --green: #34d98e;
+      --red: #f05b5b;
+    }
+
+    /* ── CRIMSON RED ── */
+    body.theme-red {
+      --bg: #0d0608;
+      --surface: #180b0d;
+      --surface2: #221014;
+      --surface3: #2c151a;
+      --border: #3d1a20;
+      --border2: #4d2228;
+      --accent: #ef4444;
+      --accent2: #f87171;
+      --accent-glow: rgba(239, 68, 68, .2);
+      --text: #fef2f2;
+      --text-muted: #7c3030;
+      --text-dim: #2c1010;
+      --green: #34d98e;
+      --red: #f87171;
+    }
+
+    /* ── FOREST GREEN ── */
+    body.theme-green {
+      --bg: #050d08;
+      --surface: #0a1610;
+      --surface2: #0f1f18;
+      --surface3: #152820;
+      --border: #1e3d2a;
+      --border2: #264d36;
+      --accent: #22c55e;
+      --accent2: #4ade80;
+      --accent-glow: rgba(34, 197, 94, .2);
+      --text: #f0fdf4;
+      --text-muted: #3d7a50;
+      --text-dim: #0f2018;
+      --green: #4ade80;
+      --red: #f05b5b;
+    }
+
+    /* ── VIOLET PURPLE ── */
+    body.theme-purple {
+      --bg: #08060e;
+      --surface: #110d1c;
+      --surface2: #181228;
+      --surface3: #201830;
+      --border: #2e1f4d;
+      --border2: #3d2866;
+      --accent: #a855f7;
+      --accent2: #c084fc;
+      --accent-glow: rgba(168, 85, 247, .2);
+      --text: #faf5ff;
+      --text-muted: #6b3fa0;
+      --text-dim: #1e1030;
+      --green: #34d98e;
+      --red: #f05b5b;
+    }
+
+    /* ── ROSE PINK ── */
+    body.theme-rose {
+      --bg: #0e060a;
+      --surface: #1c0d14;
+      --surface2: #26121c;
+      --surface3: #301826;
+      --border: #4d1f30;
+      --border2: #63283d;
+      --accent: #f43f5e;
+      --accent2: #fb7185;
+      --accent-glow: rgba(244, 63, 94, .2);
+      --text: #fff1f2;
+      --text-muted: #7c2d42;
+      --text-dim: #2c0f18;
+      --green: #34d98e;
+      --red: #fb7185;
+    }
+
+    /* ── CYAN TEAL ── */
+    body.theme-cyan {
+      --bg: #040e0f;
+      --surface: #071a1c;
+      --surface2: #0c2326;
+      --surface3: #122c30;
+      --border: #1a3d42;
+      --border2: #224f55;
+      --accent: #06b6d4;
+      --accent2: #22d3ee;
+      --accent-glow: rgba(6, 182, 212, .2);
+      --text: #ecfeff;
+      --text-muted: #2d6b75;
+      --text-dim: #0c2228;
+      --green: #34d98e;
+      --red: #f05b5b;
+    }
+
+    /* ── AMBER WARM ── */
+    body.theme-amber {
+      --bg: #0d0900;
+      --surface: #1a1100;
+      --surface2: #231800;
+      --surface3: #2d2000;
+      --border: #3d3000;
+      --border2: #4f3d00;
+      --accent: #f59e0b;
+      --accent2: #fbbf24;
+      --accent-glow: rgba(245, 158, 11, .2);
+      --text: #fffbeb;
+      --text-muted: #786010;
+      --text-dim: #2a2000;
+      --green: #34d98e;
+      --red: #f05b5b;
+    }
+
+    /* ── INDIGO DEEP ── */
+    body.theme-indigo {
+      --bg: #06080f;
+      --surface: #0d1020;
+      --surface2: #12162c;
+      --surface3: #181d38;
+      --border: #22284d;
+      --border2: #2c3366;
+      --accent: #6366f1;
+      --accent2: #818cf8;
+      --accent-glow: rgba(99, 102, 241, .2);
+      --text: #eef2ff;
+      --text-muted: #4040a0;
+      --text-dim: #141830;
+      --green: #34d98e;
+      --red: #f05b5b;
+    }
+
+    /* ── VIOLET PURPLE ── */
+    body.theme-violet {
+      --bg: #0a0612;
+      --surface: #170a26;
+      --surface2: #1e0d33;
+      --surface3: #2a1247;
+      --border: #3a1d5e;
+      --border2: #4a2575;
+      --accent: #a855f7;
+      --accent2: #c084fc;
+      --accent-glow: rgba(168, 85, 247, .25);
+      --text: #f3e8ff;
+      --text-muted: #7e3cb5;
+      --text-dim: #1a0d2e;
+      --green: #34d98e;
+      --red: #f05b5b;
+    }
+
+    /* ── OCEAN DEEP ── */
+    body.theme-ocean {
+      --bg: #021018;
+      --surface: #062029;
+      --surface2: #0a2d3a;
+      --surface3: #103e4f;
+      --border: #1a5266;
+      --border2: #226a82;
+      --accent: #06b6d4;
+      --accent2: #22d3ee;
+      --accent-glow: rgba(6, 182, 212, .25);
+      --text: #e0f7ff;
+      --text-muted: #4a8a9c;
+      --text-dim: #08222e;
+      --green: #34d98e;
+      --red: #f05b5b;
+    }
+
+    /* ── SUNSET ── */
+    body.theme-sunset {
+      --bg: #150810;
+      --surface: #240e1a;
+      --surface2: #321324;
+      --surface3: #471a32;
+      --border: #5e2645;
+      --border2: #75305a;
+      --accent: #fb7185;
+      --accent2: #fda4af;
+      --accent-glow: rgba(251, 113, 133, .25);
+      --text: #ffe4ec;
+      --text-muted: #a04d6a;
+      --text-dim: #1d0c14;
+      --green: #34d98e;
+      --red: #f05b5b;
+    }
+
+    /* ── MINT FRESH ── */
+    body.theme-mint {
+      --bg: #051210;
+      --surface: #0a2421;
+      --surface2: #0f322d;
+      --surface3: #16463f;
+      --border: #1f5a51;
+      --border2: #287267;
+      --accent: #2dd4bf;
+      --accent2: #5eead4;
+      --accent-glow: rgba(45, 212, 191, .25);
+      --text: #e0fff8;
+      --text-muted: #4a9080;
+      --text-dim: #0a1f1c;
+      --green: #34d98e;
+      --red: #f05b5b;
+    }
+
+    /* ── MIDNIGHT ── */
+    body.theme-midnight {
+      --bg: #000000;
+      --surface: #0a0a0f;
+      --surface2: #12121a;
+      --surface3: #1a1a26;
+      --border: #25252e;
+      --border2: #32323d;
+      --accent: #e0e0ff;
+      --accent2: #ffffff;
+      --accent-glow: rgba(224, 224, 255, .15);
+      --text: #ffffff;
+      --text-muted: #6a6a7a;
+      --text-dim: #14141c;
+      --green: #34d98e;
+      --red: #f05b5b;
+    }
+
+    body {
+      font-size: var(--base-size, 15px);
+    }
+
+    *,
+    *::before,
+    *::after {
+      transition: background-color .25s, border-color .25s, color .15s;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      -webkit-tap-highlight-color: transparent
+    }
+
+    html,
+    body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      overflow: hidden;
+      overscroll-behavior: none
+    }
+
+    .screen {
+      display: none;
+      flex-direction: column;
+      height: 100dvh
+    }
+
+    .screen.active {
+      display: flex
+    }
+
+    /* BUTTONS */
+    .btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      border: none;
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-size: 16px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all .15s;
+      height: 52px;
+      padding: 0 20px
+    }
+
+    .btn:active {
+      transform: scale(0.97)
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 0 20px var(--accent-glow)
+    }
+
+    .btn-secondary {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border)
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text-muted);
+      border: 1px solid var(--border)
+    }
+
+    .btn-danger {
+      background: rgba(240, 91, 91, .1);
+      color: var(--red);
+      border: 1px solid rgba(240, 91, 91, .2)
+    }
+
+    .btn-sm {
+      height: 36px;
+      font-size: 13px;
+      border-radius: 8px;
+      padding: 0 14px
+    }
+
+    .btn-xs {
+      height: 28px;
+      font-size: 12px;
+      border-radius: 6px;
+      padding: 0 10px
+    }
+
+    .btn-icon {
+      width: 40px;
+      height: 40px;
+      padding: 0;
+      border-radius: 10px
+    }
+
+    /* FORM */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 16px
+    }
+
+    .form-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      letter-spacing: 2px;
+      text-transform: uppercase
+    }
+
+    .form-input {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      padding: 13px 16px;
+      outline: none;
+      transition: border-color .2s;
+      width: 100%
+    }
+
+    .form-input:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px var(--accent-glow)
+    }
+
+    .form-input::placeholder {
+      color: var(--text-dim)
+    }
+
+    /* ══ HOME SCREEN ══ */
+    #home {
+      overflow: hidden
+    }
+
+    .home-header {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 12px;
+      padding: 14px 20px;
+      padding-top: max(env(safe-area-inset-top), 14px);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0
+    }
+
+    .logo {
+      font-family: 'FrizQuadrata', serif;
+      font-size: 20px;
+      letter-spacing: 1px;
+      color: var(--text);
+      line-height: 1;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      justify-content: flex-end
+    }
+
+    .home-name {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      letter-spacing: .5px;
+      text-align: right;
+      max-width: 140px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .home-view {
+      flex: 1;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column
+    }
+
+    /* SETLIST CARDS */
+    .setlists-scroll {
+      flex: 1;
+      overflow-y: auto;
+      padding: 14px 16px;
+      -webkit-overflow-scrolling: touch
+    }
+
+    .setlist-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: all .2s;
+      position: relative;
+      overflow: hidden
+    }
+
+    .setlist-card:active {
+      transform: scale(0.98)
+    }
+
+    .setlist-card.live {
+      border-color: rgba(52, 217, 142, .3);
+      background: linear-gradient(135deg, rgba(52, 217, 142, .06) 0%, var(--surface) 60%)
+    }
+
+    .setlist-card.live::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 3px;
+      background: var(--green);
+      border-radius: 2px
+    }
+
+    .live-indicator {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      min-width: 36px
+    }
+
+    .live-badge {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      padding: 3px 6px;
+      border-radius: 4px
+    }
+
+    .live-badge.on {
+      background: rgba(52, 217, 142, .15);
+      color: var(--green);
+      border: 1px solid rgba(52, 217, 142, .3);
+      animation: badgePulse 2s ease infinite
+    }
+
+    .live-badge.off {
+      background: var(--surface2);
+      color: var(--text-muted);
+      border: 1px solid var(--border)
+    }
+
+    @keyframes badgePulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: .5
+      }
+    }
+
+    .setlist-card-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .setlist-card-name {
+      font-size: 15px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .setlist-card-meta {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 3px
+    }
+
+    .setlist-card-songs {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-top: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .setlist-card-actions {
+      display: flex;
+      gap: 6px;
+      flex-shrink: 0
+    }
+
+    .card-btn {
+      width: 32px;
+      height: 32px;
+      border: none;
+      border-radius: 8px;
+      background: var(--surface2);
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .15s
+    }
+
+    .card-btn:hover {
+      background: var(--border);
+      color: var(--text)
+    }
+
+    .card-btn.danger:hover {
+      background: rgba(240, 91, 91, .15);
+      color: var(--red);
+      border-color: rgba(240, 91, 91, .3)
+    }
+
+    .fab {
+      position: fixed;
+      bottom: max(env(safe-area-inset-bottom), 24px);
+      right: 20px;
+      width: 54px;
+      height: 54px;
+      border-radius: 16px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 24px var(--accent-glow), 0 8px 40px rgba(79, 142, 247, .15);
+      transition: all .2s;
+      z-index: 10
+    }
+
+    .fab:active {
+      transform: scale(0.93)
+    }
+
+    /* REPERTUAR */
+    .lib-search-bar {
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+      display: flex;
+      gap: 8px
+    }
+
+    .lib-tab {
+      flex-shrink: 0;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      border: 1px solid var(--border2);
+      color: var(--text-muted);
+      background: var(--surface2);
+      white-space: nowrap;
+      transition: background .15s, color .15s, border-color .15s;
+    }
+
+    .lib-tab:active { opacity: .7; }
+
+    .lib-tab-active {
+      background: var(--accent);
+      color: #000;
+      border-color: var(--accent);
+      font-weight: 600;
+    }
+
+    .lib-tab-add {
+      border-style: dashed;
+      color: var(--text-muted);
+      font-size: 16px;
+      padding: 4px 12px;
+    }
+
+    .lib-search {
+      flex: 1;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 14px;
+      padding: 9px 14px;
+      outline: none
+    }
+
+    .lib-search:focus {
+      border-color: var(--accent)
+    }
+
+    .lib-search::placeholder {
+      color: var(--text-dim)
+    }
+
+    .lib-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 6px 16px
+    }
+
+    .lib-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 0;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .lib-item:last-child {
+      border-bottom: none
+    }
+
+    .lib-item-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .lib-item-title {
+      font-size: 14px;
+      font-weight: 500
+    }
+
+    .lib-item-meta {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 1px
+    }
+
+    .lib-key {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent);
+      min-width: 32px;
+      text-align: right;
+      flex-shrink: 0;
+      letter-spacing: .5px
+    }
+
+    .lib-send {
+      width: 28px;
+      height: 28px;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all .15s
+    }
+
+    .lib-send:hover {
+      background: var(--accent-glow);
+      color: var(--accent)
+    }
+
+    .lib-del {
+      width: 28px;
+      height: 28px;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all .15s
+    }
+
+    .lib-del:hover {
+      background: rgba(240, 91, 91, .15);
+      color: var(--red)
+    }
+
+    /* ══ LEADER SCREEN ══ */
+    #leader {
+      overflow: hidden
+    }
+
+    .leader-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 16px;
+      padding-top: max(env(safe-area-inset-top), 12px);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0
+    }
+
+    .leader-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      letter-spacing: 2px;
+      line-height: 1
+    }
+
+    .leader-sub {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      letter-spacing: 1px
+    }
+
+    .leader-sub span {
+      color: var(--green)
+    }
+
+    .hdr-actions {
+      display: flex;
+      gap: 6px
+    }
+
+    /* SETLIST EDITOR */
+    .setlist-editor {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 14px;
+      -webkit-overflow-scrolling: touch
+    }
+
+    .setlist-empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      gap: 10px;
+      color: var(--text-dim)
+    }
+
+    .setlist-empty-state .ico {
+      font-size: 36px;
+      opacity: .25
+    }
+
+    /* DRAG & DROP SONG CARDS */
+    .song-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 12px;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      transition: transform .2s cubic-bezier(0.2, 0, 0.2, 1), border-color .15s, opacity .15s;
+      cursor: pointer;
+      user-select: none;
+      position: relative;
+      will-change: transform
+    }
+
+    .song-row.active-song {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, rgba(79, 142, 247, .1) 0%, var(--surface) 60%)
+    }
+
+    .song-row.active-song .song-num {
+      color: var(--accent)
+    }
+
+    .song-row.dragging {
+      opacity: .2;
+      border-style: dashed;
+      pointer-events: none;
+      transform: scale(0.95)
+    }
+
+    .song-row.drop-above,
+    .song-row.drop-below {
+      border-color: var(--accent);
+    }
+
+    .drag-handle {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      cursor: grab;
+      padding: 4px;
+      flex-shrink: 0;
+      opacity: .3;
+      touch-action: none
+    }
+
+    .drag-handle span {
+      display: block;
+      width: 16px;
+      height: 2px;
+      background: var(--text-muted);
+      border-radius: 1px
+    }
+
+    .drag-handle:active {
+      cursor: grabbing;
+      opacity: .8
+    }
+
+    .song-num {
+      font-family: var(--font-display);
+      font-size: 18px;
+      color: var(--text-dim);
+      min-width: 22px;
+      text-align: center;
+      line-height: 1;
+      flex-shrink: 0
+    }
+
+    .song-row-info {
+      flex: 1;
+      min-width: 0
+    }
+
+    .song-row-title {
+      font-size: 14px;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .song-row-meta {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .song-row-key {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--accent);
+      flex-shrink: 0;
+      min-width: 28px;
+      text-align: right;
+      letter-spacing: .5px
+    }
+
+    .song-row-del {
+      width: 26px;
+      height: 26px;
+      border: none;
+      border-radius: 6px;
+      background: transparent;
+      color: var(--text-dim);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all .15s
+    }
+
+    .song-row-del:hover {
+      background: rgba(240, 91, 91, .15);
+      color: var(--red)
+    }
+
+    /* Drop zone at end of list */
+    .drop-end-zone {
+      height: 48px;
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      margin-bottom: 8px;
+      transition: all .15s;
+      display: flex;
+      align-items: center;
+      justify-content: center
+    }
+
+    .drop-end-zone.active {
+      border-color: var(--accent);
+      background: rgba(79, 142, 247, .06)
+    }
+
+    .drop-end-zone.active::after {
+      content: '↓ Sona taşı';
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+      letter-spacing: 1px
+    }
+
+    /* BOTTOM BAR */
+    .leader-bottom {
+      padding: 10px 14px;
+      padding-bottom: max(env(safe-area-inset-bottom), 10px);
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0
+    }
+
+    /* ══ MEMBER SCREEN ══ */
+    .member-hdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 20px;
+      padding-top: max(env(safe-area-inset-top), 14px);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0
+    }
+
+    .member-hdr-info .room-name {
+      font-size: 16px;
+      font-weight: 600
+    }
+
+    .member-hdr-info .room-band {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted)
+    }
+
+    .live-pill {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--green);
+      letter-spacing: 2px;
+      background: rgba(52, 217, 142, .08);
+      padding: 6px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(52, 217, 142, .2)
+    }
+
+    .live-pill::before {
+      content: '';
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 1.5s ease infinite
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1;
+        transform: scale(1)
+      }
+
+      50% {
+        opacity: .4;
+        transform: scale(.7)
+      }
+    }
+
+    .now-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 28px 24px;
+      gap: 10px;
+      background: radial-gradient(ellipse at center, rgba(79, 142, 247, .04) 0%, transparent 70%)
+    }
+
+    .now-label {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      letter-spacing: 4px;
+      color: var(--text-muted);
+      text-transform: uppercase
+    }
+
+    .now-title {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: clamp(56px, 16vw, 104px);
+      font-weight: 400;
+      letter-spacing: -.5px;
+      text-align: center;
+      line-height: 1.05;
+      word-break: break-word
+    }
+
+    .now-title.flash {
+      animation: flash .5s ease
+    }
+
+    @keyframes flash {
+      0% {
+        color: var(--accent);
+        transform: scale(1.03)
+      }
+
+      100% {
+        color: var(--text);
+        transform: scale(1)
+      }
+    }
+
+    .now-key {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: clamp(56px, 16vw, 104px);
+      font-weight: 400;
+      color: var(--accent);
+      letter-spacing: -.5px;
+      margin-top: 6px;
+      text-shadow: 0 0 40px var(--accent-glow)
+    }
+
+    .now-artist {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      color: var(--text-muted);
+      letter-spacing: .5px
+    }
+
+    .next-bar {
+      padding: 16px 20px;
+      border-top: 1px solid var(--border);
+      flex-shrink: 0;
+      padding-bottom: max(env(safe-area-inset-bottom), 16px);
+      background: var(--surface)
+    }
+
+    .next-lbl {
+      font-family: var(--font-mono);
+      font-size: 9px;
+      letter-spacing: 3px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-bottom: 5px
+    }
+
+    .next-title {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 26px;
+      font-weight: 400;
+      color: var(--text-muted)
+    }
+
+    .next-key {
+      font-family: var(--font-mono);
+      font-size: 17px;
+      color: rgba(79, 142, 247, .6);
+      margin-top: 5px;
+      letter-spacing: .5px
+    }
+
+    .wait-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px
+    }
+
+    .wait-ico {
+      font-size: 52px;
+      opacity: .18
+    }
+
+    .wait-txt {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 3px;
+      color: var(--text-dim);
+      text-transform: uppercase
+    }
+
+    /* ══ MODALS ══ */
+    .overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(4, 8, 18, .85);
+      display: flex;
+      align-items: flex-end;
+      z-index: 200;
+      backdrop-filter: blur(6px);
+      animation: fadeIn .2s
+    }
+
+    .overlay.hidden {
+      display: none
+    }
+
+    .sheet {
+      background: var(--surface);
+      border-radius: 24px 24px 0 0;
+      padding: 20px;
+      padding-bottom: max(env(safe-area-inset-bottom), 20px);
+      width: 100%;
+      border-top: 1px solid var(--border2);
+      animation: slideUp .25s ease;
+      max-height: 88dvh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 -8px 40px rgba(0, 0, 0, .4)
+    }
+
+    .sheet-handle {
+      width: 36px;
+      height: 4px;
+      background: var(--border);
+      border-radius: 2px;
+      margin: 0 auto 18px
+    }
+
+    .sheet-title {
+      font-family: var(--font-display);
+      font-size: 26px;
+      letter-spacing: 2px;
+      margin-bottom: 16px
+    }
+
+    .sheet-scroll {
+      flex: 1;
+      overflow-y: auto
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0
+      }
+
+      to {
+        opacity: 1
+      }
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%)
+      }
+
+      to {
+        transform: translateY(0)
+      }
+    }
+
+    /* MEMBERS */
+    .member-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 12px;
+      background: var(--surface2);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      border: 1px solid var(--border)
+    }
+
+    .member-av {
+      width: 30px;
+      height: 30px;
+      border-radius: 7px;
+      background: var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px
+    }
+
+    .member-n {
+      font-size: 14px;
+      font-weight: 500
+    }
+
+    .member-r {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted)
+    }
+
+    /* SHARE */
+    .share-box {
+      background: linear-gradient(135deg, var(--surface2), var(--surface3));
+      border: 1px solid var(--border2);
+      border-radius: 16px;
+      padding: 20px;
+      text-align: center;
+      margin-bottom: 14px
+    }
+
+    .share-code {
+      font-family: var(--font-display);
+      font-size: 52px;
+      letter-spacing: 12px;
+      color: var(--accent);
+      line-height: 1;
+      text-shadow: 0 0 30px var(--accent-glow)
+    }
+
+    .share-hint {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-dim);
+      margin-top: 6px;
+      letter-spacing: 1px
+    }
+
+    .sec-lbl {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      letter-spacing: 3px;
+      color: var(--text-dim);
+      text-transform: uppercase;
+      margin-bottom: 8px
+    }
+
+    /* TOAST */
+    .toast {
+      position: fixed;
+      top: max(env(safe-area-inset-top), 16px);
+      left: 50%;
+      transform: translateX(-50%) translateY(-80px);
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 999px;
+      padding: 10px 20px;
+      font-family: var(--font-mono);
+      font-size: 12px;
+      letter-spacing: 1px;
+      color: var(--text);
+      z-index: 999;
+      transition: transform .3s;
+      white-space: nowrap;
+      pointer-events: none;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, .3)
+    }
+
+    .toast.show {
+      transform: translateX(-50%) translateY(0)
+    }
+
+    .undo-toast {
+      position: fixed;
+      bottom: max(env(safe-area-inset-bottom), 24px);
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 999px;
+      padding: 10px 14px 10px 20px;
+      font-family: var(--font-body);
+      font-size: 13px;
+      color: var(--text);
+      z-index: 999;
+      transition: transform .3s;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,.4);
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    .undo-toast.show {
+      transform: translateX(-50%) translateY(0);
+      pointer-events: auto;
+      opacity: 1;
+    }
+
+    /* MISC */
+    ::-webkit-scrollbar {
+      width: 2px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: transparent
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border2);
+      border-radius: 1px
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--border);
+      margin: 12px 0
+    }
+
+    input[type=number]::-webkit-inner-spin-button {
+      -webkit-appearance: none
+    }
+
+    /* MEDLEY */
+    .medley-block {
+      display: flex;
+      flex-direction: column;
+      gap: 1px
+    }
+
+    .medley-line {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      line-height: 1.35
+    }
+
+    .medley-connector {
+      color: var(--accent);
+      font-size: 11px;
+      opacity: .6;
+      flex-shrink: 0;
+      margin-top: 1px
+    }
+
+    .medley-part {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis
+    }
+
+    .song-title-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      display: block
+    }
+
+    .status-btn {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      padding: 8px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-align: center;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      transition: all .2s
+    }
+
+    .status-btn.active {
+      color: #fff;
+      border-color: transparent
+    }
+
+    .status-btn#sbtn-pool.active {
+      background: #4f8ef7;
+      box-shadow: 0 0 10px rgba(79, 142, 247, .3)
+    }
+
+    .status-btn#sbtn-working.active {
+      background: #f59e0b;
+      box-shadow: 0 0 10px rgba(245, 158, 11, .3)
+    }
+
+    .status-btn#sbtn-ready.active {
+      background: #22c55e;
+      box-shadow: 0 0 10px rgba(34, 197, 94, .3)
+    }
+
+    .status-btn#sbtn-review.active {
+      background: #ef4444;
+      box-shadow: 0 0 10px rgba(239, 68, 68, .3)
+    }
+
+    .status-badge {
+      font-family: var(--font-mono);
+      font-size: 8px;
+      text-transform: uppercase;
+      padding: 2px 5px;
+      border-radius: 4px;
+      letter-spacing: .5px;
+      margin-left: 6px;
+      vertical-align: middle
+    }
+
+    .sb-pool {
+      background: rgba(79, 142, 247, .1);
+      color: #4f8ef7;
+      border: 1px solid rgba(79, 142, 247, .2)
+    }
+
+    .sb-working {
+      background: rgba(245, 158, 11, .1);
+      color: #f59e0b;
+      border: 1px solid rgba(245, 158, 11, .2)
+    }
+
+    .sb-ready {
+      background: rgba(34, 197, 94, .1);
+      color: #22c55e;
+      border: 1px solid rgba(34, 197, 94, .2)
+    }
+
+    .sb-review {
+      background: rgba(239, 68, 68, .1);
+      color: #ef4444;
+      border: 1px solid rgba(239, 68, 68, .2)
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ══ SPLASH — ROLE SELECTION ══ -->
+  <div id="splash" class="screen active">
+    <div
+      style="display:flex;flex-direction:column;align-items:center;justify-content:center;flex:1;gap:10px;padding:32px">
+      <div
+        style="font-family:'FrizQuadrata', serif; font-size:48px; letter-spacing:2px; line-height:1; color:var(--text);">
+        GIG<span style="color:#4f8ef7">SYNC</span></div>
+      <div
+        style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:40px">
+        Sahne Senkronizasyonu</div>
+
+      <div style="width:100%;display:flex;flex-direction:column;gap:12px">
+        <button class="btn btn-primary" style="width:100%;height:64px;font-size:17px;border-radius:16px"
+          onclick="selectRole('host')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round">
+            <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
+          </svg>
+          YÖNETİCİ
+        </button>
+        <div
+          style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);text-align:center;letter-spacing:1px">
+          Setlist oluşturur · Oda açar · Şarkı seçer</div>
+
+        <div style="height:8px"></div>
+
+        <button class="btn btn-secondary" style="width:100%;height:64px;font-size:17px;border-radius:16px"
+          onclick="selectRole('crew')">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          GRUP
+        </button>
+        <div
+          style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);text-align:center;letter-spacing:1px">
+          Sadece görüntüleme · Senkronize takip</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ HOME SCREEN ══ -->
+  <div id="home" class="screen">
+    <div class="home-header">
+      <!-- SOL: LOGO VE ROZET + İSİM -->
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="logo">GIG<span style="color:#4f8ef7">SYNC</span></div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div id="role-badge"
+            style="font-family:var(--font-mono);font-size:10px;padding:3px 8px;border-radius:6px;letter-spacing:1px;font-weight:700;width:fit-content">
+          </div>
+          <span class="home-name" id="home-username-display" onclick="showNameModal()"
+            style="cursor:pointer; text-align:left; max-width:140px;"></span>
+        </div>
+      </div>
+
+      <!-- SAĞ: BUTONLAR -->
+      <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-end">
+        <div class="header-actions">
+          <button id="header-lib-btn" class="btn btn-ghost" onclick="showRepertuarModal()" title="Repertuar"
+            style="font-family:var(--font-mono);font-size:13px;letter-spacing:2px;padding:0 14px;height:38px;border-radius:10px;display:none;font-weight:700">
+            REP
+          </button>
+          <button class="btn btn-ghost" onclick="showScreen('splash')" title="Rol değiştir"
+            style="font-family:var(--font-mono);font-size:11px;letter-spacing:1px;padding:0 12px;height:38px;gap:6px;border-radius:10px">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round">
+              <path d="M17 3l4 4-4 4" />
+              <path d="M3 11V7a4 4 0 0 1 4-4h14" />
+              <path d="M7 21l-4-4 4-4" />
+              <path d="M21 13v4a4 4 0 0 1-4 4H3" />
+            </svg>
+            ROL
+          </button>
+          <button class="btn btn-icon btn-ghost" style="width:38px;height:38px;border-radius:10px"
+            onclick="showSettingsModal()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+              stroke-linecap="round">
+              <circle cx="12" cy="12" r="3" />
+              <path
+                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+            </svg>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="home-view">
+      <div class="setlists-scroll" id="setlists-scroll">
+        <div id="setlists-list"></div>
+
+        <!-- CREW JOIN AREA -->
+        <div id="crew-join-area" style="display:none; text-align:center; padding:40px 20px; flex-direction:column; align-items:center; gap:24px; justify-content:center; min-height:50dvh">
+          <div style="background:var(--surface2); width:80px; height:80px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:1px solid var(--border); box-shadow:0 8px 32px rgba(0,0,0,0.2)">
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+              <circle cx="9" cy="7" r="4"></circle>
+              <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+              <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+            </svg>
+          </div>
+          <div style="display:flex; flex-direction:column; gap:8px">
+            <div style="font-size:18px; font-weight:700; color:var(--text); font-family: var(--font-sans)">Grup Üyesi Girişi</div>
+            <div style="font-size:13px; color:var(--text-dim); max-width:260px; margin:0 auto; line-height:1.6">Sahnede liderin paylaştığı 4 haneli oda kodunu girerek canlı takibe başlayın.</div>
+          </div>
+          <button class="btn btn-primary" onclick="showJoinRoomModal()" style="width:100%; max-width:260px; box-shadow:0 0 24px var(--accent-glow); font-weight: 700; height: 48px; border-radius: 12px; font-family: var(--font-mono); letter-spacing: 2px;">
+            ODAYA KATIL
+          </button>
+        </div>
+
+        <div style="height:80px"></div>
+      </div>
+    </div>
+
+    <button class="fab" id="fab-create" onclick="showCreateSetlistModal()">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+        stroke-linecap="round">
+        <path d="M12 5v14M5 12h14" />
+      </svg>
+    </button>
+  </div>
+
+  <!-- ══ LEADER ══ -->
+  <div id="leader" class="screen">
+    <div class="leader-header">
+      <div>
+        <div class="leader-title" id="leader-setlist-name">—</div>
+        <div class="leader-sub"><span style="color:var(--text-muted)"
+            id="leader-username"></span> · <span id="leader-song-count" style="color:var(--accent)">0 şarkı</span></div>
+        <span id="leader-code" style="display:none"></span>
+      </div>
+      <div class="hdr-actions">
+        <div id="leader-live-btn" style="display:none" onclick="closeRoomFromLeader()">
+          <div id="leader-live-toggle"
+            style="font-family:var(--font-mono);font-size:11px;padding:6px 14px;border-radius:999px;letter-spacing:1px;background:rgba(52,217,142,.15);color:var(--green);border:1px solid rgba(52,217,142,.3);cursor:pointer">
+            ● CANLI · KAPAT</div>
+        </div>
+        <button id="leader-open-btn" onclick="showOpenRoomModal()"
+          style="display:none;font-family:var(--font-mono);font-size:14px;padding:10px 22px;border-radius:12px;border:1px solid var(--accent);background:var(--accent);color:#000;cursor:pointer;letter-spacing:2px;font-weight:700;box-shadow:0 0 24px var(--accent-glow);gap:8px;display:none;align-items:center">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
+          ODAYI AÇ
+        </button>
+        <button class="btn btn-icon btn-secondary" onclick="showMembersSheet()" title="Üyeler"
+          style="position:relative">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          <span id="member-count-dot"
+            style="position:absolute;top:4px;right:4px;min-width:16px;height:16px;background:var(--green);color:#000;font-family:var(--font-mono);font-size:9px;font-weight:700;border-radius:999px;display:none;align-items:center;justify-content:center;padding:0 3px">0</span>
+        </button>
+        <button class="btn btn-icon btn-ghost" onclick="goBackFromLeader()" title="Geri">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round">
+            <path d="M19 12H5M12 5l-7 7 7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="setlist-editor" id="setlist-editor">
+      <div class="setlist-empty-state" id="leader-empty">
+        <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:2px;text-transform:uppercase;">Setlist
+          boş</div>
+        <div style="font-size:13px;margin-top:4px;">Repertuardan şarkı ekle</div>
+      </div>
+      <div id="leader-song-list"></div>
+    </div>
+
+    <div class="leader-bottom">
+      <button class="btn btn-secondary btn-sm" style="flex:1" onclick="showAddToSetlistSheet('add')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+        Ekle
+        <span id="setlist-count-badge"
+          style="background:var(--accent);color:#000;font-family:var(--font-mono);font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;display:none">0</span>
+      </button>
+      <button class="btn btn-secondary btn-sm" style="flex:1;opacity:.85" onclick="showAddToSetlistSheet('request')">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+          stroke-linecap="round">
+          <path d="M12 5v14M5 12h14" />
+        </svg>
+        İstek
+      </button>
+    </div>
+  </div>
+
+  <!-- ══ MEMBER ══ -->
+  <div id="member" class="screen">
+    <div class="member-hdr">
+      <div class="member-hdr-info">
+        <div class="room-name" id="mem-room-name">—</div>
+        <div class="room-band" id="mem-room-band">—</div>
+      </div>
+      <div class="live-pill">CANLI</div>
+    </div>
+    <div class="now-area" id="now-area">
+      <div class="wait-state" id="wait-state">
+        <div class="wait-txt">Lider bekleniyor...</div>
+      </div>
+      <div id="now-display"
+        style="display:none;flex-direction:column;align-items:center;gap:8px;width:100%;padding:0 8px;cursor:pointer"
+        onclick="currentDetailSong && showSongDetail(currentDetailSong)">
+        <div class="now-label">ŞU AN ÇALINIYOR</div>
+        <div class="now-title" id="mem-now-title">—</div>
+        <div style="display:flex;align-items:baseline;gap:16px;justify-content:center">
+          <div class="now-key" id="mem-now-key"></div>
+          <div id="mem-now-bpm"
+            style="font-family:var(--font-mono);font-size:18px;color:var(--text-muted);letter-spacing:1px;display:none">
+          </div>
+        </div>
+        <div class="now-artist" id="mem-now-artist"></div>
+        <div
+          style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);letter-spacing:2px;margin-top:8px">
+          DETAY İÇİN DOKUN</div>
+      </div>
+    </div>
+    <div class="next-bar" id="next-bar" style="display:none">
+      <div class="next-lbl">Sıradaki</div>
+      <div class="next-title" id="mem-next-title">—</div>
+      <div class="next-key" id="mem-next-key"></div>
+    </div>
+    <div
+      style="padding:12px 18px;border-top:1px solid var(--border);padding-bottom:max(env(safe-area-inset-bottom),12px)">
+      <button class="btn btn-danger" style="width:100%" onclick="leaveRoom()">Odadan Ayrıl</button>
+    </div>
+  </div>
+
+
+  <!-- OPEN ROOM MODAL (LEADER) -->
+  <div class="overlay hidden" id="open-room-modal" onclick="if(event.target===this)closeOpenRoomModal()" style="z-index: 220;">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">ODAYI KUR</div>
+      <div class="form-group">
+        <div class="form-label" style="display:flex; justify-content:space-between; align-items:center;">
+          <span>Oda Kodu / İsmi</span>
+          <span style="font-size:10px; color:var(--text-muted)">En az 3, en fazla 12 karakter</span>
+        </div>
+        <div style="display:flex; gap:10px; align-items:center;">
+          <input id="leader-custom-code-input" class="form-input" type="text" placeholder="ABCD" maxlength="12"
+            style="text-transform:uppercase;letter-spacing:4px;font-family:var(--font-mono);font-size:20px;text-align:center;flex:1;height:48px;border-radius:12px;" />
+          <button class="btn btn-secondary btn-icon" onclick="regenerateLeaderRandomCode()" style="height:48px; width:48px; border-radius:12px; display:flex; align-items:center; justify-content:center;" title="Rastgele Kod Üret">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38" />
+            </svg>
+          </button>
+        </div>
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-top:8px;line-height:1.4">
+          Varsayılan rastgele kodu kullanabilir veya kendi özel kodunuzu yazabilirsiniz (örn: GRUBUMUZ, SAHNE1). Türkçe karakter ve sembol kullanamazsınız.
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-ghost" style="flex:1" onclick="closeOpenRoomModal()">Vazgeç</button>
+        <button class="btn btn-primary" style="flex:2; font-weight:700" onclick="confirmOpenRoomFromLeader()">Odayı Aç</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- JOIN ROOM MODAL (CREW) -->
+  <div class="overlay hidden" id="join-room-modal" onclick="if(event.target===this)closeJoinRoomModal()" style="z-index: 220;">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">ODAYA KATIL</div>
+      <div class="form-group">
+        <div class="form-label">Oda Kodu / İsmi</div>
+        <input id="join-code-input" class="form-input" type="text" placeholder="KODU GİRİN" maxlength="12"
+          style="text-transform:uppercase;letter-spacing:4px;font-family:var(--font-mono);font-size:20px;text-align:center;height:48px;border-radius:12px;" />
+      </div>
+      <div id="recent-rooms-container" style="display:none; margin-top:16px;">
+        <div class="form-label" style="margin-bottom:8px">Son Katıldığın Odalar (Dokun-Katıl)</div>
+        <div id="recent-rooms-list" style="display:flex; flex-direction:column; gap:8px; max-height:260px; overflow-y:auto; padding-right:4px;">
+          <!-- Son odalar buraya yüklenecek -->
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button class="btn btn-ghost" style="flex:1" onclick="closeJoinRoomModal()">İptal</button>
+        <button class="btn btn-primary" style="flex:2" onclick="joinRoomByCode()">Katıl</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MEMBERS SHEET (LEADER) -->
+  <div class="overlay hidden" id="members-sheet" onclick="if(event.target===this)closeMembersSheet()" style="z-index: 220;">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">ODA</div>
+      <div style="text-align:center;margin-bottom:20px">
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);letter-spacing:2px;margin-bottom:8px">ODA KODU</div>
+        <div id="room-code-display" style="font-family:var(--font-mono);font-size:48px;color:var(--accent);letter-spacing:12px;font-weight:700">—</div>
+        <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);margin-top:8px">Üyelerinle paylaş</div>
+      </div>
+      <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:2px;color:var(--text-dim);margin-bottom:8px">ÜYELER</div>
+      <div id="members-list" style="max-height:40dvh;overflow-y:auto"></div>
+      <button class="btn btn-secondary" style="width:100%;margin-top:14px" onclick="closeMembersSheet()">Kapat</button>
+    </div>
+  </div>
+
+  <!-- ══ MODALS ══ -->
+
+  <!-- REPERTUAR MODAL -->
+  <div class="overlay hidden" id="repertuar-modal" onclick="if(event.target===this)closeRepertuarModal()"
+    style="z-index: 210;">
+    <div class="sheet" style="height:90dvh">
+      <div class="sheet-handle"></div>
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
+        <div class="sheet-title" style="margin-bottom:0">REPERTUAR</div>
+        <div id="lib-count-badge"
+          style="background:var(--accent);color:#000;font-family:var(--font-mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px">
+          0</div>
+        <div style="margin-left:auto; display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end">
+          <button id="lib-bulk-send-btn" class="btn btn-xs" onclick="showSendToLibSheet([...selectedLibIds])"
+            style="display:none; font-size:10px; padding:0 8px; height:24px; background:var(--accent); color:#000; border-color:var(--accent)">GÖNDER (<span
+              id="lib-sel-send-count">0</span>)</button>
+          <button id="lib-bulk-del-btn" class="btn btn-danger btn-xs" onclick="deleteSelectedFromLibrary()"
+            style="display:none; font-size:10px; padding:0 8px; height:24px">SİL (<span
+              id="lib-sel-count">0</span>)</button>
+          <button class="btn btn-ghost btn-xs" id="lib-select-all-btn" onclick="toggleSelectAllLibrary()"
+            style="font-size:10px; padding:0 8px; height:24px; border-color:var(--border2)">HEPSİNİ SEÇ</button>
+          <button class="btn btn-danger btn-xs" onclick="clearLibrary()"
+            style="font-size:10px; padding:0 8px; height:24px">TÜMÜNÜ SİL</button>
+        </div>
+      </div>
+      <div id="lib-tabs-bar" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px;scrollbar-width:none"></div>
+      <div class="lib-search-bar" style="border:none; padding:0 0 12px 0; gap:10px">
+        <input class="lib-search" type="text" placeholder="Repertuarda ara..." id="lib-search-input"
+          oninput="renderLibrary()" style="flex:1" />
+        <button class="btn btn-secondary btn-xs" onclick="showPasteImportModal()"
+          style="height:36px; padding:0 12px; font-family:var(--font-mono); font-size:10px; letter-spacing:1px; border-radius:10px; white-space:nowrap">TOPLU
+          EKLE</button>
+        <button class="btn btn-icon btn-ghost" onclick="showAddSongModal()" title="Yeni şarkı"
+          style="width:36px; height:36px; border-radius:10px; flex-shrink:0">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
+            stroke-linecap="round">
+            <path d="M12 5v14M5 12h14" />
+          </svg>
+        </button>
+      </div>
+      <div class="lib-list" id="lib-list" style="padding:0"></div>
+      <button class="btn btn-secondary" style="width:100%;margin-top:14px"
+        onclick="closeRepertuarModal()">Kapat</button>
+    </div>
+  </div>
+
+  <!-- NAME MODAL -->
+  <div class="overlay hidden" id="name-modal" onclick="if(event.target===this)closeNameModal()" style="z-index: 220;">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">ADIN</div>
+      <div class="form-group">
+        <div class="form-label">Sahnedeki adın</div>
+        <input id="username-input" class="form-input" type="text" placeholder="ör. Umut" maxlength="30" />
+      </div>
+      <div style="display:flex;gap:10px">
+        <button class="btn btn-ghost" style="flex:1" onclick="closeNameModal()">İptal</button>
+        <button class="btn btn-primary" style="flex:2" onclick="saveName()">Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- CREATE SETLIST MODAL -->
+  <div class="overlay hidden" id="create-setlist-modal" onclick="if(event.target===this)closeCreateSetlistModal()"
+    style="z-index: 220;">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">YENİ SETLİST</div>
+      <div class="form-group">
+        <div class="form-label">Setlist Adı</div>
+        <input id="new-setlist-name" class="form-input" type="text" placeholder="ör. Rixos Bodrum" maxlength="60" />
+      </div>
+      <div class="form-group">
+        <div class="form-label">Grup / Sahne Adı</div>
+        <input id="new-setlist-band" class="form-input" type="text" placeholder="ör. Büşra Çim" maxlength="40" />
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button class="btn btn-ghost" style="flex:1" onclick="closeCreateSetlistModal()">İptal</button>
+        <button class="btn btn-primary" style="flex:2" onclick="createSetlist()">Oluştur</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD SONG TO SETLIST SHEET -->
+  <div class="overlay hidden" id="add-to-setlist-sheet" onclick="if(event.target===this)closeAddToSetlistSheet()"
+    style="z-index: 220;">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+        <div id="add-sheet-title" class="sheet-title" style="margin-bottom:0">ŞARKI EKLE</div>
+        <div id="sheet-count-badge" onclick="closeAddToSetlistSheet()"
+          style="background:var(--accent);color:#000;font-family:var(--font-mono);font-size:13px;font-weight:600;padding:4px 12px;border-radius:999px;display:none;cursor:pointer">
+          0 seçili</div>
+      </div>
+      <div id="add-lib-tabs" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px;scrollbar-width:none"></div>
+      <input class="lib-search" type="text" placeholder="Repertuarda ara..." id="add-search" oninput="renderAddList()"
+        style="margin-bottom:12px;width:100%" />
+      <div class="sheet-scroll" id="add-list" style="max-height:55dvh"></div>
+    </div>
+  </div>
+
+  <!-- SETTINGS MODAL -->
+  <div class="overlay hidden" id="settings-modal" onclick="if(event.target===this)closeSettingsModal()"
+    style="z-index: 220;">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">AYARLAR</div>
+
+      <div class="sec-lbl" style="margin-bottom:12px">Tema</div>
+      <div style="overflow-y:auto;max-height:60dvh;margin-bottom:16px">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" id="theme-grid">
+          <button onclick="applyTheme('dark')" class="theme-btn" id="theme-dark"
+            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#060912">
+            <div style="font-size:13px;font-weight:500;color:#e8edf5;margin-bottom:6px">Dark Blue</div>
+            <div style="display:flex;gap:4px"><span
+                style="flex:1;height:8px;border-radius:4px;background:#060912;border:1px solid #1e2a40"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#4f8ef7"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#0d1220"></span></div>
+          </button>
+          <button onclick="applyTheme('light')" class="theme-btn" id="theme-light"
+            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#FAF7F0">
+            <div style="font-size:13px;font-weight:500;color:#1C1917;margin-bottom:6px">Krem Beyaz</div>
+            <div style="display:flex;gap:4px"><span
+                style="flex:1;height:8px;border-radius:4px;background:#FAF7F0;border:1px solid #DFD7C7"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#1C1917"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#FCFAF5"></span></div>
+          </button>
+          <button onclick="applyTheme('grey')" class="theme-btn" id="theme-grey"
+            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#0f1014">
+            <div style="font-size:13px;font-weight:500;color:#e2e8f0;margin-bottom:6px">Slate Grey</div>
+            <div style="display:flex;gap:4px"><span
+                style="flex:1;height:8px;border-radius:4px;background:#0f1014;border:1px solid #2e3038"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#94a3b8"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#16181e"></span></div>
+          </button>
+          <button onclick="applyTheme('orange')" class="theme-btn" id="theme-orange"
+            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#0e0a06">
+            <div style="font-size:13px;font-weight:500;color:#f5ede4;margin-bottom:6px">Midnight Orange</div>
+            <div style="display:flex;gap:4px"><span
+                style="flex:1;height:8px;border-radius:4px;background:#0e0a06;border:1px solid #3d2e1a"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#f97316"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#1a1208"></span></div>
+          </button>
+          <button onclick="applyTheme('amber')" class="theme-btn" id="theme-amber"
+            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#0d0900">
+            <div style="font-size:13px;font-weight:500;color:#fffbeb;margin-bottom:6px">Amber Warm</div>
+            <div style="display:flex;gap:4px"><span
+                style="flex:1;height:8px;border-radius:4px;background:#0d0900;border:1px solid #3d3000"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#f59e0b"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#1a1100"></span></div>
+          </button>
+          <button onclick="applyTheme('gold')" class="theme-btn" id="theme-gold"
+            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#0c0a00">
+            <div style="font-size:13px;font-weight:500;color:#f5f0d8;margin-bottom:6px">Warm Gold</div>
+            <div style="display:flex;gap:4px"><span
+                style="flex:1;height:8px;border-radius:4px;background:#0c0a00;border:1px solid #3d3200"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#f5c400"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#191400"></span></div>
+          </button>
+          <button onclick="applyTheme('red')" class="theme-btn" id="theme-red"
+            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#0d0608">
+            <div style="font-size:13px;font-weight:500;color:#fef2f2;margin-bottom:6px">Crimson Red</div>
+            <div style="display:flex;gap:4px"><span
+                style="flex:1;height:8px;border-radius:4px;background:#0d0608;border:1px solid #3d1a20"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#ef4444"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#180b0d"></span></div>
+          </button>
+          <button onclick="applyTheme('rose')" class="theme-btn" id="theme-rose"
+            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#0e060a">
+            <div style="font-size:13px;font-weight:500;color:#fff1f2;margin-bottom:6px">Rose Pink</div>
+            <div style="display:flex;gap:4px"><span
+                style="flex:1;height:8px;border-radius:4px;background:#0e060a;border:1px solid #4d1f30"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#f43f5e"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#1c0d14"></span></div>
+          </button>
+          <button onclick="applyTheme('green')" class="theme-btn" id="theme-green"
+            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#050d08">
+            <div style="font-size:13px;font-weight:500;color:#f0fdf4;margin-bottom:6px">Forest Green</div>
+            <div style="display:flex;gap:4px"><span
+                style="flex:1;height:8px;border-radius:4px;background:#050d08;border:1px solid #1e3d2a"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#22c55e"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#0a1610"></span></div>
+          </button>
+          <button onclick="applyTheme('cyan')" class="theme-btn" id="theme-cyan"
+            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#040e0f">
+            <div style="font-size:13px;font-weight:500;color:#ecfeff;margin-bottom:6px">Cyan Teal</div>
+            <div style="display:flex;gap:4px"><span
+                style="flex:1;height:8px;border-radius:4px;background:#040e0f;border:1px solid #1a3d42"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#06b6d4"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#071a1c"></span></div>
+          </button>
+          <button onclick="applyTheme('indigo')" class="theme-btn" id="theme-indigo"
+            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#06080f">
+            <div style="font-size:13px;font-weight:500;color:#eef2ff;margin-bottom:6px">Indigo Deep</div>
+            <div style="display:flex;gap:4px"><span
+                style="flex:1;height:8px;border-radius:4px;background:#06080f;border:1px solid #22284d"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#6366f1"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#0d1020"></span></div>
+          </button>
+          <button onclick="applyTheme('violet')" class="theme-btn" id="theme-violet"
+            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#0a0612">
+            <div style="font-size:13px;font-weight:500;color:#f3e8ff;margin-bottom:6px">Violet Purple</div>
+            <div style="display:flex;gap:4px"><span
+                style="flex:1;height:8px;border-radius:4px;background:#0a0612;border:1px solid #3a1d5e"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#a855f7"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#170a26"></span></div>
+          </button>
+          <button onclick="applyTheme('ocean')" class="theme-btn" id="theme-ocean"
+            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#021018">
+            <div style="font-size:13px;font-weight:500;color:#e0f7ff;margin-bottom:6px">Ocean Deep</div>
+            <div style="display:flex;gap:4px"><span
+                style="flex:1;height:8px;border-radius:4px;background:#021018;border:1px solid #1a5266"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#06b6d4"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#062029"></span></div>
+          </button>
+          <button onclick="applyTheme('sunset')" class="theme-btn" id="theme-sunset"
+            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#150810">
+            <div style="font-size:13px;font-weight:500;color:#ffe4ec;margin-bottom:6px">Sunset</div>
+            <div style="display:flex;gap:4px"><span
+                style="flex:1;height:8px;border-radius:4px;background:#150810;border:1px solid #5e2645"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#fb7185"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#240e1a"></span></div>
+          </button>
+          <button onclick="applyTheme('mint')" class="theme-btn" id="theme-mint"
+            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#051210">
+            <div style="font-size:13px;font-weight:500;color:#e0fff8;margin-bottom:6px">Mint Fresh</div>
+            <div style="display:flex;gap:4px"><span
+                style="flex:1;height:8px;border-radius:4px;background:#051210;border:1px solid #1f5a51"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#2dd4bf"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#0a2421"></span></div>
+          </button>
+          <button onclick="applyTheme('midnight')" class="theme-btn" id="theme-midnight"
+            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#000000">
+            <div style="font-size:13px;font-weight:500;color:#ffffff;margin-bottom:6px">Midnight</div>
+            <div style="display:flex;gap:4px"><span
+                style="flex:1;height:8px;border-radius:4px;background:#000000;border:1px solid #25252e"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#e0e0ff"></span><span
+                style="flex:1;height:8px;border-radius:4px;background:#0a0a0f"></span></div>
+          </button>
+          <button onclick="applyTheme('stage')" class="theme-btn" id="theme-stage"
+            style="padding:16px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:linear-gradient(135deg,#000,#1a1a1a);grid-column:span 2">
+            <div style="font-size:15px;font-weight:600;color:#fff;margin-bottom:6px">⚡ STAGE MODE — Büyük Yazı</div>
+            <div style="font-size:11px;color:#888;font-family:var(--font-mono);letter-spacing:1px">Sahne için maksimum okunabilirlik</div>
+          </button>
+        </div>
+      </div>
+
+      <button class="btn btn-secondary" style="width:100%;margin-top:14px" onclick="closeSettingsModal()">Kapat</button>
+    </div>
+  </div>
+
+  <!-- PASTE IMPORT MODAL -->
+  <div class="overlay hidden" id="paste-import-modal" onclick="if(event.target===this)closePasteImportModal()"
+    style="z-index: 230;">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">TOPLU EKLE</div>
+      <textarea id="paste-input"
+        style="width:100%;height:180px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;color:var(--text);font-family:var(--font-body);font-size:14px;padding:12px 14px;outline:none;resize:none;line-height:1.6;transition:border-color .2s"
+        placeholder="Listeyi buraya yapıştır..."></textarea>
+      <div style="display:flex;gap:10px;margin-top:14px">
+        <button class="btn btn-ghost" style="flex:1" onclick="closePasteImportModal()">İptal</button>
+        <button class="btn btn-primary" style="flex:2" onclick="importFromPaste()">Kütüphaneye Ekle</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SEND TO LIBRARY SHEET -->
+  <div class="overlay hidden" id="send-to-lib-sheet" onclick="if(event.target===this)closeSendToLibSheet()"
+    style="z-index: 250;">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title" id="send-to-lib-title">GÖNDER</div>
+      <div id="send-to-lib-list" style="display:flex;flex-direction:column;gap:8px;margin-bottom:16px"></div>
+      <button class="btn btn-ghost" style="width:100%" onclick="closeSendToLibSheet()">İptal</button>
+    </div>
+  </div>
+
+  <!-- CREATE LIBRARY MODAL -->
+  <div class="overlay hidden" id="create-lib-modal" onclick="if(event.target===this)closeCreateLibModal()"
+    style="z-index: 240;">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">YENİ KÜTÜPHANe</div>
+      <div class="form-group">
+        <div class="form-label">Kütüphane Adı</div>
+        <input id="new-lib-name" class="form-input" type="text" placeholder="ör. Rixsos, Hilton, Jazz Set" maxlength="50"
+          onkeydown="if(event.key==='Enter')createSubLibrary()" />
+      </div>
+      <div style="display:flex;gap:10px;margin-top:8px">
+        <button class="btn btn-ghost" style="flex:1" onclick="closeCreateLibModal()">İptal</button>
+        <button class="btn btn-primary" style="flex:2" onclick="createSubLibrary()">Oluştur</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ADD SONG TO LIBRARY MODAL -->
+  <div class="overlay hidden" id="add-song-modal" onclick="if(event.target===this)closeAddSongModal()"
+    style="z-index: 230;">
+    <div class="sheet">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">YENİ ŞARKI</div>
+      <div class="form-group">
+        <div class="form-label">Şarkı Adı</div><input id="ns-title" class="form-input" type="text"
+          placeholder="Şarkı adı" maxlength="60" />
+      </div>
+      <div class="form-group">
+        <div class="form-label">Sanatçı (opsiyonel)</div><input id="ns-artist" class="form-input" type="text"
+          placeholder="Sanatçı" maxlength="40" />
+      </div>
+      <div style="display:flex;gap:10px">
+        <div class="form-group" style="flex:1;margin:0">
+          <div class="form-label">Ton</div><input id="ns-key" class="form-input" type="text" placeholder="ör. Em"
+            maxlength="10" />
+        </div>
+        <div class="form-group" style="width:80px;margin:0">
+          <div class="form-label">BPM</div><input id="ns-bpm" class="form-input" type="number" placeholder="120" />
+        </div>
+      </div>
+      <div style="display:flex;gap:10px;margin-top:12px">
+        <button class="btn btn-ghost" style="flex:1" onclick="closeAddSongModal()">İptal</button>
+        <button class="btn btn-primary" style="flex:2" onclick="addSongToLibrary()">Kütüphaneye Ekle</button>
+      </div>
+    </div>
+  </div>
+
+
+
+  </div>
+
+  <!-- TOAST -->
+  <div id="toast" class="toast">Mesaj</div>
+
+  <!-- UNDO TOAST -->
+  <div id="undo-toast" class="undo-toast">
+    <span id="undo-toast-msg"></span>
+    <button id="undo-toast-btn" onclick="triggerUndo()" style="margin-left:12px;background:var(--accent);color:#000;border:none;border-radius:999px;padding:4px 12px;font-family:var(--font-mono);font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px">GERİ AL</button>
+  </div>
+
+  <!-- SUPABASE CLIENT JS CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    // ══ SUPABASE CONFIG ══
+    const supabaseUrl = "https://xcizgihnylwbjkfxzkpg.supabase.co";
+    const supabaseKey = "sb_publishable_aT7TbUfwn8v-WGnDfsfzHg_LJhohnd7";
+    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
+    // ══ STATE ══
+    const S = {
+      username: '',
+      userRole: null, // 'host' or 'crew'
+      groupKey: 'default',
+      groupKeys: ['default'],
+      libraries: {},
+      activeLibId: 'default',
+      setlists: {},
+      listeners: {},
+      activeRoom: null,
+      liveSongs: [],
+      liveActiveSong: null,
+      activeRoomCode: null,
+      role: null,
+      memberId: null,
+    };
+
+    const currentLib = () => (S.libraries[S.activeLibId] || S.libraries['default']).songs;
+    const saveLibraries = () => LS.set('gs_libraries', S.libraries);
+
+    const DEFAULT_LIB = [
+      { title: 'Autumn Leaves', artist: 'Joseph Kosma', key: 'Em' },
+      { title: 'Fly Me To The Moon', artist: 'Frank Sinatra', key: 'C' },
+      { title: 'Smooth Operator', artist: 'Sade', key: 'Am' }
+    ];
+
+    // ══ HELPERS ══
+    const esc = (t) => {
+      if (!t) return '';
+      return String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+    };
+
+    const LS = {
+      get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+      set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
+    };
+
+    function showToast(m) {
+      const t = document.getElementById('toast');
+      t.textContent = m;
+      t.classList.add('show');
+      setTimeout(() => t.classList.remove('show'), 2500);
+    }
+
+    let _undoCb = null;
+    let _undoToastTimer = null;
+
+    function showUndoToast(msg, undoCallback) {
+      _undoCb = undoCallback;
+      if (_undoToastTimer) clearTimeout(_undoToastTimer);
+      const el = document.getElementById('undo-toast');
+      document.getElementById('undo-toast-msg').textContent = msg;
+      el.classList.add('show');
+      _undoToastTimer = setTimeout(() => {
+        el.classList.remove('show');
+        _undoCb = null;
+      }, 5000);
+    }
+
+    window.triggerUndo = () => {
+      if (_undoToastTimer) clearTimeout(_undoToastTimer);
+      document.getElementById('undo-toast').classList.remove('show');
+      if (_undoCb) { _undoCb(); _undoCb = null; }
+    };
+
+    // ══ LOGIC ══
+    function loadAll() {
+      S.username = LS.get('gs_username') || '';
+      S.userRole = LS.get('gs_user_role') || null;
+
+      // Load libraries; migrate legacy gs_library if needed
+      const savedLibs = LS.get('gs_libraries');
+      if (savedLibs && typeof savedLibs === 'object' && !Array.isArray(savedLibs)) {
+        S.libraries = savedLibs;
+      } else {
+        const legacySongs = LS.get('gs_library');
+        const songs = legacySongs || DEFAULT_LIB.map((s, i) => ({ id: `lib_${i}`, ...s }));
+        S.libraries = { default: { id: 'default', name: 'Ana Kütüphane', songs } };
+        saveLibraries();
+      }
+      if (!S.libraries['default']) {
+        S.libraries['default'] = { id: 'default', name: 'Ana Kütüphane', songs: [] };
+      }
+      S.activeLibId = 'default';
+      
+      // Legacy compatibility: If gs_setlists is stored as an Array, migrate it to an Object
+      let loadedSetlists = LS.get('gs_setlists') || {};
+      if (Array.isArray(loadedSetlists)) {
+        const migrated = {};
+        loadedSetlists.forEach(sl => {
+          if (sl && sl.id) migrated[sl.id] = sl;
+        });
+        loadedSetlists = migrated;
+        LS.set('gs_setlists', loadedSetlists);
+      }
+      S.setlists = loadedSetlists;
+
+      S.groupKey = LS.get('gs_group_key') || 'default';
+      S.groupKeys = LS.get('gs_group_keys') || ['default'];
+      if (!S.groupKeys.includes(S.groupKey)) S.groupKeys.push(S.groupKey);
+    }
+
+    window.selectRole = (role) => {
+      S.userRole = role;
+      LS.set('gs_user_role', role);
+      sessionStorage.setItem('gs_role_selected', '1');
+      applyRole();
+      showScreen('home');
+      renderSetlistCards();
+      if (role === 'host') renderLibrary();
+      if (!S.username) showNameModal();
+    };
+
+    window.applyRole = () => {
+      const isHost = S.userRole === 'host';
+      const libBtn = document.getElementById('header-lib-btn');
+      if (libBtn) libBtn.style.display = isHost ? '' : 'none';
+      const fab = document.getElementById('fab-create');
+      if (fab) fab.style.display = isHost ? '' : 'none';
+      const setlistsList = document.getElementById('setlists-list');
+      if (setlistsList) setlistsList.style.display = isHost ? '' : 'none';
+      const crewArea = document.getElementById('crew-join-area');
+      if (crewArea) crewArea.style.display = isHost ? 'none' : 'flex';
+
+      const badge = document.getElementById('role-badge');
+      if (badge) {
+        badge.textContent = isHost ? 'YÖNETİCİ' : 'GRUP';
+        badge.style.background = isHost ? 'rgba(79,142,247,.15)' : 'rgba(255,255,255,.08)';
+        badge.style.color = isHost ? 'var(--accent)' : 'var(--text-muted)';
+        badge.style.border = '1px solid var(--border)';
+      }
+      updateUsernameDisplay();
+    };
+
+    window.showRepertuarModal = () => {
+      document.getElementById('repertuar-modal').classList.remove('hidden');
+      renderLibrary();
+    };
+    window.closeRepertuarModal = () => document.getElementById('repertuar-modal').classList.add('hidden');
+
+    window.updateUsernameDisplay = () => {
+      const el = document.getElementById('home-username-display');
+      if (el) el.textContent = S.username || 'İSİM GİR';
+    };
+
+    window.showScreen = (id) => {
+      document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+      document.getElementById(id).classList.add('active');
+    };
+
+    window.switchHomeTab = (tab) => {
+      document.querySelectorAll('.home-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById(`htab-${tab}`).classList.add('active');
+      const slider = document.getElementById('home-slider');
+      slider.style.transform = tab === 'rooms' ? 'translateX(0)' : 'translateX(-50%)';
+      if (tab === 'library') renderLibrary();
+    };
+
+    let selectedLibIds = new Set();
+
+    function renderLibrary() {
+      renderLibTabs();
+      const q = document.getElementById('lib-search-input').value.toLowerCase();
+      const list = document.getElementById('lib-list');
+      const filtered = currentLib().filter(s => s.title.toLowerCase().includes(q) || (s.artist || '').toLowerCase().includes(q));
+
+      const badge = document.getElementById('lib-count-badge');
+      if (badge) badge.textContent = filtered.length;
+
+      list.innerHTML = filtered.map(s => `
+    <div class="lib-item">
+      <input type="checkbox" class="lib-checkbox" ${selectedLibIds.has(s.id) ? 'checked' : ''} onchange="toggleLibSelection('${s.id}')" style="width:18px; height:18px; margin-right:4px; accent-color:var(--accent)" />
+      <div class="lib-item-info">
+        <div class="lib-item-title">${esc(s.title)}</div>
+        <div class="lib-item-meta">${esc(s.artist || '—')}</div>
+      </div>
+      <div class="lib-key">${esc(s.key || '')}</div>
+      <button class="lib-send" onclick="showSendToLibSheet(['${s.id}'])" title="Kütüphaneye gönder">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </button>
+      <button class="lib-del" onclick="deleteFromLibrary('${s.id}')" title="Sil">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+      </button>
+    </div>
+  `).join('');
+      updateBulkDeleteUI(filtered);
+    }
+
+    window.toggleLibSelection = (id) => {
+      if (selectedLibIds.has(id)) selectedLibIds.delete(id);
+      else selectedLibIds.add(id);
+
+      const filtered = currentLib().filter(s => {
+        const q = document.getElementById('lib-search-input').value.toLowerCase();
+        return s.title.toLowerCase().includes(q) || (s.artist || '').toLowerCase().includes(q);
+      });
+      updateBulkDeleteUI(filtered);
+    };
+
+    function updateBulkDeleteUI(filtered) {
+      const btn = document.getElementById('lib-bulk-del-btn');
+      const sendBtn = document.getElementById('lib-bulk-send-btn');
+      const countSpan = document.getElementById('lib-sel-count');
+      const sendCountSpan = document.getElementById('lib-sel-send-count');
+      const allBtn = document.getElementById('lib-select-all-btn');
+
+      const currentFilteredIds = filtered.map(f => f.id);
+      const selectedInView = [...selectedLibIds].filter(id => currentFilteredIds.includes(id));
+
+      if (selectedInView.length > 0) {
+        btn.style.display = 'flex';
+        countSpan.textContent = selectedInView.length;
+        sendBtn.style.display = 'flex';
+        sendCountSpan.textContent = selectedInView.length;
+      } else {
+        btn.style.display = 'none';
+        sendBtn.style.display = 'none';
+      }
+
+      if (currentFilteredIds.length > 0 && selectedInView.length === currentFilteredIds.length) {
+        allBtn.textContent = 'SEÇİMİ KALDIR';
+        allBtn.onclick = () => toggleSelectAllLibrary(false, currentFilteredIds);
+      } else {
+        allBtn.textContent = 'HEPSİNİ SEÇ';
+        allBtn.onclick = () => toggleSelectAllLibrary(true, currentFilteredIds);
+      }
+    }
+
+    window.toggleSelectAllLibrary = (select, idsInView) => {
+      if (!idsInView) {
+        const q = document.getElementById('lib-search-input').value.toLowerCase();
+        idsInView = currentLib().filter(s => s.title.toLowerCase().includes(q) || (s.artist || '').toLowerCase().includes(q)).map(s => s.id);
+      }
+
+      if (select) {
+        idsInView.forEach(id => selectedLibIds.add(id));
+      } else {
+        idsInView.forEach(id => selectedLibIds.delete(id));
+      }
+      renderLibrary();
+    };
+
+    window.deleteSelectedFromLibrary = () => {
+      const count = selectedLibIds.size;
+      if (!confirm(`${count} şarkıyı silmek istediğine emin misin?`)) return;
+
+      S.libraries[S.activeLibId].songs = currentLib().filter(s => !selectedLibIds.has(s.id));
+      selectedLibIds.clear();
+      saveLibraries();
+      renderLibrary();
+      showToast(`${count} şarkı silindi`);
+    };
+
+    window.deleteFromLibrary = (id) => {
+      if (!confirm('Bu şarkıyı repertuardan silmek istediğine emin misin?')) return;
+      S.libraries[S.activeLibId].songs = currentLib().filter(x => x.id !== id);
+      saveLibraries();
+      renderLibrary();
+    };
+
+    window.clearLibrary = () => {
+      const libName = S.libraries[S.activeLibId].name;
+      if (!confirm(`"${libName}" kütüphanesindeki tüm şarkıları silmek istediğine emin misin?`)) return;
+      S.libraries[S.activeLibId].songs = [];
+      saveLibraries();
+      renderLibrary();
+      showToast('Kütüphane temizlendi');
+    };
+
+    // ══ LIBRARY TABS ══
+    function renderLibTabs() {
+      const bar = document.getElementById('lib-tabs-bar');
+      if (!bar) return;
+      const libs = Object.values(S.libraries);
+      bar.innerHTML = libs.map(lib => {
+        const isActive = lib.id === S.activeLibId;
+        const delBtn = lib.id !== 'default'
+          ? `<span onclick="event.stopPropagation();deleteLibraryWithUndo('${lib.id}')"
+              style="margin-left:5px;opacity:.6;font-size:12px;line-height:1;padding:0 1px">×</span>`
+          : '';
+        return `<div class="lib-tab${isActive ? ' lib-tab-active' : ''}" onclick="setActiveLibrary('${lib.id}')">
+          ${esc(lib.name)}${delBtn}
+        </div>`;
+      }).join('') + `
+        <div class="lib-tab lib-tab-add" onclick="showCreateLibModal()">+</div>
+      `;
+    }
+
+    window.setActiveLibrary = (id) => {
+      if (!S.libraries[id]) return;
+      S.activeLibId = id;
+      selectedLibIds.clear();
+      renderLibrary();
+    };
+
+    window.showCreateLibModal = () => document.getElementById('create-lib-modal').classList.remove('hidden');
+    window.closeCreateLibModal = () => {
+      document.getElementById('create-lib-modal').classList.add('hidden');
+      document.getElementById('new-lib-name').value = '';
+    };
+
+    window.createSubLibrary = () => {
+      const name = document.getElementById('new-lib-name').value.trim();
+      if (!name) { showToast('Kütüphane adı gir'); return; }
+      const id = 'lib_' + Date.now();
+      S.libraries[id] = { id, name, songs: [] };
+      saveLibraries();
+      S.activeLibId = id;
+      closeCreateLibModal();
+      renderLibrary();
+      showToast(`"${name}" kütüphanesi oluşturuldu`);
+    };
+
+    let _undoLibTimer = null;
+
+    window.deleteLibraryWithUndo = (id) => {
+      if (id === 'default') { showToast('Ana Kütüphane silinemez'); return; }
+      const lib = S.libraries[id];
+      if (!lib) return;
+
+      // Snapshot al ve hemen sil
+      const snapshot = JSON.parse(JSON.stringify(lib));
+      const wasActive = S.activeLibId === id;
+      delete S.libraries[id];
+      if (wasActive) S.activeLibId = 'default';
+      saveLibraries();
+      renderLibrary();
+
+      // Önceki undo timer'ı iptal et
+      if (_undoLibTimer) clearTimeout(_undoLibTimer);
+
+      showUndoToast(`"${lib.name}" silindi`, () => {
+        // Geri al
+        S.libraries[snapshot.id] = snapshot;
+        if (wasActive) S.activeLibId = snapshot.id;
+        saveLibraries();
+        renderLibrary();
+      });
+    };
+
+    window.promptDeleteLibrary = window.deleteLibraryWithUndo;
+
+    // ══ SEND TO LIBRARY ══
+    let pendingSendIds = [];
+
+    window.showSendToLibSheet = (ids) => {
+      pendingSendIds = ids.map(String);
+      const otherLibs = Object.values(S.libraries).filter(l => l.id !== S.activeLibId);
+      if (!otherLibs.length) { showToast('Başka kütüphane yok — önce bir tane oluştur'); return; }
+
+      const titleEl = document.getElementById('send-to-lib-title');
+      titleEl.textContent = ids.length === 1
+        ? 'HANGI KÜTÜPHANEye GÖNDER?'
+        : `${ids.length} ŞARKILARI GÖNDER`;
+
+      const listEl = document.getElementById('send-to-lib-list');
+      listEl.innerHTML = otherLibs.map(lib => `
+        <button class="btn btn-secondary" style="width:100%;justify-content:flex-start;gap:10px;text-align:left"
+          onclick="sendToLib('${lib.id}')">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          ${esc(lib.name)}
+          <span style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);margin-left:auto">${lib.songs.length} şarkı</span>
+        </button>
+      `).join('');
+
+      document.getElementById('send-to-lib-sheet').classList.remove('hidden');
+    };
+
+    window.closeSendToLibSheet = () => {
+      document.getElementById('send-to-lib-sheet').classList.add('hidden');
+      pendingSendIds = [];
+    };
+
+    window.sendToLib = (targetLibId) => {
+      const targetLib = S.libraries[targetLibId];
+      if (!targetLib) return;
+
+      const allSongs = Object.values(S.libraries).flatMap(l => l.songs);
+      const existingTitles = new Set(targetLib.songs.map(s => s.title.toLowerCase()));
+      let added = 0;
+
+      pendingSendIds.forEach(id => {
+        const song = allSongs.find(s => s.id === id);
+        if (!song) return;
+        if (existingTitles.has(song.title.toLowerCase())) return;
+        const newSong = { ...song, id: 'lib_' + Date.now() + '_' + Math.random().toString(36).slice(2) };
+        targetLib.songs.unshift(newSong);
+        existingTitles.add(song.title.toLowerCase());
+        added++;
+      });
+
+      saveLibraries();
+      closeSendToLibSheet();
+      selectedLibIds.clear();
+      renderLibrary();
+
+      if (added === 0) showToast('Zaten bu kütüphanede mevcut');
+      else showToast(`${added} şarkı "${targetLib.name}" kütüphanesine eklendi`);
+    };
+
+    window.showAddSongModal = () => document.getElementById('add-song-modal').classList.remove('hidden');
+    window.closeAddSongModal = () => document.getElementById('add-song-modal').classList.add('hidden');
+
+    // ══ CREATE SETLIST ══
+    window.showCreateSetlistModal = () => document.getElementById('create-setlist-modal').classList.remove('hidden');
+    window.closeCreateSetlistModal = () => document.getElementById('create-setlist-modal').classList.add('hidden');
+    window.createSetlist = () => {
+      const name = document.getElementById('new-setlist-name').value.trim();
+      const band = document.getElementById('new-setlist-band').value.trim();
+      if (!name) { showToast('Setlist adı gir'); return; }
+      const id = `sl_${Date.now()}`;
+      S.setlists[id] = { id, name, band, songs: [], createdAt: Date.now() };
+      LS.set('gs_setlists', S.setlists);
+      closeCreateSetlistModal();
+      document.getElementById('new-setlist-name').value = '';
+      document.getElementById('new-setlist-band').value = '';
+      renderSetlistCards();
+      showToast(`"${name}" oluşturuldu`);
+    };
+
+    // ══ ADD TO SETLIST SHEET — tek dokunuşla ekle ══
+    let addListActiveLibId = 'all';
+
+    window.showAddToSetlistSheet = (mode) => {
+      addListActiveLibId = 'all';
+      document.getElementById('add-search').value = '';
+      document.getElementById('add-to-setlist-sheet').classList.remove('hidden');
+      renderAddList();
+    };
+
+    window.closeAddToSetlistSheet = () => {
+      document.getElementById('add-to-setlist-sheet').classList.add('hidden');
+    };
+
+    window.setAddListLib = (id) => {
+      addListActiveLibId = id;
+      renderAddList();
+    };
+
+    function renderAddListTabs() {
+      const bar = document.getElementById('add-lib-tabs');
+      if (!bar) return;
+      const libs = Object.values(S.libraries);
+      if (libs.length <= 1) { bar.innerHTML = ''; return; }
+      bar.innerHTML = `
+        <div class="lib-tab${addListActiveLibId === 'all' ? ' lib-tab-active' : ''}" onclick="setAddListLib('all')">Tümü</div>
+        ${libs.map(lib => `
+          <div class="lib-tab${addListActiveLibId === lib.id ? ' lib-tab-active' : ''}" onclick="setAddListLib('${lib.id}')">${esc(lib.name)}</div>
+        `).join('')}
+      `;
+    }
+
+    window.renderAddList = () => {
+      renderAddListTabs();
+      const q = document.getElementById('add-search').value.toLowerCase();
+      const list = document.getElementById('add-list');
+      const currentIds = new Set(S.liveSongs.map(s => s.libId || s.id));
+      const sourceSongs = addListActiveLibId === 'all'
+        ? Object.values(S.libraries).flatMap(lib => lib.songs)
+        : (S.libraries[addListActiveLibId]?.songs || []);
+      const filtered = sourceSongs.filter(s =>
+        !currentIds.has(s.id) &&
+        (s.title.toLowerCase().includes(q) || (s.artist || '').toLowerCase().includes(q))
+      );
+
+      if (!filtered.length) {
+        list.innerHTML = '<div style="text-align:center;color:var(--text-dim);font-family:var(--font-mono);font-size:12px;padding:32px 0">Eklenecek şarkı kalmadı</div>';
+        return;
+      }
+
+      list.innerHTML = filtered.map(s => `
+        <div onclick="addOneToSetlist('${s.id}')"
+          style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);margin-bottom:8px;active:background:var(--surface3)">
+          <div style="flex:1;min-width:0">
+            <div style="font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(s.title)}</div>
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);margin-top:2px">${esc(s.artist || '—')}</div>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:13px;color:var(--accent);flex-shrink:0">${esc(s.key || '')}</div>
+          <div style="color:var(--accent);font-size:20px;flex-shrink:0;line-height:1">+</div>
+        </div>
+      `).join('');
+    };
+
+    window.addOneToSetlist = (libId) => {
+      const allSongs = Object.values(S.libraries).flatMap(lib => lib.songs);
+      const s = allSongs.find(x => x.id === libId);
+      if (!s) return;
+      const slId = S.activeSetlistId;
+      if (!slId || !S.setlists[slId]) { showToast('Setlist seçili değil'); return; }
+      const song = { ...s, libId: s.id, id: `live_${Date.now()}`, order: S.liveSongs.length };
+      S.liveSongs.push(song);
+      saveLeaderSongs();
+      renderLeaderSongList();
+      renderAddList();
+      showToast(`"${s.title}" eklendi`);
+    };
+
+    window.addSongToLibrary = () => {
+      const title = document.getElementById('ns-title').value.trim();
+      const artist = document.getElementById('ns-artist').value.trim();
+      const key = document.getElementById('ns-key').value.trim();
+      const bpm = document.getElementById('ns-bpm').value.trim();
+
+      if (!title) return showToast('Şarkı adı girmelisin');
+
+      const newSong = {
+        id: 'lib_' + Date.now(),
+        title, artist, key, bpm,
+        createdAt: Date.now()
+      };
+
+      currentLib().unshift(newSong);
+      saveLibraries();
+
+      document.getElementById('ns-title').value = '';
+      document.getElementById('ns-artist').value = '';
+      document.getElementById('ns-key').value = '';
+      document.getElementById('ns-bpm').value = '';
+
+      closeAddSongModal();
+      renderLibrary();
+      showToast('Şarkı eklendi');
+    };
+
+    window.showPasteImportModal = () => document.getElementById('paste-import-modal').classList.remove('hidden');
+    window.closePasteImportModal = () => document.getElementById('paste-import-modal').classList.add('hidden');
+
+    window.importFromPaste = () => {
+      const input = document.getElementById('paste-input').value.trim();
+      if (!input) return;
+
+      const lines = input.split('\n');
+      let added = 0;
+
+      lines.forEach((line, idx) => {
+        let raw = line.trim();
+        if (!raw) return;
+
+        // 1. Satır başındaki sayıları ve boşlukları temizle (1., 2-, 3 )
+        raw = raw.replace(/^\d+[\.\-\s]*/, '');
+
+        // 2. Sondaki gürültüyü temizle (modülasyon, notlar vb.)
+        raw = raw.replace(/\s*(modül|modul|not|var mı|modülasyon).*$/i, '');
+
+        // 3. AKILLI TON BULUCU
+        // Satırın sonuna doğru bir boşluktan sonra gelen ve arkasında sadece nokta/işaret olan Tonu bulur.
+        // Örnek: "Autumn Leaves Bm......" -> Bm'i alır.
+        let key = '';
+        const keyRegex = /\s([A-G][#b]?m?)\s*[\.\s\/\\_?…]*$/i;
+        const keyMatch = raw.match(keyRegex);
+
+        if (keyMatch) {
+          key = keyMatch[1].trim();
+          // Tonu ve sonrasındaki her şeyi satırdan atalım
+          raw = raw.substring(0, keyMatch.index).trim();
+        } else {
+          // Eğer en sonda değilse, bazen noktaların arasında kalmış olabilir. 
+          // Alternatif bir deneme:
+          const altMatch = raw.match(/\s([A-G][#b]?m?)(?=[\.\s\/\\_?…]+|$)/i);
+          if (altMatch) {
+            key = altMatch[1].trim();
+            raw = raw.replace(altMatch[0], '').trim();
+          }
+        }
+
+        // 4. Kalan Gürültüyü Son Bir Kez Süpür (Sondaki noktalar vb.)
+        raw = raw.replace(/[\.\s\/\\_?…]+$/, '');
+
+        // 5. Şarkı Adı ve Sanatçı Ayrımı
+        let title = raw;
+        let artist = '';
+        const seps = [' - ', ' -', '- ', ' / ', ' /', '/ '];
+        let foundSep = false;
+
+        for (let s of seps) {
+          if (raw.includes(s)) {
+            const parts = raw.split(s);
+            title = parts[0].trim();
+            artist = parts.slice(1).join(' ').trim();
+            foundSep = true;
+            break;
+          }
+        }
+
+        // [AKILLI TAHMİN] Eğer ayraç yoksa, büyük/küçük harf geçişinden sanatçıyı bulmaya çalış
+        if (!foundSep) {
+          const words = raw.split(/\s+/);
+          if (words.length > 2) {
+            for (let i = 1; i < words.length; i++) {
+              const curr = words[i];
+              const prev = words[i - 1];
+
+              // Eğer önceki kelime küçükle başlıyor ve şimdiki BÜYÜKLE başlıyorsa (Örn: "alive Capital")
+              const isCurrUpper = curr[0] === curr[0].toUpperCase() && curr[0] !== curr[0].toLowerCase();
+              const isPrevLower = prev[0] === prev[0].toLowerCase() && prev[0] !== prev[0].toUpperCase();
+
+              if (isCurrUpper && isPrevLower) {
+                title = words.slice(0, i).join(' ').trim();
+                artist = words.slice(i).join(' ').trim();
+                foundSep = true;
+                break;
+              }
+            }
+          }
+        }
+
+        // 6. Temizlik ve Yazım Düzeltme
+        title = title.replace(/\s+/g, ' ');
+        if (title.length > 0) title = title.charAt(0).toUpperCase() + title.slice(1);
+        artist = artist.replace(/\s+/g, ' ');
+        if (artist.length > 0) artist = artist.charAt(0).toUpperCase() + artist.slice(1);
+
+        currentLib().unshift({
+          id: 'lib_' + Date.now() + '_' + idx,
+          title, artist, key,
+          createdAt: Date.now()
+        });
+        added++;
+      });
+
+      saveLibraries();
+      document.getElementById('paste-input').value = '';
+      closePasteImportModal();
+      renderLibrary();
+      showToast(`${added} şarkı eklendi`);
+    };
+
+    function renderSetlistCards() {
+      const list = document.getElementById('setlists-list');
+      const localSl = Object.values(S.setlists).sort((a, b) => b.createdAt - a.createdAt);
+
+      if (localSl.length === 0) {
+        list.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-dim)">Setlist yok</div>`;
+        return;
+      }
+
+      list.innerHTML = localSl.map(sl => `
+    <div class="setlist-card" style="display:flex;align-items:center;gap:8px">
+      <div class="setlist-card-info" onclick="openLeader('${sl.id}')" style="flex:1;cursor:pointer">
+        <div class="setlist-card-name">${esc(sl.name)}</div>
+        <div class="setlist-card-meta">${esc(sl.band || '—')} · ${sl.songs.length} şarkı</div>
+      </div>
+      <button onclick="event.stopPropagation();showSetlistEditMenu('${sl.id}')" title="Düzenle"
+        style="background:transparent;border:1px solid var(--border);color:var(--text-muted);padding:8px 10px;border-radius:8px;cursor:pointer;flex-shrink:0">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <circle cx="12" cy="5" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="19" r="1.5" fill="currentColor"/>
+        </svg>
+      </button>
+    </div>
+  `).join('');
+    }
+
+    // Düzenleme menüsü
+    window.showSetlistEditMenu = (slId) => {
+      const sl = S.setlists[slId];
+      if (!sl) return;
+      let modal = document.getElementById('setlist-edit-modal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'setlist-edit-modal';
+        modal.className = 'overlay hidden';
+        modal.style.zIndex = '230';
+        modal.onclick = (e) => { if (e.target === modal) modal.classList.add('hidden'); };
+        modal.innerHTML = `
+          <div class="sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title" id="se-title">DÜZENLE</div>
+            <div class="form-group">
+              <div class="form-label">Setlist Adı</div>
+              <input id="se-name" class="form-input" type="text" maxlength="40" />
+            </div>
+            <div class="form-group">
+              <div class="form-label">Grup / Sahne Adı</div>
+              <input id="se-band" class="form-input" type="text" maxlength="40" />
+            </div>
+            <button class="btn btn-primary" style="width:100%;margin-bottom:10px" onclick="saveSetlistEdit()">Kaydet</button>
+            <button class="btn btn-danger" style="width:100%;margin-bottom:10px" onclick="deleteSetlistConfirm()">Setlisti Sil</button>
+            <button class="btn btn-ghost" style="width:100%" onclick="document.getElementById('setlist-edit-modal').classList.add('hidden')">İptal</button>
+          </div>`;
+        document.body.appendChild(modal);
+      }
+      modal.dataset.slId = slId;
+      document.getElementById('se-name').value = sl.name || '';
+      document.getElementById('se-band').value = sl.band || '';
+      modal.classList.remove('hidden');
+    };
+
+    window.saveSetlistEdit = () => {
+      const modal = document.getElementById('setlist-edit-modal');
+      const slId = modal.dataset.slId;
+      const sl = S.setlists[slId];
+      if (!sl) return;
+      const name = document.getElementById('se-name').value.trim();
+      if (!name) { showToast('Ad boş olamaz'); return; }
+      sl.name = name;
+      sl.band = document.getElementById('se-band').value.trim();
+      LS.set('gs_setlists', S.setlists);
+      modal.classList.add('hidden');
+      renderSetlistCards();
+      showToast('Güncellendi');
+    };
+
+    window.deleteSetlistConfirm = () => {
+      const modal = document.getElementById('setlist-edit-modal');
+      const slId = modal.dataset.slId;
+      const sl = S.setlists[slId];
+      if (!sl) return;
+      if (!confirm(`"${sl.name}" silinecek. Emin misin?`)) return;
+      delete S.setlists[slId];
+      LS.set('gs_setlists', S.setlists);
+      modal.classList.add('hidden');
+      renderSetlistCards();
+      showToast('Silindi');
+    };
+
+    window.openLeader = (id) => {
+      const sl = S.setlists[id];
+      if (!sl) return;
+      S.activeSetlistId = id;
+      S.liveSongs = [...(sl.songs || [])];
+      S.activeRoomCode = null;
+      S.liveActiveSong = null;
+      document.getElementById('leader-setlist-name').textContent = sl.name;
+      document.getElementById('leader-username').textContent = S.username;
+      document.getElementById('leader-code').textContent = '—';
+      document.getElementById('leader-open-btn').style.display = 'flex';
+      document.getElementById('leader-live-btn').style.display = 'none';
+      const dot = document.getElementById('member-count-dot');
+      if (dot) dot.style.display = 'none';
+      renderLeaderSongList();
+      showScreen('leader');
+    };
+
+    function saveLeaderSongs() {
+      if (!S.activeSetlistId || !S.setlists[S.activeSetlistId]) return;
+      S.setlists[S.activeSetlistId].songs = [...S.liveSongs];
+      LS.set('gs_setlists', S.setlists);
+      const countEl = document.getElementById('leader-song-count');
+      if (countEl) countEl.textContent = `${S.liveSongs.length} şarkı`;
+      if (S.activeRoomCode) pushSetlistToSupabase();
+    }
+
+    function renderLeaderSongList() {
+      const emptyEl = document.getElementById('leader-empty');
+      const listEl = document.getElementById('leader-song-list');
+      const countEl = document.getElementById('leader-song-count');
+      if (countEl) countEl.textContent = `${S.liveSongs.length} şarkı`;
+
+      if (!S.liveSongs.length) {
+        if (emptyEl) emptyEl.style.display = '';
+        if (listEl) listEl.innerHTML = '';
+        return;
+      }
+      if (emptyEl) emptyEl.style.display = 'none';
+
+      listEl.style.padding = '12px 14px';
+      listEl.innerHTML = S.liveSongs.map((s, i) => `
+        <div class="drag-row" data-id="${s.id}" onclick="if(!event.target.closest('.drag-handle'))selectSongInRoom('${s.id}')"
+          style="display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:12px;cursor:pointer;border:1px solid ${S.liveActiveSong === s.id ? 'var(--accent)' : 'var(--border)'};background:${S.liveActiveSong === s.id ? 'rgba(79,142,247,0.12)' : 'var(--surface2)'};margin-bottom:8px;user-select:none;will-change:transform">
+          <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--accent);min-width:32px;text-align:center;flex-shrink:0">${i + 1}</div>
+          <div style="flex:1;min-width:0">
+            <div style="font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(s.title)}</div>
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);margin-top:2px">${esc(s.artist || '—')}</div>
+          </div>
+          <div style="font-family:var(--font-mono);font-size:13px;color:var(--accent);flex-shrink:0;min-width:28px;text-align:right">${esc(s.key || '')}</div>
+          <div class="drag-handle" data-id="${s.id}"
+            style="padding:10px 8px;cursor:grab;flex-shrink:0;touch-action:none;opacity:.35">
+            <svg width="14" height="18" viewBox="0 0 14 18" fill="currentColor">
+              <circle cx="4" cy="3" r="1.6"/><circle cx="10" cy="3" r="1.6"/>
+              <circle cx="4" cy="9" r="1.6"/><circle cx="10" cy="9" r="1.6"/>
+              <circle cx="4" cy="15" r="1.6"/><circle cx="10" cy="15" r="1.6"/>
+            </svg>
+          </div>
+        </div>
+      `).join('');
+
+      // ── Drag & Drop (FLIP-based, smooth) ──
+      let dragRow = null, startY = 0, currentY = 0, dragHeight = 0;
+      let rowsArr = [], rowIds = [], originalIdx = -1, currentIdx = -1;
+
+      listEl.querySelectorAll('.drag-handle').forEach(handle => {
+        handle.addEventListener('pointerdown', e => {
+          e.preventDefault();
+          handle.setPointerCapture(e.pointerId);
+
+          dragRow = handle.closest('.drag-row');
+          rowsArr = [...listEl.querySelectorAll('.drag-row')];
+          rowIds = rowsArr.map(r => r.dataset.id);
+          originalIdx = rowsArr.indexOf(dragRow);
+          currentIdx = originalIdx;
+          dragHeight = dragRow.offsetHeight + 8; // +margin
+
+          startY = e.clientY;
+          currentY = e.clientY;
+
+          // Sürüklenen satır: opaklık düşsün, üstte kalsın, transform ile takip etsin
+          dragRow.style.transition = 'none';
+          dragRow.style.opacity = '0.4';
+          dragRow.style.zIndex = '100';
+          dragRow.style.position = 'relative';
+
+          handle.addEventListener('pointermove', onMove);
+          handle.addEventListener('pointerup', onUp);
+          handle.addEventListener('pointercancel', onUp);
+        });
+      });
+
+      function onMove(e) {
+        if (!dragRow) return;
+        currentY = e.clientY;
+        const dy = currentY - startY;
+        dragRow.style.transform = `translateY(${dy}px)`;
+
+        // Yeni hedef indeksi: kaç satırlık kayma oldu?
+        const slotShift = Math.round(dy / dragHeight);
+        let newIdx = originalIdx + slotShift;
+        newIdx = Math.max(0, Math.min(rowsArr.length - 1, newIdx));
+
+        if (newIdx === currentIdx) return;
+        currentIdx = newIdx;
+
+        // Diğer satırları yerinden oynatmak için transform uygula
+        rowsArr.forEach((r, i) => {
+          if (r === dragRow) return;
+          let shift = 0;
+          if (originalIdx < newIdx) {
+            // Aşağı gidiyor: orig+1..newIdx arası YUKARI kayar
+            if (i > originalIdx && i <= newIdx) shift = -dragHeight;
+          } else if (originalIdx > newIdx) {
+            // Yukarı gidiyor: newIdx..orig-1 arası AŞAĞI kayar
+            if (i >= newIdx && i < originalIdx) shift = dragHeight;
+          }
+          r.style.transition = 'transform 0.2s cubic-bezier(.2,.8,.2,1)';
+          r.style.transform = shift ? `translateY(${shift}px)` : '';
+        });
+      }
+
+      function onUp() {
+        if (!dragRow) return;
+
+        // Transition'ları temizle
+        rowsArr.forEach(r => { r.style.transition = ''; r.style.transform = ''; });
+        dragRow.style.opacity = '';
+        dragRow.style.zIndex = '';
+        dragRow.style.position = '';
+
+        // DOM'da yeniden sırala
+        if (currentIdx !== originalIdx) {
+          if (currentIdx >= rowsArr.length - 1) {
+            listEl.appendChild(dragRow);
+          } else {
+            const beforeRow = rowsArr[currentIdx > originalIdx ? currentIdx + 1 : currentIdx];
+            if (beforeRow && beforeRow !== dragRow) listEl.insertBefore(dragRow, beforeRow);
+          }
+        }
+
+        // Yeni sırayı kaydet
+        const newOrder = [...listEl.querySelectorAll('.drag-row')].map(r => r.dataset.id);
+        S.liveSongs = newOrder.map(id => S.liveSongs.find(s => s.id === id)).filter(Boolean);
+        S.liveSongs.forEach((s, i) => s.order = i);
+
+        dragRow = null;
+        rowsArr = []; rowIds = []; originalIdx = -1; currentIdx = -1;
+
+        saveLeaderSongs();
+        renderLeaderSongList();
+      }
+    }
+
+
+    // ══════════ SUPABASE SYNC ══════════
+    function makeRoomCode() {
+      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      let code = '';
+      for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
+      return code;
+    }
+
+    window.showOpenRoomModal = () => {
+      if (!S.username) { showNameModal(); return; }
+      if (!S.activeSetlistId || !S.setlists[S.activeSetlistId]) return;
+      
+      let code = localStorage.getItem('last_room_code');
+      if (!code) {
+        code = makeRoomCode();
+      }
+      
+      const inputEl = document.getElementById('leader-custom-code-input');
+      if (inputEl) inputEl.value = code;
+      
+      const modal = document.getElementById('open-room-modal');
+      if (modal) modal.classList.remove('hidden');
+    };
+
+    window.closeOpenRoomModal = () => {
+      const modal = document.getElementById('open-room-modal');
+      if (modal) modal.classList.add('hidden');
+    };
+
+    window.regenerateLeaderRandomCode = () => {
+      const code = makeRoomCode();
+      const inputEl = document.getElementById('leader-custom-code-input');
+      if (inputEl) inputEl.value = code;
+    };
+
+    window.confirmOpenRoomFromLeader = async () => {
+      const inputEl = document.getElementById('leader-custom-code-input');
+      if (!inputEl) return;
+      
+      let code = inputEl.value.trim().toUpperCase();
+      
+      // Türkçe karakterleri standart harflere çevir ve geçersiz sembolleri temizle
+      code = code
+        .replace(/Ğ/g, 'G').replace(/Ü/g, 'U').replace(/Ş/g, 'S')
+        .replace(/İ/g, 'I').replace(/Ö/g, 'O').replace(/Ç/g, 'C')
+        .replace(/[^A-Z0-9-]/g, '');
+
+      if (!code || code.length < 3) {
+        showToast('Oda kodu en az 3 karakter olmalıdır!');
+        return;
+      }
+      if (code.length > 12) {
+        showToast('Oda kodu en fazla 12 karakter olmalıdır!');
+        return;
+      }
+
+      const sl = S.setlists[S.activeSetlistId];
+      S.activeRoomCode = code;
+
+      const roomData = {
+        code: code,
+        name: sl.name,
+        band: sl.band || '',
+        leader: S.username,
+        active_song: null,
+        songs: S.liveSongs.map((s, i) => ({ ...s, order: i }))
+      };
+
+      const { error } = await supabaseClient
+        .from('gigsync_rooms')
+        .insert([roomData]);
+
+      if (error) {
+        if (error.code === '23505') { // Unique constraint violation (Primary Key collision)
+          showToast('Bu oda kodu şu an sahnede aktif! Lütfen başka bir kod girin.');
+        } else {
+          showToast('Oda oluşturulurken hata oluştu!');
+          console.error('Supabase Error:', error);
+        }
+        return;
+      }
+
+      // Modalı Kapat
+      closeOpenRoomModal();
+
+      // Tercih edilen oda kodunu gelecekte hatırlamak üzere kaydet
+      localStorage.setItem('last_room_code', code);
+
+      // UI güncelle
+      document.getElementById('leader-code').textContent = code;
+      document.getElementById('leader-open-btn').style.display = 'none';
+      document.getElementById('leader-live-btn').style.display = '';
+
+      // Realtime kanalını ve Presence'ı başlat
+      startLeaderRealtime(code);
+
+      showToast(`Oda açıldı: ${code}`);
+    };
+
+    function startLeaderRealtime(code) {
+      const channel = supabaseClient.channel(`room_${code}`, {
+        config: {
+          presence: {
+            key: S.username,
+          },
+        },
+      });
+
+      channel
+        .on('presence', { event: 'sync' }, () => {
+          const state = channel.presenceState();
+          const members = {};
+          Object.keys(state).forEach((key) => {
+            members[key] = state[key][0];
+          });
+          const count = Object.keys(members).length;
+          const dot = document.getElementById('member-count-dot');
+          if (dot) {
+            dot.textContent = count;
+            dot.style.display = count > 0 ? 'flex' : 'none';
+          }
+          renderMembersList(members);
+        })
+        .subscribe(async (status) => {
+          if (status === 'SUBSCRIBED') {
+            await channel.track({ name: S.username, joinedAt: Date.now(), isLeader: true });
+          }
+        });
+
+      S.activeChannel = channel;
+      S.listeners.memberWatch = () => {
+        channel.unsubscribe();
+      };
+    }
+
+    function renderMembersList(members) {
+      const listEl = document.getElementById('members-list');
+      if (!listEl) return;
+      const arr = Object.entries(members);
+      if (!arr.length) {
+        listEl.innerHTML = '<div style="text-align:center;color:var(--text-dim);font-family:var(--font-mono);font-size:11px;padding:20px 0">Henüz üye yok</div>';
+        return;
+      }
+      listEl.innerHTML = arr.map(([id, m]) => `
+        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);border-radius:10px;margin-bottom:6px;border:1px solid var(--border)">
+          <div style="width:30px;height:30px;border-radius:7px;background:var(--accent);color:#000;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">${esc((m.name || '?').charAt(0).toUpperCase())}</div>
+          <div style="flex:1;font-size:14px">${esc(m.name || '—')}</div>
+        </div>
+      `).join('');
+    }
+
+    window.showMembersSheet = () => {
+      if (!S.activeRoomCode) { showToast('Oda açık değil'); return; }
+      document.getElementById('room-code-display').textContent = S.activeRoomCode;
+      document.getElementById('members-sheet').classList.remove('hidden');
+      
+      if (S.activeChannel) {
+        const state = S.activeChannel.presenceState();
+        const members = {};
+        Object.keys(state).forEach((key) => {
+          members[key] = state[key][0];
+        });
+        renderMembersList(members);
+      } else {
+        renderMembersList({});
+      }
+    };
+    window.closeMembersSheet = () => document.getElementById('members-sheet').classList.add('hidden');
+
+    window.selectSongInRoom = async (songId) => {
+      if (!S.activeRoomCode) return;
+      
+      const { error } = await supabaseClient
+        .from('gigsync_rooms')
+        .update({ active_song: songId })
+        .eq('code', S.activeRoomCode);
+
+      if (error) {
+        console.error('Şarkı seçilirken hata oluştu:', error);
+        return;
+      }
+      
+      S.liveActiveSong = songId;
+      document.querySelectorAll('.drag-row').forEach(r => {
+        r.style.borderColor = r.dataset.id === songId ? 'var(--accent)' : 'var(--border)';
+        r.style.background = r.dataset.id === songId ? 'rgba(79,142,247,0.12)' : 'var(--surface2)';
+      });
+    };
+
+    window.pushSetlistToSupabase = async () => {
+      if (!S.activeRoomCode) return;
+      const songsArr = S.liveSongs.map((s, i) => ({ ...s, order: i }));
+      
+      const { error } = await supabaseClient
+        .from('gigsync_rooms')
+        .update({ songs: songsArr })
+        .eq('code', S.activeRoomCode);
+
+      if (error) {
+        console.error('Setlist senkronize edilirken hata oluştu:', error);
+      }
+    };
+
+    // ══════════ CREW: ODAYA KATIL ══════════
+    function renderRecentRooms() {
+      const container = document.getElementById('recent-rooms-container');
+      const listEl = document.getElementById('recent-rooms-list');
+      let joinedRooms = JSON.parse(localStorage.getItem('gigsync_recent_rooms_v2') || '[]');
+
+      if (joinedRooms.length === 0) {
+        container.style.display = 'none';
+        return;
+      }
+
+      container.style.display = 'block';
+      listEl.innerHTML = '';
+
+      joinedRooms.forEach((room, idx) => {
+        const row = document.createElement('div');
+        row.style.cssText = 'display:flex;align-items:center;gap:8px';
+
+        const bandStr = room.band ? `<span style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:2px">${esc(room.band)}</span>` : '';
+        const nameStr = `<span style="font-size:14px;font-weight:700;color:var(--text)">${esc(room.name)}</span>`;
+
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-secondary';
+        btn.style.cssText = 'flex:1;justify-content:space-between;padding:12px 16px;border-radius:12px;display:flex;align-items:center;border:1px solid var(--border);background:var(--surface);cursor:pointer;text-align:left;min-width:0';
+        btn.innerHTML = `
+          <div style="display:flex;flex-direction:column;min-width:0;overflow:hidden">
+            ${bandStr}
+            ${nameStr}
+          </div>
+          <span style="font-size:11px;color:var(--accent);display:flex;align-items:center;gap:4px;font-weight:600;white-space:nowrap;margin-left:10px;flex-shrink:0">
+            Katıl
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </span>`;
+        btn.onclick = () => {
+          document.getElementById('join-code-input').value = room.code;
+          joinRoomByCode();
+        };
+
+        const delBtn = document.createElement('button');
+        delBtn.style.cssText = 'width:32px;height:32px;border:none;background:transparent;color:var(--text-dim);cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:8px;flex-shrink:0;transition:all .15s';
+        delBtn.title = 'Listeden kaldır';
+        delBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>`;
+        delBtn.onmouseenter = () => { delBtn.style.background = 'rgba(240,91,91,.15)'; delBtn.style.color = 'var(--red)'; };
+        delBtn.onmouseleave = () => { delBtn.style.background = 'transparent'; delBtn.style.color = 'var(--text-dim)'; };
+        delBtn.onclick = () => {
+          let rooms = JSON.parse(localStorage.getItem('gigsync_recent_rooms_v2') || '[]');
+          rooms.splice(idx, 1);
+          localStorage.setItem('gigsync_recent_rooms_v2', JSON.stringify(rooms));
+          renderRecentRooms();
+        };
+
+        row.appendChild(btn);
+        row.appendChild(delBtn);
+        listEl.appendChild(row);
+      });
+    }
+
+    window.showJoinRoomModal = () => {
+      if (!S.username) { showNameModal(); return; }
+      document.getElementById('join-code-input').value = '';
+
+      // Migrate legacy rooms
+      let joinedRooms = JSON.parse(localStorage.getItem('gigsync_recent_rooms_v2') || '[]');
+      if (joinedRooms.length === 0) {
+        const oldRooms = JSON.parse(localStorage.getItem('gigsync_recent_rooms') || '[]');
+        if (oldRooms.length > 0) {
+          joinedRooms = oldRooms.map(code => ({ code, name: code, band: 'Kayıtlı Oda' }));
+          localStorage.setItem('gigsync_recent_rooms_v2', JSON.stringify(joinedRooms));
+        }
+      }
+
+      renderRecentRooms();
+      document.getElementById('join-room-modal').classList.remove('hidden');
+      setTimeout(() => document.getElementById('join-code-input').focus(), 100);
+    };
+    
+    window.closeJoinRoomModal = () => document.getElementById('join-room-modal').classList.add('hidden');
+
+    window.joinRoomByCode = async () => {
+      let code = document.getElementById('join-code-input').value.trim().toUpperCase();
+      
+      // Türkçe karakterleri standart harflere çevir ve geçersiz sembolleri temizle
+      code = code
+        .replace(/Ğ/g, 'G').replace(/Ü/g, 'U').replace(/Ş/g, 'S')
+        .replace(/İ/g, 'I').replace(/Ö/g, 'O').replace(/Ç/g, 'C')
+        .replace(/[^A-Z0-9-]/g, '');
+
+      if (!code || code.length < 3 || code.length > 12) {
+        showToast('Oda kodu en az 3, en fazla 12 karakter olmalıdır!');
+        return;
+      }
+
+      // Fetch room metadata
+      const { data: rooms, error } = await supabaseClient
+        .from('gigsync_rooms')
+        .select('*')
+        .eq('code', code);
+
+      if (error || !rooms || rooms.length === 0) {
+        showToast('Oda bulunamadı veya şu an aktif değil!');
+        return;
+      }
+      const room = rooms[0];
+
+      // Save to recently joined rooms list with v2 objects
+      let joinedRooms = JSON.parse(localStorage.getItem('gigsync_recent_rooms_v2') || '[]');
+      joinedRooms = joinedRooms.filter(r => r.code !== code);
+      joinedRooms.unshift({
+        code: code,
+        name: room.name || '—',
+        band: room.band || ''
+      });
+      if (joinedRooms.length > 20) joinedRooms.pop(); // En az 20 odayı hafızada sakla
+      localStorage.setItem('gigsync_recent_rooms_v2', JSON.stringify(joinedRooms));
+
+      S.activeRoomCode = code;
+      S.role = 'member';
+
+      // Member ekranını ayarla
+      document.getElementById('mem-room-name').textContent = room.name || '—';
+      document.getElementById('mem-room-band').textContent = room.band || '—';
+
+      closeJoinRoomModal();
+      showScreen('member');
+      
+      startMemberRealtime(code, room);
+      showToast(`${room.name} — katıldın`);
+    };
+
+    let currentDetailSong = null;
+    function startMemberRealtime(code, initialRoom) {
+      let songs = {};
+      let activeSongId = initialRoom.active_song;
+
+      const transformSongs = (songsList) => {
+        const obj = {};
+        if (Array.isArray(songsList)) {
+          songsList.forEach(s => { obj[s.id] = s; });
+        } else {
+          Object.assign(obj, songsList);
+        }
+        return obj;
+      };
+
+      songs = transformSongs(initialRoom.songs);
+
+      const waitState = document.getElementById('wait-state');
+      const nowDisplay = document.getElementById('now-display');
+      const nextBar = document.getElementById('next-bar');
+
+      function updateNowDisplay() {
+        if (!activeSongId || !songs[activeSongId]) {
+          waitState.style.display = '';
+          nowDisplay.style.display = 'none';
+          nextBar.style.display = 'none';
+          currentDetailSong = null;
+          return;
+        }
+
+        const s = songs[activeSongId];
+        currentDetailSong = s;
+        waitState.style.display = 'none';
+        nowDisplay.style.display = 'flex';
+
+        const titleEl = document.getElementById('mem-now-title');
+        titleEl.textContent = s.title || '—';
+        titleEl.classList.remove('flash');
+        void titleEl.offsetWidth;
+        titleEl.classList.add('flash');
+
+        document.getElementById('mem-now-key').textContent = s.key || '';
+        document.getElementById('mem-now-artist').textContent = s.artist || '';
+        const bpmEl = document.getElementById('mem-now-bpm');
+        if (s.bpm) { bpmEl.textContent = `${s.bpm} BPM`; bpmEl.style.display = ''; }
+        else bpmEl.style.display = 'none';
+
+        // Sıradaki
+        const sortedSongs = Object.values(songs).sort((a, b) => (a.order || 0) - (b.order || 0));
+        const idx = sortedSongs.findIndex(x => x.id === activeSongId);
+        const next = sortedSongs[idx + 1];
+        if (next) {
+          nextBar.style.display = '';
+          document.getElementById('mem-next-title').textContent = next.title || '';
+          document.getElementById('mem-next-key').textContent = next.key || '';
+        } else nextBar.style.display = 'none';
+      }
+
+      // Initial render
+      updateNowDisplay();
+
+      // Force Sync on focus/visibility recovery (telefon kilidi açılınca veya sekmeye dönünce)
+      const onVisibilityChange = async () => {
+        if (document.visibilityState === 'visible' && S.activeRoomCode) {
+          try {
+            const { data } = await supabaseClient
+              .from('gigsync_rooms')
+              .select('active_song, songs')
+              .eq('code', S.activeRoomCode)
+              .single();
+            if (data) {
+              activeSongId = data.active_song;
+              if (data.songs) {
+                const newSongsObj = transformSongs(data.songs);
+                if (Object.keys(newSongsObj).length > 0) songs = newSongsObj;
+              }
+              updateNowDisplay();
+            }
+          } catch (e) {
+            console.warn('[GigSync] Visibility sync hatası:', e);
+          }
+        }
+      };
+      document.addEventListener('visibilitychange', onVisibilityChange);
+
+      // 1. Subscribe to PostgreSQL changes on the specific room
+      const dbSubscription = supabaseClient
+        .channel(`db_room_${code}`)
+        .on(
+          'postgres_changes',
+          {
+            event: '*',
+            schema: 'public',
+            table: 'gigsync_rooms',
+            filter: `code=eq.${code}`
+          },
+          (payload) => {
+            console.log('DB Change:', payload.eventType);
+            if (payload.eventType === 'DELETE') {
+              showToast('Oda kapatıldı');
+              leaveRoom();
+            } else if (payload.eventType === 'UPDATE') {
+              const updatedRoom = payload.new;
+              if (updatedRoom.active_song !== undefined) activeSongId = updatedRoom.active_song;
+              if (updatedRoom.songs !== undefined) songs = transformSongs(updatedRoom.songs);
+              updateNowDisplay();
+            }
+          }
+        )
+        .subscribe();
+
+      // 2. Subscribe to Presence channel
+      const presenceChannel = supabaseClient.channel(`room_${code}`, {
+        config: {
+          presence: {
+            key: S.username,
+          },
+        },
+      });
+
+      presenceChannel.subscribe(async (status) => {
+        if (status === 'SUBSCRIBED') {
+          await presenceChannel.track({ name: S.username, joinedAt: Date.now(), isLeader: false });
+        }
+      });
+
+      S.activeChannel = presenceChannel;
+      S.dbSubscription = dbSubscription;
+
+      S.listeners.memberWatch = () => {
+        presenceChannel.unsubscribe();
+        dbSubscription.unsubscribe();
+        document.removeEventListener('visibilitychange', onVisibilityChange);
+      };
+    }
+
+    window.leaveRoom = async () => {
+      if (S.listeners.memberWatch) { S.listeners.memberWatch(); delete S.listeners.memberWatch; }
+      S.activeRoomCode = null;
+      S.memberId = null;
+      S.role = null;
+      currentDetailSong = null;
+      showScreen('home');
+    };
+
+    window.closeRoomFromLeader = async () => {
+      if (!S.activeRoomCode) return;
+      if (S.listeners.memberWatch) { S.listeners.memberWatch(); delete S.listeners.memberWatch; }
+      
+      await supabaseClient
+        .from('gigsync_rooms')
+        .delete()
+        .eq('code', S.activeRoomCode);
+        
+      S.activeRoomCode = null;
+      document.getElementById('leader-code').textContent = '—';
+      document.getElementById('leader-open-btn').style.display = 'flex';
+      document.getElementById('leader-live-btn').style.display = 'none';
+      const dot = document.getElementById('member-count-dot');
+      if (dot) dot.style.display = 'none';
+      showToast('Oda kapatıldı');
+    };
+
+
+
+    // ══════════ THEME ══════════
+    window.applyTheme = (name) => {
+      // Tüm theme-* class'larını body'den kaldır
+      const themes = ['orange','gold','light','stage','grey','amber','red','rose','green','cyan','indigo','violet','ocean','sunset','mint','midnight'];
+      themes.forEach(t => document.body.classList.remove('theme-' + t));
+      if (name && name !== 'dark') document.body.classList.add('theme-' + name);
+      // Buton highlight
+      document.querySelectorAll('.theme-btn').forEach(b => b.style.borderColor = 'transparent');
+      const activeBtn = document.getElementById('theme-' + name);
+      if (activeBtn) activeBtn.style.borderColor = 'var(--accent)';
+      LS.set('gs_theme', name);
+      showToast(`Tema: ${name}`);
+    };
+
+    function loadTheme() {
+      const saved = LS.get('gs_theme') || 'dark';
+      applyTheme(saved);
+    }
+
+    // ══════════ SONG DETAIL ══════════
+    window.showSongDetail = (s) => {
+      if (!s) return;
+      // Basit bir detay modalı: prompt yerine yeni bir overlay
+      let modal = document.getElementById('song-detail-modal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'song-detail-modal';
+        modal.className = 'overlay hidden';
+        modal.style.zIndex = '230';
+        modal.onclick = (e) => { if (e.target === modal) modal.classList.add('hidden'); };
+        modal.innerHTML = `
+          <div class="sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">ŞARKI BİLGİSİ</div>
+            <div id="sd-content"></div>
+            <button class="btn btn-secondary" style="width:100%;margin-top:14px" onclick="document.getElementById('song-detail-modal').classList.add('hidden')">Kapat</button>
+          </div>`;
+        document.body.appendChild(modal);
+      }
+      const contentEl = modal.querySelector('#sd-content');
+      contentEl.innerHTML = `
+        <div style="font-size:24px;font-weight:600;margin-bottom:6px">${esc(s.title || '—')}</div>
+        <div style="font-family:var(--font-mono);font-size:13px;color:var(--text-muted);margin-bottom:16px">${esc(s.artist || '')}</div>
+        <div style="display:flex;gap:12px;margin-bottom:14px">
+          ${s.key ? `<div style="background:var(--surface2);padding:8px 14px;border-radius:8px;border:1px solid var(--border)"><div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:1px">TON</div><div style="font-family:var(--font-mono);font-size:18px;color:var(--accent)">${esc(s.key)}</div></div>` : ''}
+          ${s.bpm ? `<div style="background:var(--surface2);padding:8px 14px;border-radius:8px;border:1px solid var(--border)"><div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:1px">BPM</div><div style="font-family:var(--font-mono);font-size:18px">${esc(s.bpm)}</div></div>` : ''}
+        </div>
+        ${s.notes ? `<div style="background:var(--surface2);padding:12px;border-radius:10px;border:1px solid var(--border);margin-bottom:10px"><div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:1px;margin-bottom:6px">NOTLAR</div><div style="font-size:14px;white-space:pre-wrap">${esc(s.notes)}</div></div>` : ''}
+        ${s.link ? `<a href="${esc(s.link)}" target="_blank" class="btn btn-primary" style="width:100%;text-decoration:none">Linki Aç</a>` : ''}
+      `;
+      modal.classList.remove('hidden');
+    };
+
+    // ══════════ GROUP KEYS ══════════
+    window.addGroupKeyFromInput = () => {
+      const v = document.getElementById('settings-group-key').value.trim();
+      if (!v) return;
+      if (!S.groupKeys.includes(v)) S.groupKeys.push(v);
+      S.groupKey = v;
+      LS.set('gs_group_keys', S.groupKeys);
+      LS.set('gs_group_key', v);
+      renderGroupKeys();
+      showToast(`Grup: ${v}`);
+    };
+
+    function renderGroupKeys() {
+      const el = document.getElementById('group-keys-list');
+      if (!el) return;
+      el.innerHTML = S.groupKeys.map(k => `
+        <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;background:${k===S.groupKey?'rgba(79,142,247,.12)':'var(--surface2)'};border:1px solid ${k===S.groupKey?'var(--accent)':'var(--border)'};border-radius:10px;cursor:pointer" onclick="selectGroupKey('${esc(k)}')">
+          <div style="flex:1;font-family:var(--font-mono);font-size:13px">${esc(k)}</div>
+          ${k===S.groupKey?'<div style="font-family:var(--font-mono);font-size:10px;color:var(--accent)">AKTİF</div>':''}
+        </div>
+      `).join('');
+    }
+
+    window.selectGroupKey = (k) => {
+      S.groupKey = k;
+      LS.set('gs_group_key', k);
+      renderGroupKeys();
+    };
+
+    // ══════════ MEDLEY DETECTION ══════════
+    function isMedley(title) {
+      return title && title.includes('/');
+    }
+    function renderMedleyTitle(title) {
+      if (!isMedley(title)) return esc(title);
+      const parts = title.split('/').map(p => p.trim());
+      return parts.map((p, i) => `${i > 0 ? '<span class="medley-connector"> ▸ </span>' : ''}<span class="medley-part">${esc(p)}</span>`).join('');
+    }
+
+    window.goBackFromLeader = async () => {
+      if (S.activeRoomCode) await closeRoomFromLeader();
+      S.activeSetlistId = null;
+      S.liveSongs = [];
+      showScreen('home');
+      renderSetlistCards();
+    };
+
+    // Modals
+    window.showNameModal = () => {
+      document.getElementById('username-input').value = S.username;
+      document.getElementById('name-modal').classList.remove('hidden');
+    };
+    window.closeNameModal = () => document.getElementById('name-modal').classList.add('hidden');
+    window.saveName = () => {
+      const v = document.getElementById('username-input').value.trim();
+      if (!v) return;
+      S.username = v;
+      LS.set('gs_username', v);
+      updateUsernameDisplay();
+      closeNameModal();
+    };
+
+    window.showSettingsModal = () => {
+      document.getElementById('settings-modal').classList.remove('hidden');
+      // Tema highlight
+      const cur = LS.get('gs_theme') || 'dark';
+      document.querySelectorAll('.theme-btn').forEach(b => b.style.borderColor = 'transparent');
+      const btn = document.getElementById('theme-' + cur);
+      if (btn) btn.style.borderColor = 'var(--accent)';
+    };
+    window.closeSettingsModal = () => document.getElementById('settings-modal').classList.add('hidden');
+
+    // Initialization
+    window.onload = () => {
+      loadAll();
+      loadTheme();
+      if (!S.userRole || !sessionStorage.getItem('gs_role_selected')) {
+        showScreen('splash');
+      } else {
+        applyRole();
+        showScreen('home');
+        renderSetlistCards();
+        if (S.userRole === 'host') renderLibrary();
+      }
+    };
+
+  </script>
+</body>
+
+</html>

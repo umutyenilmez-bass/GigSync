@@ -1,0 +1,27 @@
+{
+  "name": "GigSync",
+  "short_name": "GigSync",
+  "description": "Sahne senkronizasyonu — gerçek zamanlı setlist",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#060912",
+  "theme_color": "#060912",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "Gig_Sync_Logo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "Gig_Sync_Logo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "Gig_Sync_Logo.png",
+      "sizes": "1024x1024",
+      "type": "image/png"
+    }
+  ]
+}
