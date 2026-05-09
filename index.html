@@ -3721,17 +3721,17 @@
         songs: S.liveSongs.map((s, i) => ({ ...s, order: i }))
       };
 
+      // UPSERT: Aynı kodla eski/yarıda kalmış bir oda varsa üzerine yaz.
+      // Bu sayede:
+      //   1) Tarayıcı kapatılarak terk edilen odalar sorun çıkarmaz.
+      //   2) Aynı oda kodu farklı setlistlerde tekrar kullanılabilir.
       const { error } = await supabaseClient
         .from('gigsync_rooms')
-        .insert([roomData]);
+        .upsert([roomData], { onConflict: 'code' });
 
       if (error) {
-        if (error.code === '23505') { // Unique constraint violation (Primary Key collision)
-          showToast('Bu oda kodu şu an sahnede aktif! Lütfen başka bir kod girin.');
-        } else {
-          showToast('Oda oluşturulurken hata oluştu!');
-          console.error('Supabase Error:', error);
-        }
+        showToast('Oda oluşturulurken hata oluştu!');
+        console.error('Supabase Error:', error);
         return;
       }
 
