@@ -1,5 +1,5 @@
-const CACHE = 'gigsync-v18-cloud-sync';
-const ASSETS = ['/', '/index.html', '/manifest.json'];
+const CACHE = 'gigsync-v19-logo-sync';
+const ASSETS = ['/', '/index.html', '/manifest.json', '/Gig_Sync_Logo.png'];
 
 self.addEventListener('install', e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(ASSETS)));
