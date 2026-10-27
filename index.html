@@ -2600,6 +2600,33 @@
         </div>
       </div>
 
+      <!-- REPERTUAR & SETLIST YEDEKLEME -->
+      <div class="sec-lbl" style="margin-top:16px;margin-bottom:8px">Repertuar &amp; Setlist Yedekleme</div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:14px">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;line-height:1.4">
+          Şarkılarınızı ve setlistlerinizi cihazınıza dosya olarak indirebilir veya tek tuşla Cloudflare bulutuna yedekleyebilirsiniz.
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <button class="btn btn-secondary" style="flex:1;height:36px;font-size:11px;padding:0;min-height:unset" onclick="downloadBackupJson()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
+            Yedek İndir (JSON)
+          </button>
+          <button class="btn btn-secondary" style="flex:1;height:36px;font-size:11px;padding:0;min-height:unset" onclick="triggerUploadBackupJson()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/></svg>
+            Yedek Yükle
+          </button>
+        </div>
+        <input type="file" id="backup-file-input" accept=".json" style="display:none" onchange="handleBackupFileSelect(event)">
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" style="flex:1;height:36px;font-size:11px;padding:0;min-height:unset;background:var(--accent);color:#000" onclick="saveBackupToCloud()">
+            ☁️ Buluta Yedekle
+          </button>
+          <button class="btn btn-secondary" style="flex:1;height:36px;font-size:11px;padding:0;min-height:unset" onclick="restoreBackupFromCloud()">
+            📥 Buluttan Çek
+          </button>
+        </div>
+      </div>
+
       <button class="btn btn-secondary" style="width:100%;margin-top:4px" onclick="closeSettingsModal()">Kapat</button>
     </div>
   </div>
@@ -4538,6 +4565,139 @@
       const input = document.getElementById('settings-worker-url');
       if (input) input.value = getWorkerUrl();
       showToast('Varsayılan sunucuya dönüldü');
+    };
+
+    // ══════════ REPERTUAR & SETLIST YEDEKLEME (JSON & CLOUD) ══════════
+    window.downloadBackupJson = () => {
+      const backupData = {
+        version: "gigsync-v2",
+        exportedAt: new Date().toISOString(),
+        username: S.username,
+        libraries: S.libraries,
+        setlists: S.setlists,
+        groupKey: S.groupKey,
+        groupKeys: S.groupKeys
+      };
+
+      const jsonStr = JSON.stringify(backupData, null, 2);
+      const blob = new Blob([jsonStr], { type: "application/json" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      const dateStr = new Date().toISOString().slice(0, 10);
+      a.href = url;
+      a.download = `gigsync-yedek-${dateStr}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast("Yedek dosyası indirildi!");
+    };
+
+    window.triggerUploadBackupJson = () => {
+      const fileInput = document.getElementById("backup-file-input");
+      if (fileInput) fileInput.click();
+    };
+
+    window.handleBackupFileSelect = (event) => {
+      const file = event.target.files && event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        try {
+          const data = JSON.parse(e.target.result);
+          if (!data.libraries && !data.setlists) {
+            showToast("Geçersiz yedek dosyası!");
+            return;
+          }
+
+          if (data.libraries) {
+            S.libraries = data.libraries;
+            saveLibraries();
+          }
+          if (data.setlists) {
+            S.setlists = data.setlists;
+            LS.set("gs_setlists", S.setlists);
+          }
+          if (data.groupKeys) {
+            S.groupKeys = data.groupKeys;
+            LS.set("gs_group_keys", S.groupKeys);
+          }
+          if (data.groupKey) {
+            S.groupKey = data.groupKey;
+            LS.set("gs_group_key", S.groupKey);
+          }
+
+          renderSetlistCards();
+          if (S.userRole === 'host') renderLibrary();
+          showToast("Yedek başarıyla yüklendi!");
+          closeSettingsModal();
+        } catch (err) {
+          showToast("Dosya okunurken hata oluştu: " + err.message);
+        }
+      };
+      reader.readAsText(file);
+      event.target.value = "";
+    };
+
+    window.saveBackupToCloud = async () => {
+      const userKey = (S.username || "default").trim().toLowerCase().replace(/[^a-z0-9_-]/g, "_");
+      const backupData = {
+        username: S.username,
+        libraries: S.libraries,
+        setlists: S.setlists,
+        groupKey: S.groupKey,
+        groupKeys: S.groupKeys,
+        updatedAt: Date.now()
+      };
+
+      try {
+        const res = await fetch(`${getWorkerUrl()}/api/backup?user=${encodeURIComponent(userKey)}`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(backupData)
+        });
+
+        if (!res.ok) throw new Error("Sunucu hatası: " + res.status);
+        showToast("Tüm şarkılar ve setlistler Cloudflare bulutuna yedeklendi! ☁️");
+      } catch (err) {
+        showToast("Buluta yedeklenirken hata oluştu: " + err.message);
+      }
+    };
+
+    window.restoreBackupFromCloud = async () => {
+      const userKey = (S.username || "default").trim().toLowerCase().replace(/[^a-z0-9_-]/g, "_");
+      try {
+        const res = await fetch(`${getWorkerUrl()}/api/backup?user=${encodeURIComponent(userKey)}`);
+        if (!res.ok) throw new Error("Sunucu hatası");
+        const json = await res.json();
+        const data = json.data;
+
+        if (!data || (!data.libraries && !data.setlists)) {
+          showToast("Bulutta kayıtlı yedek bulunamadı!");
+          return;
+        }
+
+        if (data.libraries) {
+          S.libraries = data.libraries;
+          saveLibraries();
+        }
+        if (data.setlists) {
+          S.setlists = data.setlists;
+          LS.set("gs_setlists", S.setlists);
+        }
+        if (data.groupKeys) {
+          S.groupKeys = data.groupKeys;
+          LS.set("gs_group_keys", S.groupKeys);
+        }
+
+        renderSetlistCards();
+        if (S.userRole === 'host') renderLibrary();
+        showToast("Buluttan geri yüklendi! ✅");
+        closeSettingsModal();
+      } catch (err) {
+        showToast("Buluttan yüklenirken hata oluştu: " + err.message);
+      }
     };
 
     // Initialization
