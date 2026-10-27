@@ -2020,6 +2020,74 @@
       color: #ef4444;
       border: 1px solid rgba(239, 68, 68, .2)
     }
+
+    /* AI CHAT ASİSTANI STİLLERİ */
+    .fab-ai {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      height: 48px;
+      padding: 0 16px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #4f8ef7, #8b5cf6);
+      color: #fff;
+      border: none;
+      font-family: var(--font-mono);
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 1px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 4px 20px rgba(79,142,247,0.35);
+      cursor: pointer;
+      z-index: 95;
+      transition: transform .2s, box-shadow .2s;
+    }
+    .fab-ai:hover { transform: scale(1.04); box-shadow: 0 6px 24px rgba(139,92,246,0.45); }
+    .ai-chip {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      cursor: pointer;
+      font-family: var(--font-mono);
+      transition: all .15s;
+    }
+    .ai-chip:hover { border-color: var(--accent); color: var(--text); background: var(--surface3); }
+    .ai-msg { display: flex; flex-direction: column; max-width: 88%; }
+    .ai-msg.user { align-self: flex-end; }
+    .ai-msg.bot { align-self: flex-start; }
+    .ai-msg-bubble {
+      padding: 10px 14px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+    .ai-msg.user .ai-msg-bubble {
+      background: var(--accent);
+      color: #000;
+      font-weight: 500;
+      border-bottom-right-radius: 4px;
+    }
+    .ai-msg.bot .ai-msg-bubble {
+      background: var(--surface2);
+      color: var(--text);
+      border: 1px solid var(--border);
+      border-bottom-left-radius: 4px;
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ef4444;
+      display: inline-block;
+      animation: pulse 1s infinite;
+    }
+    @keyframes pulse { 0% { opacity: 1; transform: scale(1); } 50% { opacity: 0.4; transform: scale(1.3); } 100% { opacity: 1; transform: scale(1); } }
   </style>
 </head>
 
@@ -2087,6 +2155,11 @@
       <!-- SAĞ: BUTONLAR -->
       <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-end">
         <div class="header-actions">
+          <button id="header-ai-btn" class="btn btn-ghost" onclick="toggleAiChatModal()" title="AI Sahne Asistanı"
+            style="font-family:var(--font-mono);font-size:12px;letter-spacing:1px;padding:0 10px;height:38px;border-radius:10px;font-weight:700;color:var(--accent);border:1px solid rgba(79,142,247,0.3);background:rgba(79,142,247,0.08);display:flex;align-items:center;gap:4px">
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+            AI
+          </button>
           <button id="header-lib-btn" class="btn btn-ghost" onclick="showRepertuarModal()" title="Repertuar"
             style="font-family:var(--font-mono);font-size:13px;letter-spacing:2px;padding:0 14px;height:38px;border-radius:10px;display:none;font-weight:700">
             REP
@@ -2147,6 +2220,10 @@
         stroke-linecap="round">
         <path d="M12 5v14M5 12h14" />
       </svg>
+    </button>
+
+    <button class="fab-ai" id="fab-ai" onclick="toggleAiChatModal()" title="AI Sahne Asistanı">
+      <span style="font-size:14px">✨</span> AI ASİSTAN
     </button>
   </div>
 
@@ -2627,7 +2704,82 @@
         </div>
       </div>
 
+      <!-- GEMINI API KEY CONFIG -->
+      <div class="sec-lbl" style="margin-top:16px;margin-bottom:8px">Google Gemini API Anahtarı (AI Asistan)</div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:14px">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;line-height:1.4">
+          Sesli &amp; yazılı AI Sahne Asistanı için ücretsiz Google AI Studio anahtarınızı buraya girebilirsiniz.
+        </div>
+        <input type="password" id="settings-gemini-key" placeholder="AIzaSy..." style="width:100%;height:38px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:12px;padding:0 12px;outline:none;margin-bottom:8px">
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" style="flex:1;height:34px;font-size:12px;padding:0;min-height:unset" onclick="saveGeminiKeyFromSettings()">Anahtarı Kaydet</button>
+          <button class="btn btn-secondary" style="flex:1;height:34px;font-size:12px;padding:0;min-height:unset" onclick="clearGeminiKeyFromSettings()">Temizle</button>
+        </div>
+      </div>
+
       <button class="btn btn-secondary" style="width:100%;margin-top:4px" onclick="closeSettingsModal()">Kapat</button>
+    </div>
+  </div>
+
+  <!-- AI CHAT MODAL -->
+  <div class="overlay hidden" id="ai-chat-modal" onclick="if(event.target===this)closeAiChatModal()" style="z-index: 250;">
+    <div class="sheet" style="max-height:85dvh;height:85dvh;display:flex;flex-direction:column;padding-bottom:14px">
+      <div class="sheet-handle"></div>
+      
+      <!-- AI Header -->
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:8px">
+          <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg, #4f8ef7, #8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;box-shadow:0 0 12px rgba(79,142,247,0.4)">✨</div>
+          <div>
+            <div style="font-size:14px;font-weight:700;letter-spacing:1px;font-family:var(--font-mono)">AI SAHNE ASİSTANI</div>
+            <div style="font-size:10px;color:var(--green);font-family:var(--font-mono)">● Çevrimiçi · Sesli &amp; Yazılı Komut</div>
+          </div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost" onclick="clearAiChat()" title="Sohbeti Temizle" style="padding:4px 8px;font-size:11px;font-family:var(--font-mono);color:var(--text-dim);height:unset">Temizle</button>
+          <button class="btn btn-ghost" onclick="closeAiChatModal()" style="padding:4px 8px;font-size:15px;color:var(--text-muted);height:unset">✕</button>
+        </div>
+      </div>
+
+      <!-- Quick Chips -->
+      <div id="ai-chips" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none">
+        <button class="ai-chip" onclick="sendAiChip('90\'lar Türkçe Pop enerjik 12 şarkılık bir setlist oluştur')">🎸 90'lar Pop</button>
+        <button class="ai-chip" onclick="sendAiChip('Repertuarımdan yüksek tempolu 10 şarkılık sahne akışı hazırla')">⚡ Enerjik Akış</button>
+        <button class="ai-chip" onclick="sendAiChip('Akustik ve dinlendirici 8 şarkılık slow setlist yap')">☕ Akustik Slow</button>
+        <button class="ai-chip" onclick="sendAiChip('Repertuarımdaki şarkıların orijinal tonlarını ve BPM değerlerini bulup yaz')">🎵 Orijinal Tonları Bul</button>
+        <button class="ai-chip" onclick="sendAiChip('Repertuarımdaki şarkılara uygun YouTube linklerini bul ve ekle')">🔗 YouTube Linkleri</button>
+      </div>
+
+      <!-- Chat Messages Scroll Container -->
+      <div id="ai-chat-messages" style="flex:1;overflow-y:auto;display:flex;flex-direction:column;gap:12px;padding:4px 2px;margin-bottom:10px">
+        <!-- Welcome message -->
+        <div class="ai-msg bot">
+          <div class="ai-msg-bubble">
+            Selam Umut! 🎸 Ben senin yapay zeka sahne direktörünüm. Bana yazarak veya mikrofona basıp konuşarak:
+            <ul style="margin:6px 0 0 16px;padding:0;font-size:12px;line-height:1.6">
+              <li>Tarza göre anında setlist yaptırabilirsin</li>
+              <li>Repertuarına şarkı ekletebilirsin</li>
+              <li>İstediğinde orijinal tonları veya YouTube linklerini buldurabilirsin</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <!-- Recording indicator -->
+      <div id="ai-recording-indicator" style="display:none;align-items:center;justify-content:center;gap:8px;padding:8px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:10px;margin-bottom:8px;color:#ef4444;font-size:12px;font-family:var(--font-mono)">
+        <span class="pulse-dot"></span> Dinleniyor... Konuşun (Bitince otomatik gönderecek)
+      </div>
+
+      <!-- Input Bar -->
+      <div style="display:flex;align-items:center;gap:8px">
+        <button id="ai-mic-btn" onclick="toggleVoiceInput()" class="btn btn-secondary" style="width:44px;height:44px;border-radius:12px;padding:0;flex-shrink:0" title="Sesli Konuş">
+          <svg id="ai-mic-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/></svg>
+        </button>
+        <input type="text" id="ai-chat-input" placeholder="Yaz veya mikrofona basıp konuş..." style="flex:1;height:44px;background:var(--surface2);border:1px solid var(--border);border-radius:12px;color:var(--text);font-size:13px;padding:0 14px;outline:none;font-family:var(--font-body)" onkeydown="if(event.key==='Enter')sendAiMessage()">
+        <button onclick="sendAiMessage()" class="btn btn-primary" style="width:44px;height:44px;border-radius:12px;padding:0;flex-shrink:0" title="Gönder">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M2.01 21L23 12 2.01 3 2 10l15 2-15 2z"/></svg>
+        </button>
+      </div>
     </div>
   </div>
 
@@ -4578,6 +4730,9 @@
 
       const input = document.getElementById('settings-worker-url');
       if (input) input.value = getWorkerUrl();
+
+      const geminiInput = document.getElementById('settings-gemini-key');
+      if (geminiInput) geminiInput.value = getGeminiKey();
     };
     window.closeSettingsModal = () => document.getElementById('settings-modal').classList.add('hidden');
 
@@ -4594,6 +4749,332 @@
       const input = document.getElementById('settings-worker-url');
       if (input) input.value = getWorkerUrl();
       showToast('Varsayılan sunucuya dönüldü');
+    };
+
+    // ══════════ GEMINI API KEY AYARLARI ══════════
+    function getGeminiKey() {
+      return (localStorage.getItem('gs_gemini_key') || '').trim();
+    }
+    window.saveGeminiKeyFromSettings = () => {
+      const input = document.getElementById('settings-gemini-key');
+      if (!input) return;
+      const key = input.value.trim();
+      if (!key) {
+        localStorage.removeItem('gs_gemini_key');
+        showToast('API anahtarı temizlendi');
+      } else {
+        localStorage.setItem('gs_gemini_key', key);
+        showToast('Gemini API anahtarı kaydedildi! 🔑');
+      }
+    };
+    window.clearGeminiKeyFromSettings = () => {
+      localStorage.removeItem('gs_gemini_key');
+      const input = document.getElementById('settings-gemini-key');
+      if (input) input.value = '';
+      showToast('API anahtarı temizlendi');
+    };
+
+    // ══════════ AI SAHNE ASİSTANI (SESLİ & YAZILI) ══════════
+    let aiChatHistory = [];
+    let isAiGenerating = false;
+    let speechRecognizer = null;
+    let isSpeechActive = false;
+
+    window.toggleAiChatModal = () => {
+      const modal = document.getElementById('ai-chat-modal');
+      if (!modal) return;
+      if (modal.classList.contains('hidden')) {
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+          const input = document.getElementById('ai-chat-input');
+          if (input) input.focus();
+        }, 150);
+      } else {
+        closeAiChatModal();
+      }
+    };
+
+    window.closeAiChatModal = () => {
+      const modal = document.getElementById('ai-chat-modal');
+      if (modal) modal.classList.add('hidden');
+      if (isSpeechActive && speechRecognizer) {
+        try { speechRecognizer.stop(); } catch (e) {}
+        isSpeechActive = false;
+      }
+      const ind = document.getElementById('ai-recording-indicator');
+      if (ind) ind.style.display = 'none';
+      const micBtn = document.getElementById('ai-mic-btn');
+      if (micBtn) {
+        micBtn.style.background = '';
+        micBtn.style.color = '';
+      }
+    };
+
+    window.clearAiChat = () => {
+      aiChatHistory = [];
+      const container = document.getElementById('ai-chat-messages');
+      if (container) {
+        container.innerHTML = `
+          <div class="ai-msg bot">
+            <div class="ai-msg-bubble">
+              Sohbet temizlendi. 🎸 Yeni bir setlist oluşturmak veya şarkı düzenlemek için yazabilir ya da mikrofona basıp konuşabilirsin!
+            </div>
+          </div>`;
+      }
+      showToast('Sohbet temizlendi');
+    };
+
+    window.sendAiChip = (text) => {
+      const input = document.getElementById('ai-chat-input');
+      if (input) input.value = text;
+      sendAiMessage();
+    };
+
+    window.sendAiMessage = async () => {
+      const input = document.getElementById('ai-chat-input');
+      if (!input || isAiGenerating) return;
+      const text = input.value.trim();
+      if (!text) return;
+
+      input.value = '';
+
+      // Kullanıcı baloncuğunu ekle
+      appendAiBubble('user', text);
+
+      // Yazıyor animasyonu
+      const typingId = 'typing_' + Date.now();
+      appendTypingIndicator(typingId);
+      isAiGenerating = true;
+
+      // Kullanıcının mevcut durumunu bağlam olarak hazırla
+      const context = {
+        username: S.username || 'Umut',
+        librarySongs: currentLib() || [],
+        setlists: Object.values(S.setlists || {}).map(sl => ({ name: sl.name, band: sl.band, count: (sl.songs || []).length }))
+      };
+
+      try {
+        const res = await fetch(`${getWorkerUrl()}/api/ai/chat`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            message: text,
+            history: aiChatHistory,
+            context: context,
+            apiKey: getGeminiKey()
+          })
+        });
+
+        removeTypingIndicator(typingId);
+        isAiGenerating = false;
+
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || `HTTP ${res.status}`);
+        }
+
+        const data = await res.json();
+        const reply = data.reply || 'Bir yanıt oluşturulamadı.';
+
+        // Geçmişe ekle
+        aiChatHistory.push({ role: 'user', content: text });
+        aiChatHistory.push({ role: 'assistant', content: reply });
+
+        // Asistan baloncuğunu ve varsa aksiyon kartını ekle
+        appendAiBubble('bot', reply, data.action);
+
+        // Aksiyon varsa arka planda oluştur
+        if (data.action) {
+          handleAiAction(data.action);
+        }
+      } catch (err) {
+        removeTypingIndicator(typingId);
+        isAiGenerating = false;
+        appendAiBubble('bot', `⚠️ ${err.message}`);
+      }
+    };
+
+    function appendAiBubble(role, text, action = null) {
+      const container = document.getElementById('ai-chat-messages');
+      if (!container) return;
+
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `ai-msg ${role}`;
+
+      const bubbleDiv = document.createElement('div');
+      bubbleDiv.className = 'ai-msg-bubble';
+
+      const formattedText = esc(text)
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/\n/g, '<br>');
+
+      bubbleDiv.innerHTML = formattedText;
+
+      // Eğer aksiyon varsa interaktif kart oluştur
+      if (action && action.action === 'CREATE_SETLIST') {
+        const actionCard = document.createElement('div');
+        actionCard.style.cssText = 'background:var(--surface3);border:1px solid var(--accent);border-radius:12px;padding:12px;margin-top:10px';
+        const songsPreview = (action.songs || []).slice(0, 4).map(s => esc(s.title + (s.key ? ' (' + s.key + ')' : ''))).join(' · ');
+        const moreCount = (action.songs || []).length > 4 ? ` +${action.songs.length - 4} şarkı daha` : '';
+        actionCard.innerHTML = `
+          <div style="font-weight:700;color:var(--accent);font-size:13px;margin-bottom:4px;font-family:var(--font-mono)">🎵 ${esc(action.name || 'Setlist')} (${(action.songs || []).length} Şarkı)</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">${songsPreview}${moreCount}</div>
+          <button class="btn btn-primary" style="width:100%;height:36px;font-size:12px;padding:0">🚀 Bu Setlisti Aç</button>
+        `;
+        const openBtn = actionCard.querySelector('button');
+        openBtn.onclick = () => {
+          if (action._createdId) {
+            openSetlist(action._createdId);
+            closeAiChatModal();
+          } else {
+            showScreen('home');
+            closeAiChatModal();
+          }
+        };
+        bubbleDiv.appendChild(actionCard);
+      } else if (action && action.action === 'ADD_TO_LIBRARY') {
+        const actionCard = document.createElement('div');
+        actionCard.style.cssText = 'background:var(--surface3);border:1px solid var(--green);border-radius:12px;padding:10px 12px;margin-top:10px;font-size:12px;color:var(--green);font-family:var(--font-mono)';
+        actionCard.innerHTML = `✅ ${(action.songs || []).length} şarkı kütüphanene başarıyla eklendi!`;
+        bubbleDiv.appendChild(actionCard);
+      }
+
+      msgDiv.appendChild(bubbleDiv);
+      container.appendChild(msgDiv);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function appendTypingIndicator(id) {
+      const container = document.getElementById('ai-chat-messages');
+      if (!container) return;
+      const div = document.createElement('div');
+      div.id = id;
+      div.className = 'ai-msg bot';
+      div.innerHTML = `
+        <div class="ai-msg-bubble" style="display:flex;align-items:center;gap:6px;padding:10px 14px">
+          <span style="font-size:12px;color:var(--text-muted);font-family:var(--font-mono)">Düşünüyor</span>
+          <span class="pulse-dot" style="background:var(--accent)"></span>
+        </div>`;
+      container.appendChild(div);
+      container.scrollTop = container.scrollHeight;
+    }
+
+    function removeTypingIndicator(id) {
+      const el = document.getElementById(id);
+      if (el) el.remove();
+    }
+
+    function handleAiAction(action) {
+      if (!action || !action.action) return;
+
+      if (action.action === 'CREATE_SETLIST') {
+        const newId = 'sl_' + Date.now();
+        const songs = (action.songs || []).map((s, idx) => ({
+          id: 's_' + Date.now() + '_' + idx,
+          title: s.title || 'Şarkı',
+          artist: s.artist || '',
+          key: s.key || '',
+          bpm: s.bpm || '',
+          notes: s.notes || '',
+          link: s.link || '',
+          order: idx
+        }));
+
+        S.setlists[newId] = {
+          id: newId,
+          name: action.name || 'Yeni Setlist',
+          band: action.band || '',
+          songs: songs,
+          createdAt: Date.now()
+        };
+        action._createdId = newId;
+
+        LS.set('gs_setlists', S.setlists);
+        renderSetlistCards();
+        showToast(`"${action.name}" setlisti oluşturuldu! 🎵`);
+      } else if (action.action === 'ADD_TO_LIBRARY') {
+        const songs = action.songs || [];
+        songs.forEach((s, idx) => {
+          currentLib().unshift({
+            id: 'lib_' + Date.now() + '_' + idx,
+            title: s.title || 'Şarkı',
+            artist: s.artist || '',
+            key: s.key || '',
+            bpm: s.bpm || '',
+            notes: s.notes || '',
+            link: s.link || '',
+            createdAt: Date.now()
+          });
+        });
+        saveLibraries();
+        if (S.userRole === 'host') renderLibrary();
+        showToast(`${songs.length} şarkı kütüphaneye eklendi! 📚`);
+      }
+    }
+
+    // ══════════ SES TANIMA (WEB SPEECH API) ══════════
+    window.toggleVoiceInput = () => {
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        showToast('Tarayıcınız ses tanımayı desteklemiyor. Lütfen Chrome kullanın.');
+        return;
+      }
+
+      const micBtn = document.getElementById('ai-mic-btn');
+      const indicator = document.getElementById('ai-recording-indicator');
+      const input = document.getElementById('ai-chat-input');
+
+      if (isSpeechActive && speechRecognizer) {
+        try { speechRecognizer.stop(); } catch (e) {}
+        isSpeechActive = false;
+        if (micBtn) { micBtn.style.background = ''; micBtn.style.color = ''; }
+        if (indicator) indicator.style.display = 'none';
+        return;
+      }
+
+      try {
+        speechRecognizer = new SpeechRecognition();
+        speechRecognizer.lang = 'tr-TR';
+        speechRecognizer.continuous = false;
+        speechRecognizer.interimResults = true;
+
+        speechRecognizer.onstart = () => {
+          isSpeechActive = true;
+          if (micBtn) { micBtn.style.background = '#ef4444'; micBtn.style.color = '#fff'; }
+          if (indicator) indicator.style.display = 'flex';
+          showToast('Dinleniyor... Konuşabilirsiniz 🎙️');
+        };
+
+        speechRecognizer.onresult = (event) => {
+          let transcript = '';
+          for (let i = event.resultIndex; i < event.results.length; i++) {
+            transcript += event.results[i][0].transcript;
+          }
+          if (input) input.value = transcript;
+        };
+
+        speechRecognizer.onerror = (event) => {
+          console.warn('Ses tanıma hatası:', event.error);
+          isSpeechActive = false;
+          if (micBtn) { micBtn.style.background = ''; micBtn.style.color = ''; }
+          if (indicator) indicator.style.display = 'none';
+        };
+
+        speechRecognizer.onend = () => {
+          isSpeechActive = false;
+          if (micBtn) { micBtn.style.background = ''; micBtn.style.color = ''; }
+          if (indicator) indicator.style.display = 'none';
+          // Eğer metin varsa 300 ms sonra otomatik gönder
+          if (input && input.value.trim().length > 2) {
+            setTimeout(() => sendAiMessage(), 300);
+          }
+        };
+
+        speechRecognizer.start();
+      } catch (err) {
+        console.error('Mikrofon başlatılamadı:', err);
+        showToast('Mikrofon izni verilmedi veya başlatılamadı.');
+      }
     };
 
     // ══════════ REPERTUAR & SETLIST YEDEKLEME (JSON & CLOUD) ══════════
