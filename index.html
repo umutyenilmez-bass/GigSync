@@ -2520,12 +2520,13 @@
   <!-- SETTINGS MODAL -->
   <div class="overlay hidden" id="settings-modal" onclick="if(event.target===this)closeSettingsModal()"
     style="z-index: 220;">
-    <div class="sheet">
+    <div class="sheet" style="max-height:88dvh;overflow-y:auto;display:flex;flex-direction:column;padding-bottom:24px">
       <div class="sheet-handle"></div>
-      <div class="sheet-title">AYARLAR</div>
+      <div class="sheet-title" style="margin-bottom:8px">AYARLAR</div>
 
-      <div class="sec-lbl" style="margin-bottom:12px">Tema</div>
-      <div style="overflow-y:auto;max-height:60dvh;margin-bottom:16px">
+      <!-- TEMA SEÇİMİ -->
+      <div class="sec-lbl" style="margin-bottom:8px">Tema</div>
+      <div style="margin-bottom:14px">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" id="theme-grid">
           <button onclick="applyTheme('dark')" class="theme-btn" id="theme-dark"
             style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#060912">
@@ -2664,7 +2665,7 @@
       </div>
 
       <!-- CLOUDFLARE WORKER CONFIG -->
-      <div class="sec-lbl" style="margin-top:16px;margin-bottom:8px">Cloudflare Senkron Sunucusu</div>
+      <div class="sec-lbl" style="margin-top:8px;margin-bottom:8px">Cloudflare Senkron Sunucusu</div>
       <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:14px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
           <span style="font-size:12px;color:var(--text-muted);font-family:var(--font-mono)">Worker API &amp; WebSocket</span>
@@ -2678,7 +2679,7 @@
       </div>
 
       <!-- REPERTUAR & SETLIST YEDEKLEME -->
-      <div class="sec-lbl" style="margin-top:16px;margin-bottom:8px">Repertuar &amp; Setlist Yedekleme</div>
+      <div class="sec-lbl" style="margin-top:8px;margin-bottom:8px">Repertuar &amp; Setlist Yedekleme</div>
       <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:14px">
         <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;line-height:1.4">
           Şarkılarınızı ve setlistlerinizi cihazınıza dosya olarak indirebilir veya tek tuşla Cloudflare bulutuna yedekleyebilirsiniz.
@@ -2704,20 +2705,17 @@
         </div>
       </div>
 
-      <!-- GEMINI API KEY CONFIG -->
-      <div class="sec-lbl" style="margin-top:16px;margin-bottom:8px">Google Gemini API Anahtarı (AI Asistan)</div>
-      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:14px">
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px;line-height:1.4">
-          Sesli &amp; yazılı AI Sahne Asistanı için ücretsiz Google AI Studio anahtarınızı buraya girebilirsiniz.
+      <!-- AI SAHNE ASİSTANI GÜVENLİK DURUMU -->
+      <div class="sec-lbl" style="margin-top:8px;margin-bottom:8px">AI Sahne Asistanı Durumu</div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px">Google Gemini 3.5 Flash</div>
+          <div style="font-size:11px;color:var(--text-muted)">Cloudflare sunucu kasası üzerinden şifreli ve güvenli bağlı</div>
         </div>
-        <input type="password" id="settings-gemini-key" placeholder="AIzaSy..." style="width:100%;height:38px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:12px;padding:0 12px;outline:none;margin-bottom:8px">
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-primary" style="flex:1;height:34px;font-size:12px;padding:0;min-height:unset" onclick="saveGeminiKeyFromSettings()">Anahtarı Kaydet</button>
-          <button class="btn btn-secondary" style="flex:1;height:34px;font-size:12px;padding:0;min-height:unset" onclick="clearGeminiKeyFromSettings()">Temizle</button>
-        </div>
+        <span style="font-size:11px;padding:4px 10px;border-radius:999px;background:rgba(34,197,94,0.15);color:#22c55e;font-family:var(--font-mono);font-weight:700">AKTİF &amp; GÜVENLİ 🛡️</span>
       </div>
 
-      <button class="btn btn-secondary" style="width:100%;margin-top:4px" onclick="closeSettingsModal()">Kapat</button>
+      <button class="btn btn-secondary" style="width:100%;margin-top:4px;height:40px" onclick="closeSettingsModal()">Kapat</button>
     </div>
   </div>
 
@@ -2765,9 +2763,19 @@
         </div>
       </div>
 
-      <!-- Recording indicator -->
-      <div id="ai-recording-indicator" style="display:none;align-items:center;justify-content:center;gap:8px;padding:8px;background:rgba(239,68,68,0.15);border:1px solid rgba(239,68,68,0.3);border-radius:10px;margin-bottom:8px;color:#ef4444;font-size:12px;font-family:var(--font-mono)">
-        <span class="pulse-dot"></span> Dinleniyor... Konuşun (Bitince otomatik gönderecek)
+      <!-- Recording indicator with real-time sound waves -->
+      <div id="ai-recording-indicator" style="display:none;flex-direction:column;gap:8px;padding:10px 14px;background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.35);border-radius:12px;margin-bottom:10px">
+        <div style="display:flex;align-items:center;justify-content:space-between;color:#ef4444;font-size:12px;font-family:var(--font-mono)">
+          <div style="display:flex;align-items:center;gap:8px">
+            <span class="pulse-dot" style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#ef4444;box-shadow:0 0 10px #ef4444"></span>
+            <span id="ai-rec-text" style="font-weight:600">🎙️ Dinliyor... Konuşabilirsiniz</span>
+          </div>
+          <button type="button" onclick="stopVoiceInput(true)" style="background:rgba(239,68,68,0.2);border:1px solid rgba(239,68,68,0.4);color:#ef4444;border-radius:6px;padding:3px 10px;font-size:11px;cursor:pointer;font-family:var(--font-mono);font-weight:700">DURDUR &amp; GÖNDER ⏹</button>
+        </div>
+        <!-- Real-time Equalizer Waveform Canvas -->
+        <div style="height:38px;width:100%;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.3);border:1px solid rgba(255,255,255,0.06);border-radius:8px;overflow:hidden">
+          <canvas id="ai-wave-canvas" width="400" height="38" style="width:100%;height:38px;display:block"></canvas>
+        </div>
       </div>
 
       <!-- Input Bar -->
@@ -4730,9 +4738,6 @@
 
       const input = document.getElementById('settings-worker-url');
       if (input) input.value = getWorkerUrl();
-
-      const geminiInput = document.getElementById('settings-gemini-key');
-      if (geminiInput) geminiInput.value = getGeminiKey();
     };
     window.closeSettingsModal = () => document.getElementById('settings-modal').classList.add('hidden');
 
@@ -4749,29 +4754,6 @@
       const input = document.getElementById('settings-worker-url');
       if (input) input.value = getWorkerUrl();
       showToast('Varsayılan sunucuya dönüldü');
-    };
-
-    // ══════════ GEMINI API KEY AYARLARI ══════════
-    function getGeminiKey() {
-      return (localStorage.getItem('gs_gemini_key') || '').trim();
-    }
-    window.saveGeminiKeyFromSettings = () => {
-      const input = document.getElementById('settings-gemini-key');
-      if (!input) return;
-      const key = input.value.trim();
-      if (!key) {
-        localStorage.removeItem('gs_gemini_key');
-        showToast('API anahtarı temizlendi');
-      } else {
-        localStorage.setItem('gs_gemini_key', key);
-        showToast('Gemini API anahtarı kaydedildi! 🔑');
-      }
-    };
-    window.clearGeminiKeyFromSettings = () => {
-      localStorage.removeItem('gs_gemini_key');
-      const input = document.getElementById('settings-gemini-key');
-      if (input) input.value = '';
-      showToast('API anahtarı temizlendi');
     };
 
     // ══════════ AI SAHNE ASİSTANI (SESLİ & YAZILI) ══════════
@@ -4797,16 +4779,8 @@
     window.closeAiChatModal = () => {
       const modal = document.getElementById('ai-chat-modal');
       if (modal) modal.classList.add('hidden');
-      if (isSpeechActive && speechRecognizer) {
-        try { speechRecognizer.stop(); } catch (e) {}
-        isSpeechActive = false;
-      }
-      const ind = document.getElementById('ai-recording-indicator');
-      if (ind) ind.style.display = 'none';
-      const micBtn = document.getElementById('ai-mic-btn');
-      if (micBtn) {
-        micBtn.style.background = '';
-        micBtn.style.color = '';
+      if (window.stopVoiceInput) {
+        window.stopVoiceInput(false);
       }
     };
 
@@ -4860,8 +4834,7 @@
           body: JSON.stringify({
             message: text,
             history: aiChatHistory,
-            context: context,
-            apiKey: getGeminiKey()
+            context: context
           })
         });
 
@@ -5012,11 +4985,161 @@
       }
     }
 
-    // ══════════ SES TANIMA (WEB SPEECH API) ══════════
-    window.toggleVoiceInput = () => {
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      if (!SpeechRecognition) {
-        showToast('Tarayıcınız ses tanımayı desteklemiyor. Lütfen Chrome kullanın.');
+    // ══════════ SES TANIMA & CANLI SES DALGASI (WEB AUDIO + SPEECH) ══════════
+    let audioCtx = null;
+    let audioAnalyser = null;
+    let audioMicStream = null;
+    let audioAnimId = null;
+    let speechSilenceTimer = null;
+
+    function startAudioWaveVisualizer(stream) {
+      try {
+        if (!audioCtx) {
+          audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+        if (audioCtx.state === 'suspended') {
+          audioCtx.resume();
+        }
+        const source = audioCtx.createMediaStreamSource(stream);
+        audioAnalyser = audioCtx.createAnalyser();
+        audioAnalyser.fftSize = 64; // 32 frekans aralığı
+        audioAnalyser.smoothingTimeConstant = 0.75;
+        source.connect(audioAnalyser);
+
+        const canvas = document.getElementById('ai-wave-canvas');
+        if (!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const bufferLength = audioAnalyser.frequencyBinCount;
+        const dataArray = new Uint8Array(bufferLength);
+
+        function drawWave() {
+          audioAnimId = requestAnimationFrame(drawWave);
+          audioAnalyser.getByteFrequencyData(dataArray);
+
+          const width = canvas.width;
+          const height = canvas.height;
+          ctx.clearRect(0, 0, width, height);
+
+          // Ses şiddetine göre metin durumunu güncelle
+          let sum = 0;
+          for (let i = 0; i < bufferLength; i++) sum += dataArray[i];
+          const avg = sum / bufferLength;
+          const statusText = document.getElementById('ai-rec-text');
+          if (statusText) {
+            if (avg > 18) {
+              statusText.textContent = '🔥 Sesiniz Algılanıyor...';
+              statusText.style.color = '#22c55e';
+            } else {
+              statusText.textContent = '🎙️ Dinliyor... Konuşabilirsiniz';
+              statusText.style.color = '#ef4444';
+            }
+          }
+
+          // 24 adet dinamik ekolayzır dalga çubuğu
+          const barCount = 24;
+          const spacing = 4;
+          const barWidth = Math.max(3, Math.floor((width - ((barCount + 1) * spacing)) / barCount));
+          let x = spacing;
+
+          for (let i = 0; i < barCount; i++) {
+            const binIndex = Math.floor((i / barCount) * (bufferLength * 0.75));
+            const val = dataArray[binIndex] || 0;
+            const percent = val / 255;
+            // Sessizken 4px, ses varken yüksek dalga
+            const barHeight = Math.max(4, Math.floor(percent * (height - 4)));
+            const y = Math.floor((height - barHeight) / 2);
+
+            const grad = ctx.createLinearGradient(0, y, 0, y + barHeight);
+            if (percent > 0.4) {
+              grad.addColorStop(0, '#22c55e');
+              grad.addColorStop(0.5, '#06b6d4');
+              grad.addColorStop(1, '#a855f7');
+            } else {
+              grad.addColorStop(0, '#06b6d4');
+              grad.addColorStop(1, '#3b82f6');
+            }
+
+            ctx.fillStyle = grad;
+            if (ctx.roundRect) {
+              ctx.beginPath();
+              ctx.roundRect(x, y, barWidth, barHeight, 2);
+              ctx.fill();
+            } else {
+              ctx.fillRect(x, y, barWidth, barHeight);
+            }
+
+            x += barWidth + spacing;
+          }
+        }
+        drawWave();
+      } catch (err) {
+        console.warn('Ses dalgası hatası:', err);
+      }
+    }
+
+    function stopAudioWaveVisualizer() {
+      if (audioAnimId) {
+        cancelAnimationFrame(audioAnimId);
+        audioAnimId = null;
+      }
+      if (audioMicStream) {
+        try {
+          audioMicStream.getTracks().forEach(t => t.stop());
+        } catch (e) {}
+        audioMicStream = null;
+      }
+      const canvas = document.getElementById('ai-wave-canvas');
+      if (canvas) {
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
+
+    function resetSilenceTimer() {
+      clearTimeout(speechSilenceTimer);
+      speechSilenceTimer = setTimeout(() => {
+        if (isSpeechActive) {
+          const input = document.getElementById('ai-chat-input');
+          if (input && input.value.trim().length > 2) {
+            stopVoiceInput(true);
+          }
+        }
+      }, 3000); // Konuşma bittikten 3 saniye sonra otomatik gönder
+    }
+
+    window.stopVoiceInput = (autoSend = false) => {
+      clearTimeout(speechSilenceTimer);
+      isSpeechActive = false;
+
+      const micBtn = document.getElementById('ai-mic-btn');
+      const indicator = document.getElementById('ai-recording-indicator');
+      const input = document.getElementById('ai-chat-input');
+
+      if (speechRecognizer) {
+        try { speechRecognizer.stop(); } catch (e) {}
+        speechRecognizer = null;
+      }
+
+      stopAudioWaveVisualizer();
+
+      if (micBtn) {
+        micBtn.style.background = '';
+        micBtn.style.color = '';
+      }
+      if (indicator) {
+        indicator.style.display = 'none';
+      }
+
+      if (autoSend && input && input.value.trim().length > 1) {
+        showToast('Ses algılandı, gönderiliyor... 🚀');
+        setTimeout(() => sendAiMessage(), 350);
+      }
+    };
+
+    window.toggleVoiceInput = async () => {
+      // Eğer zaten açıksa kapat
+      if (isSpeechActive) {
+        stopVoiceInput(true);
         return;
       }
 
@@ -5024,56 +5147,91 @@
       const indicator = document.getElementById('ai-recording-indicator');
       const input = document.getElementById('ai-chat-input');
 
-      if (isSpeechActive && speechRecognizer) {
-        try { speechRecognizer.stop(); } catch (e) {}
-        isSpeechActive = false;
-        if (micBtn) { micBtn.style.background = ''; micBtn.style.color = ''; }
-        if (indicator) indicator.style.display = 'none';
+      // 1. Mikrofon İznini Açıkça İste (getUserMedia)
+      // Bu çağrı tarayıcının mikrofon izin penceresini (Allow / Block) zorunlu olarak tetikler
+      let stream = null;
+      try {
+        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+          showToast('⚠️ Tarayıcınızda mikrofon desteği bulunamadı.');
+          return;
+        }
+        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+        audioMicStream = stream;
+      } catch (micErr) {
+        console.error('Mikrofon izni hatası:', micErr);
+        if (micErr.name === 'NotAllowedError' || micErr.name === 'PermissionDeniedError') {
+          showToast('⚠️ Mikrofon izni reddedildi! Lütfen adres çubuğundaki kilit simgesinden izin verin.');
+        } else {
+          showToast('⚠️ Mikrofon başlatılamadı: ' + (micErr.message || 'Hata'));
+        }
+        return;
+      }
+
+      // 2. Canlı Ses Dalgasını Başlat (Kullanıcı sesini görür)
+      startAudioWaveVisualizer(stream);
+
+      // 3. Web Speech Recognition'ı Başlat (Konuşmayı yazıya döker)
+      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SpeechRecognition) {
+        showToast('Tarayıcınız ses tanımayı desteklemiyor (Chrome önerilir). Mikrofon açık.');
         return;
       }
 
       try {
         speechRecognizer = new SpeechRecognition();
         speechRecognizer.lang = 'tr-TR';
-        speechRecognizer.continuous = false;
+        speechRecognizer.continuous = true;
         speechRecognizer.interimResults = true;
 
         speechRecognizer.onstart = () => {
           isSpeechActive = true;
-          if (micBtn) { micBtn.style.background = '#ef4444'; micBtn.style.color = '#fff'; }
-          if (indicator) indicator.style.display = 'flex';
-          showToast('Dinleniyor... Konuşabilirsiniz 🎙️');
+          if (micBtn) {
+            micBtn.style.background = '#ef4444';
+            micBtn.style.color = '#fff';
+          }
+          if (indicator) {
+            indicator.style.display = 'flex';
+          }
+          showToast('🎙️ Dinliyor... Konuşabilirsiniz!');
         };
 
         speechRecognizer.onresult = (event) => {
-          let transcript = '';
-          for (let i = event.resultIndex; i < event.results.length; i++) {
-            transcript += event.results[i][0].transcript;
+          let fullText = '';
+          for (let i = 0; i < event.results.length; i++) {
+            fullText += event.results[i][0].transcript;
           }
-          if (input) input.value = transcript;
+          if (input && fullText) {
+            input.value = fullText;
+          }
+          resetSilenceTimer();
         };
 
         speechRecognizer.onerror = (event) => {
           console.warn('Ses tanıma hatası:', event.error);
-          isSpeechActive = false;
-          if (micBtn) { micBtn.style.background = ''; micBtn.style.color = ''; }
-          if (indicator) indicator.style.display = 'none';
+          if (event.error === 'not-allowed') {
+            showToast('⚠️ Ses tanıma izni verilmedi.');
+            stopVoiceInput(false);
+          } else if (event.error === 'audio-capture') {
+            showToast('⚠️ Mikrofon yakalanamadı.');
+            stopVoiceInput(false);
+          } else if (event.error === 'network') {
+            showToast('⚠️ Ses tanıma için internet bağlantısı gerekiyor.');
+            stopVoiceInput(false);
+          }
         };
 
         speechRecognizer.onend = () => {
-          isSpeechActive = false;
-          if (micBtn) { micBtn.style.background = ''; micBtn.style.color = ''; }
-          if (indicator) indicator.style.display = 'none';
-          // Eğer metin varsa 300 ms sonra otomatik gönder
-          if (input && input.value.trim().length > 2) {
-            setTimeout(() => sendAiMessage(), 300);
+          if (isSpeechActive) {
+            // Süre dolduğunda veya doğal bitişte
+            stopVoiceInput(true);
           }
         };
 
         speechRecognizer.start();
       } catch (err) {
-        console.error('Mikrofon başlatılamadı:', err);
-        showToast('Mikrofon izni verilmedi veya başlatılamadı.');
+        console.error('Ses tanıma başlatılamadı:', err);
+        showToast('Ses tanıma başlatılamadı.');
+        stopVoiceInput(false);
       }
     };
 

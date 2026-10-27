@@ -1,4 +1,4 @@
-const CACHE = 'gigsync-v11-cf';
+const CACHE = 'gigsync-v14-clean-sec';
 const ASSETS = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', e => {
