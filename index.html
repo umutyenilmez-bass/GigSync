@@ -2131,9 +2131,9 @@
           </div>
           <div style="display:flex; flex-direction:column; gap:8px">
             <div style="font-size:18px; font-weight:700; color:var(--text); font-family: var(--font-sans)">Grup Üyesi Girişi</div>
-            <div style="font-size:13px; color:var(--text-dim); max-width:260px; margin:0 auto; line-height:1.6">Sahnede liderin paylaştığı 4 haneli oda kodunu girerek canlı takibe başlayın.</div>
+            <div style="font-size:13px; color:var(--text-dim); max-width:260px; margin:0 auto; line-height:1.6">Sahnede liderin seçtiği şarkıları canlı takip etmek için doğrudan katılın.</div>
           </div>
-          <button class="btn btn-primary" onclick="showJoinRoomModal()" style="width:100%; max-width:260px; box-shadow:0 0 24px var(--accent-glow); font-weight: 700; height: 48px; border-radius: 12px; font-family: var(--font-mono); letter-spacing: 2px;">
+          <button class="btn btn-primary" onclick="joinRoomDirect()" style="width:100%; max-width:260px; box-shadow:0 0 24px var(--accent-glow); font-weight: 700; height: 48px; border-radius: 12px; font-family: var(--font-mono); letter-spacing: 2px;">
             ODAYA KATIL
           </button>
         </div>
@@ -3751,14 +3751,12 @@
       return code;
     }
 
-    // Tek dokunuşta oda aç (kaydedilmiş veya otomatik üretilmiş kodla)
+    // Tek dokunuşta doğrudan oda aç (Şifresiz / Sabit Canlı Oda)
     window.openRoomDirect = async () => {
       if (!S.username) { showNameModal(); return; }
       if (!S.activeSetlistId || !S.setlists[S.activeSetlistId]) return;
 
-      let code = localStorage.getItem('last_room_code');
-      if (!code) code = makeRoomCode();
-
+      const code = 'LIVE';
       const sl = S.setlists[S.activeSetlistId];
       S.activeRoomCode = code;
 
@@ -3790,13 +3788,13 @@
       }
 
       localStorage.setItem('last_room_code', code);
-      document.getElementById('leader-code').textContent = code;
+      document.getElementById('leader-code').textContent = 'CANLI';
       const openBtn = document.getElementById('leader-open-btn');
       if (openBtn) openBtn.style.display = 'none';
       document.getElementById('leader-live-btn').style.display = '';
 
       startLeaderRealtime(code);
-      showToast(`Oda açıldı: ${code}`);
+      showToast('Canlı sahne odası açıldı! 🔴');
     };
 
     window.showOpenRoomModal = () => {
@@ -4114,6 +4112,37 @@
         listEl.appendChild(row);
       });
     }
+
+    // Şifresiz / Doğrudan Canlı Odaya Katıl
+    window.joinRoomDirect = async () => {
+      if (!S.username) {
+        showNameModal();
+        return;
+      }
+      const code = 'LIVE';
+
+      let room = { code: 'LIVE', name: 'Canlı Sahne', band: '', songs: [], active_song: null };
+      try {
+        const res = await fetch(`${getWorkerUrl()}/api/room/${code}`);
+        if (res.ok) {
+          const json = await res.json();
+          if (json.room) room = json.room;
+        }
+      } catch (e) {
+        console.warn('[GigSync] Canlı oda sorgusu:', e);
+      }
+
+      S.activeRoomCode = code;
+      S.role = 'member';
+
+      // Member ekranını ayarla
+      document.getElementById('mem-room-name').textContent = room.name || 'Canlı Sahne';
+      document.getElementById('mem-room-band').textContent = room.band || '';
+
+      showScreen('member');
+      startMemberRealtime(code, room);
+      showToast('Canlı sahneye katıldın! 🎸');
+    };
 
     window.showJoinRoomModal = () => {
       if (!S.username) { showNameModal(); return; }
