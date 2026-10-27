@@ -2727,11 +2727,8 @@
       <!-- AI Header -->
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--border)">
         <div style="display:flex;align-items:center;gap:8px">
-          <div style="width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg, #4f8ef7, #8b5cf6);display:flex;align-items:center;justify-content:center;color:#fff;font-size:15px;box-shadow:0 0 12px rgba(79,142,247,0.4)">✨</div>
-          <div>
-            <div style="font-size:14px;font-weight:700;letter-spacing:1px;font-family:var(--font-mono)">AI SAHNE ASİSTANI</div>
-            <div style="font-size:10px;color:var(--green);font-family:var(--font-mono)">● Çevrimiçi · Sesli &amp; Yazılı Komut</div>
-          </div>
+          <div style="width:28px;height:28px;border-radius:8px;background:var(--accent);display:flex;align-items:center;justify-content:center;color:#000;font-size:14px;font-weight:700">✨</div>
+          <div style="font-size:14px;font-weight:700;letter-spacing:1px;font-family:var(--font-mono)">AI SAHNE ASİSTANI</div>
         </div>
         <div style="display:flex;gap:6px">
           <button class="btn btn-ghost" onclick="clearAiChat()" title="Sohbeti Temizle" style="padding:4px 8px;font-size:11px;font-family:var(--font-mono);color:var(--text-dim);height:unset">Temizle</button>
@@ -2753,12 +2750,7 @@
         <!-- Welcome message -->
         <div class="ai-msg bot">
           <div class="ai-msg-bubble">
-            Selam Umut! 🎸 Ben senin yapay zeka sahne direktörünüm. Bana yazarak veya mikrofona basıp konuşarak:
-            <ul style="margin:6px 0 0 16px;padding:0;font-size:12px;line-height:1.6">
-              <li>Tarza göre anında setlist yaptırabilirsin</li>
-              <li>Repertuarına şarkı ekletebilirsin</li>
-              <li>İstediğinde orijinal tonları veya YouTube linklerini buldurabilirsin</li>
-            </ul>
+            Selam Umut! 🎸 Nasıl bir setlist yapalım?
           </div>
         </div>
       </div>
@@ -3712,6 +3704,7 @@
       showToast('Silindi');
     };
 
+    window.openSetlist = (id) => window.openLeader(id);
     window.openLeader = (id) => {
       const sl = S.setlists[id];
       if (!sl) return;
@@ -4791,7 +4784,7 @@
         container.innerHTML = `
           <div class="ai-msg bot">
             <div class="ai-msg-bubble">
-              Sohbet temizlendi. 🎸 Yeni bir setlist oluşturmak veya şarkı düzenlemek için yazabilir ya da mikrofona basıp konuşabilirsin!
+              Nasıl bir setlist yapalım? 🎸
             </div>
           </div>`;
       }
@@ -4820,11 +4813,36 @@
       appendTypingIndicator(typingId);
       isAiGenerating = true;
 
-      // Kullanıcının mevcut durumunu bağlam olarak hazırla
+      // Kullanıcının TÜM kütüphanelerindeki ve setlistlerindeki eksiksiz güncel durumunu hazırla
+      const allSongs = [];
+      const seenIds = new Set();
+      Object.entries(S.libraries || {}).forEach(([libId, lib]) => {
+        const libName = lib.name || 'Genel';
+        (lib.songs || []).forEach(s => {
+          if (s && s.id && !seenIds.has(s.id)) {
+            seenIds.add(s.id);
+            allSongs.push({
+              t: s.title || '',
+              a: s.artist || '',
+              k: s.key || '',
+              b: s.bpm || '',
+              n: s.notes || '',
+              l: libName
+            });
+          }
+        });
+      });
+
+      const setlists = Object.values(S.setlists || {}).map(sl => ({
+        name: sl.name || 'Setlist',
+        band: sl.band || '',
+        songs: (sl.songs || []).map(s => s.title + (s.artist ? ' - ' + s.artist : ''))
+      }));
+
       const context = {
         username: S.username || 'Umut',
-        librarySongs: currentLib() || [],
-        setlists: Object.values(S.setlists || {}).map(sl => ({ name: sl.name, band: sl.band, count: (sl.songs || []).length }))
+        allSongs: allSongs,
+        setlists: setlists
       };
 
       try {
@@ -4853,13 +4871,13 @@
         aiChatHistory.push({ role: 'user', content: text });
         aiChatHistory.push({ role: 'assistant', content: reply });
 
-        // Asistan baloncuğunu ve varsa aksiyon kartını ekle
-        appendAiBubble('bot', reply, data.action);
-
-        // Aksiyon varsa arka planda oluştur
+        // Aksiyon varsa önce oluştur (ID'si önceden oluşsun)
         if (data.action) {
           handleAiAction(data.action);
         }
+
+        // Asistan baloncuğunu ve interaktif aksiyon kartını ekle
+        appendAiBubble('bot', reply, data.action);
       } catch (err) {
         removeTypingIndicator(typingId);
         isAiGenerating = false;
@@ -4896,12 +4914,13 @@
         `;
         const openBtn = actionCard.querySelector('button');
         openBtn.onclick = () => {
-          if (action._createdId) {
-            openSetlist(action._createdId);
-            closeAiChatModal();
+          closeAiChatModal();
+          const targetId = action._createdId;
+          if (targetId && typeof openLeader === 'function') {
+            openLeader(targetId);
           } else {
             showScreen('home');
-            closeAiChatModal();
+            renderSetlistCards();
           }
         };
         bubbleDiv.appendChild(actionCard);
