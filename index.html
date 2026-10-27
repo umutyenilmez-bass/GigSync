@@ -2586,7 +2586,21 @@
         </div>
       </div>
 
-      <button class="btn btn-secondary" style="width:100%;margin-top:14px" onclick="closeSettingsModal()">Kapat</button>
+      <!-- CLOUDFLARE WORKER CONFIG -->
+      <div class="sec-lbl" style="margin-top:16px;margin-bottom:8px">Cloudflare Senkron Sunucusu</div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
+          <span style="font-size:12px;color:var(--text-muted);font-family:var(--font-mono)">Worker API &amp; WebSocket</span>
+          <span id="worker-status-badge" style="font-size:10px;padding:2px 8px;border-radius:999px;background:rgba(34,197,94,0.15);color:#22c55e;font-family:var(--font-mono);font-weight:700">SIFIR PAUSE</span>
+        </div>
+        <input type="text" id="settings-worker-url" placeholder="https://gigsync.umutyenilmez.workers.dev" style="width:100%;height:38px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:12px;padding:0 12px;outline:none;margin-bottom:8px">
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-primary" style="flex:1;height:34px;font-size:12px;padding:0;min-height:unset" onclick="saveWorkerUrlFromSettings()">Kaydet</button>
+          <button class="btn btn-secondary" style="flex:1;height:34px;font-size:12px;padding:0;min-height:unset" onclick="resetWorkerUrlFromSettings()">Varsayılan</button>
+        </div>
+      </div>
+
+      <button class="btn btn-secondary" style="width:100%;margin-top:4px" onclick="closeSettingsModal()">Kapat</button>
     </div>
   </div>
 
@@ -2678,14 +2692,30 @@
     <button id="undo-toast-btn" onclick="triggerUndo()" style="margin-left:12px;background:var(--accent);color:#000;border:none;border-radius:999px;padding:4px 12px;font-family:var(--font-mono);font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px">GERİ AL</button>
   </div>
 
-  <!-- SUPABASE CLIENT JS CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
   <script>
-    // ══ SUPABASE CONFIG ══
-    const supabaseUrl = "https://xcizgihnylwbjkfxzkpg.supabase.co";
-    const supabaseKey = "sb_publishable_aT7TbUfwn8v-WGnDfsfzHg_LJhohnd7";
-    const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+    // ══ CLOUDFLARE WORKER CONFIG (SIFIR PAUSE, CANLI SAHNE SENKRONİZASYONU) ══
+    const DEFAULT_WORKER_URL = 'https://gigsync.umutyenilmez.workers.dev';
+
+    function getWorkerUrl() {
+      const saved = localStorage.getItem('gs_worker_url');
+      if (saved && saved.trim()) return saved.trim().replace(/\/+$/, '');
+      return DEFAULT_WORKER_URL.replace(/\/+$/, '');
+    }
+
+    function setWorkerUrl(url) {
+      if (!url || !url.trim()) {
+        localStorage.removeItem('gs_worker_url');
+      } else {
+        localStorage.setItem('gs_worker_url', url.trim().replace(/\/+$/, ''));
+      }
+    }
+
+    function getWsUrl(pathAndQuery) {
+      const httpUrl = getWorkerUrl();
+      const wsProto = httpUrl.startsWith('https:') ? 'wss:' : 'ws:';
+      const cleanBase = httpUrl.replace(/^https?:\/\//i, '');
+      return `${wsProto}//${cleanBase}${pathAndQuery}`;
+    }
 
     // ══ STATE ══
     const S = {
@@ -3519,7 +3549,7 @@
       LS.set('gs_setlists', S.setlists);
       const countEl = document.getElementById('leader-song-count');
       if (countEl) countEl.textContent = `${S.liveSongs.length} şarkı`;
-      if (S.activeRoomCode) pushSetlistToSupabase();
+      if (S.activeRoomCode) pushSetlistToWorker();
     }
 
     function renderLeaderSongList() {
@@ -3682,7 +3712,11 @@
     }
 
 
-    // ══════════ SUPABASE SYNC ══════════
+    // ══════════ CLOUDFLARE WORKER LIVE SYNC MOTORU (SIFIR PAUSE) ══════════
+    let leaderWs = null;
+    let leaderPingTimer = null;
+    let leaderReconnectTimer = null;
+
     function makeRoomCode() {
       const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
       let code = '';
@@ -3710,13 +3744,20 @@
         songs: S.liveSongs.map((s, i) => ({ ...s, order: i }))
       };
 
-      const { error } = await supabaseClient
-        .from('gigsync_rooms')
-        .upsert([roomData], { onConflict: 'code' });
+      try {
+        const res = await fetch(`${getWorkerUrl()}/api/room`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(roomData)
+        });
 
-      if (error) {
-        showToast('Oda açılamadı!');
-        console.error('Supabase Error:', error);
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || `HTTP ${res.status}`);
+        }
+      } catch (err) {
+        showToast('Oda açılamadı! Sunucu bağlantısını kontrol edin.');
+        console.error('Cloudflare Worker Error:', err);
         S.activeRoomCode = null;
         return;
       }
@@ -3791,17 +3832,20 @@
         songs: S.liveSongs.map((s, i) => ({ ...s, order: i }))
       };
 
-      // UPSERT: Aynı kodla eski/yarıda kalmış bir oda varsa üzerine yaz.
-      // Bu sayede:
-      //   1) Tarayıcı kapatılarak terk edilen odalar sorun çıkarmaz.
-      //   2) Aynı oda kodu farklı setlistlerde tekrar kullanılabilir.
-      const { error } = await supabaseClient
-        .from('gigsync_rooms')
-        .upsert([roomData], { onConflict: 'code' });
+      try {
+        const res = await fetch(`${getWorkerUrl()}/api/room`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(roomData)
+        });
 
-      if (error) {
-        showToast('Oda oluşturulurken hata oluştu!');
-        console.error('Supabase Error:', error);
+        if (!res.ok) {
+          const errData = await res.json().catch(() => ({}));
+          throw new Error(errData.error || `HTTP ${res.status}`);
+        }
+      } catch (err) {
+        showToast('Oda oluşturulurken sunucu hatası oluştu!');
+        console.error('Cloudflare Worker Error:', err);
         return;
       }
 
@@ -3816,60 +3860,116 @@
       document.getElementById('leader-open-btn').style.display = 'none';
       document.getElementById('leader-live-btn').style.display = '';
 
-      // Realtime kanalını ve Presence'ı başlat
+      // Realtime WebSocket bağlantısını başlat
       startLeaderRealtime(code);
 
       showToast(`Oda açıldı: ${code}`);
     };
 
     function startLeaderRealtime(code) {
-      const channel = supabaseClient.channel(`room_${code}`, {
-        config: {
-          presence: {
-            key: S.username,
-          },
-        },
-      });
+      if (leaderWs) {
+        try { leaderWs.close(); } catch (e) {}
+        leaderWs = null;
+      }
+      if (leaderPingTimer) { clearInterval(leaderPingTimer); leaderPingTimer = null; }
+      if (leaderReconnectTimer) { clearTimeout(leaderReconnectTimer); leaderReconnectTimer = null; }
 
-      channel
-        .on('presence', { event: 'sync' }, () => {
-          const state = channel.presenceState();
-          const members = {};
-          Object.keys(state).forEach((key) => {
-            members[key] = state[key][0];
-          });
-          const count = Object.keys(members).length;
-          const dot = document.getElementById('member-count-dot');
-          if (dot) {
-            dot.textContent = count;
-            dot.style.display = count > 0 ? 'flex' : 'none';
-          }
-          renderMembersList(members);
-        })
-        .subscribe(async (status) => {
-          if (status === 'SUBSCRIBED') {
-            await channel.track({ name: S.username, joinedAt: Date.now(), isLeader: true });
-          }
-        });
+      S.currentMembers = [];
 
-      S.activeChannel = channel;
+      const connectWs = () => {
+        if (!S.activeRoomCode || S.activeRoomCode !== code) return;
+        const wsUrl = getWsUrl(`/ws?room=${code}&name=${encodeURIComponent(S.username)}&role=leader`);
+        const ws = new WebSocket(wsUrl);
+        leaderWs = ws;
+        S.activeWs = ws;
+
+        ws.onopen = () => {
+          console.log('[GigSync Leader] Cloudflare WebSocket bağlandı');
+          if (leaderPingTimer) clearInterval(leaderPingTimer);
+          leaderPingTimer = setInterval(() => {
+            if (ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ type: 'PING' }));
+            }
+          }, 20000);
+        };
+
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.type === 'MEMBERS_UPDATE') {
+              S.currentMembers = Array.isArray(data.members) ? data.members : Object.values(data.members || {});
+              const count = S.currentMembers.length;
+              const dot = document.getElementById('member-count-dot');
+              if (dot) {
+                dot.textContent = count;
+                dot.style.display = count > 0 ? 'flex' : 'none';
+              }
+              renderMembersList(S.currentMembers);
+            } else if (data.type === 'INIT') {
+              if (data.room && data.room.members) {
+                S.currentMembers = Array.isArray(data.room.members) ? data.room.members : Object.values(data.room.members);
+                const count = S.currentMembers.length;
+                const dot = document.getElementById('member-count-dot');
+                if (dot) {
+                  dot.textContent = count;
+                  dot.style.display = count > 0 ? 'flex' : 'none';
+                }
+                renderMembersList(S.currentMembers);
+              }
+            }
+          } catch (err) {
+            console.error('[GigSync Leader] WebSocket parse error:', err);
+          }
+        };
+
+        ws.onclose = () => {
+          if (leaderPingTimer) clearInterval(leaderPingTimer);
+          if (S.activeRoomCode === code) {
+            leaderReconnectTimer = setTimeout(connectWs, 2000);
+          }
+        };
+
+        ws.onerror = (err) => {
+          console.warn('[GigSync Leader] WebSocket hatası:', err);
+        };
+      };
+
+      connectWs();
+
+      // Ekran kilidi açılınca veya sekmeye dönünce bağlantıyı kontrol et
+      const onLeaderVisibilityChange = () => {
+        if (document.visibilityState === 'visible' && S.activeRoomCode === code) {
+          if (!leaderWs || leaderWs.readyState !== WebSocket.OPEN) {
+            connectWs();
+          }
+        }
+      };
+      document.addEventListener('visibilitychange', onLeaderVisibilityChange);
+
       S.listeners.memberWatch = () => {
-        channel.unsubscribe();
+        if (leaderPingTimer) clearInterval(leaderPingTimer);
+        if (leaderReconnectTimer) clearTimeout(leaderReconnectTimer);
+        document.removeEventListener('visibilitychange', onLeaderVisibilityChange);
+        if (leaderWs) {
+          try { leaderWs.close(); } catch (e) {}
+          leaderWs = null;
+        }
+        S.activeWs = null;
       };
     }
 
     function renderMembersList(members) {
       const listEl = document.getElementById('members-list');
       if (!listEl) return;
-      const arr = Object.entries(members);
+      const arr = Array.isArray(members) ? members : Object.values(members || {});
       if (!arr.length) {
         listEl.innerHTML = '<div style="text-align:center;color:var(--text-dim);font-family:var(--font-mono);font-size:11px;padding:20px 0">Henüz üye yok</div>';
         return;
       }
-      listEl.innerHTML = arr.map(([id, m]) => `
+      listEl.innerHTML = arr.map((m) => `
         <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);border-radius:10px;margin-bottom:6px;border:1px solid var(--border)">
           <div style="width:30px;height:30px;border-radius:7px;background:var(--accent);color:#000;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">${esc((m.name || '?').charAt(0).toUpperCase())}</div>
-          <div style="flex:1;font-size:14px">${esc(m.name || '—')}</div>
+          <div style="flex:1;font-size:14px">${esc(m.name || '—')} ${m.isLeader ? '<span style="font-size:10px;color:var(--accent);font-family:var(--font-mono);margin-left:6px">(LİDER)</span>' : ''}</div>
         </div>
       `).join('');
     }
@@ -3878,50 +3978,55 @@
       if (!S.activeRoomCode) { showToast('Oda açık değil'); return; }
       document.getElementById('room-code-display').textContent = S.activeRoomCode;
       document.getElementById('members-sheet').classList.remove('hidden');
-      
-      if (S.activeChannel) {
-        const state = S.activeChannel.presenceState();
-        const members = {};
-        Object.keys(state).forEach((key) => {
-          members[key] = state[key][0];
-        });
-        renderMembersList(members);
-      } else {
-        renderMembersList({});
-      }
+      renderMembersList(S.currentMembers || []);
     };
     window.closeMembersSheet = () => document.getElementById('members-sheet').classList.add('hidden');
 
     window.selectSongInRoom = async (songId) => {
       if (!S.activeRoomCode) return;
       
-      const { error } = await supabaseClient
-        .from('gigsync_rooms')
-        .update({ active_song: songId })
-        .eq('code', S.activeRoomCode);
-
-      if (error) {
-        console.error('Şarkı seçilirken hata oluştu:', error);
-        return;
-      }
-      
       S.liveActiveSong = songId;
       document.querySelectorAll('.drag-row').forEach(r => {
         r.style.borderColor = r.dataset.id === songId ? 'var(--accent)' : 'var(--border)';
         r.style.background = r.dataset.id === songId ? 'rgba(79,142,247,0.12)' : 'var(--surface2)';
       });
+
+      // 1. WebSocket ile 10 ms içinde ultra hızlı yayın iletimi
+      let sentWs = false;
+      if (leaderWs && leaderWs.readyState === WebSocket.OPEN) {
+        leaderWs.send(JSON.stringify({ type: 'SELECT_SONG', songId }));
+        sentWs = true;
+      }
+
+      // 2. HTTP REST ile de kalıcı duruma yaz (fail-safe)
+      try {
+        await fetch(`${getWorkerUrl()}/api/room/${S.activeRoomCode}/song`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ songId })
+        });
+      } catch (error) {
+        if (!sentWs) console.error('Şarkı seçilirken hata oluştu:', error);
+      }
     };
 
-    window.pushSetlistToSupabase = async () => {
+    window.pushSetlistToWorker = async () => {
       if (!S.activeRoomCode) return;
       const songsArr = S.liveSongs.map((s, i) => ({ ...s, order: i }));
       
-      const { error } = await supabaseClient
-        .from('gigsync_rooms')
-        .update({ songs: songsArr })
-        .eq('code', S.activeRoomCode);
+      // WebSocket ile anlık setlist güncellemesi
+      if (leaderWs && leaderWs.readyState === WebSocket.OPEN) {
+        leaderWs.send(JSON.stringify({ type: 'UPDATE_SETLIST', songs: songsArr }));
+      }
 
-      if (error) {
+      // HTTP REST ile de kalıcı duruma yaz
+      try {
+        await fetch(`${getWorkerUrl()}/api/room/${S.activeRoomCode}/setlist`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ songs: songsArr })
+        });
+      } catch (error) {
         console.error('Setlist senkronize edilirken hata oluştu:', error);
       }
     };
@@ -4018,19 +4123,24 @@
         return;
       }
 
-      // Fetch room metadata
-      const { data: rooms, error } = await supabaseClient
-        .from('gigsync_rooms')
-        .select('*')
-        .eq('code', code);
-
-      if (error || !rooms || rooms.length === 0) {
+      // Cloudflare Worker üzerinden oda verisini al
+      let room = null;
+      try {
+        const res = await fetch(`${getWorkerUrl()}/api/room/${code}`);
+        if (!res.ok) throw new Error('Oda bulunamadı');
+        const json = await res.json();
+        room = json.room || json;
+      } catch (e) {
         showToast('Oda bulunamadı veya şu an aktif değil!');
         return;
       }
-      const room = rooms[0];
 
-      // Save to recently joined rooms list with v2 objects
+      if (!room || !room.code) {
+        showToast('Oda bulunamadı veya şu an aktif değil!');
+        return;
+      }
+
+      // Son odalar listesine kaydet
       let joinedRooms = JSON.parse(localStorage.getItem('gigsync_recent_rooms_v2') || '[]');
       joinedRooms = joinedRooms.filter(r => r.code !== code);
       joinedRooms.unshift({
@@ -4038,7 +4148,7 @@
         name: room.name || '—',
         band: room.band || ''
       });
-      if (joinedRooms.length > 20) joinedRooms.pop(); // En az 20 odayı hafızada sakla
+      if (joinedRooms.length > 20) joinedRooms.pop();
       localStorage.setItem('gigsync_recent_rooms_v2', JSON.stringify(joinedRooms));
 
       S.activeRoomCode = code;
@@ -4056,21 +4166,34 @@
     };
 
     let currentDetailSong = null;
+    let memberWs = null;
+    let memberPingTimer = null;
+    let memberReconnectTimer = null;
+
     function startMemberRealtime(code, initialRoom) {
+      if (memberWs) {
+        try { memberWs.close(); } catch (e) {}
+        memberWs = null;
+      }
+      if (memberPingTimer) { clearInterval(memberPingTimer); memberPingTimer = null; }
+      if (memberReconnectTimer) { clearTimeout(memberReconnectTimer); memberReconnectTimer = null; }
+
       let songs = {};
-      let activeSongId = initialRoom.active_song;
+      let activeSongId = initialRoom ? initialRoom.active_song : null;
 
       const transformSongs = (songsList) => {
         const obj = {};
         if (Array.isArray(songsList)) {
           songsList.forEach(s => { obj[s.id] = s; });
-        } else {
+        } else if (songsList && typeof songsList === 'object') {
           Object.assign(obj, songsList);
         }
         return obj;
       };
 
-      songs = transformSongs(initialRoom.songs);
+      if (initialRoom && initialRoom.songs) {
+        songs = transformSongs(initialRoom.songs);
+      }
 
       const waitState = document.getElementById('wait-state');
       const nowDisplay = document.getElementById('now-display');
@@ -4102,7 +4225,7 @@
         if (s.bpm) { bpmEl.textContent = `${s.bpm} BPM`; bpmEl.style.display = ''; }
         else bpmEl.style.display = 'none';
 
-        // Sıradaki
+        // Sıradaki şarkı hesapla
         const sortedSongs = Object.values(songs).sort((a, b) => (a.order || 0) - (b.order || 0));
         const idx = sortedSongs.findIndex(x => x.id === activeSongId);
         const next = sortedSongs[idx + 1];
@@ -4110,84 +4233,127 @@
           nextBar.style.display = '';
           document.getElementById('mem-next-title').textContent = next.title || '';
           document.getElementById('mem-next-key').textContent = next.key || '';
-        } else nextBar.style.display = 'none';
+        } else {
+          nextBar.style.display = 'none';
+        }
       }
 
       // Initial render
       updateNowDisplay();
 
-      // Force Sync on focus/visibility recovery (telefon kilidi açılınca veya sekmeye dönünce)
-      const onVisibilityChange = async () => {
-        if (document.visibilityState === 'visible' && S.activeRoomCode) {
-          try {
-            const { data } = await supabaseClient
-              .from('gigsync_rooms')
-              .select('active_song, songs')
-              .eq('code', S.activeRoomCode)
-              .single();
-            if (data) {
-              activeSongId = data.active_song;
-              if (data.songs) {
-                const newSongsObj = transformSongs(data.songs);
+      // Hızlı HTTP senkronizasyonu (fail-safe & ekran kilidi açılınca anında tetiklenir)
+      const fetchCurrentState = async () => {
+        if (!S.activeRoomCode) return;
+        try {
+          const res = await fetch(`${getWorkerUrl()}/api/room/${S.activeRoomCode}`);
+          if (res.ok) {
+            const data = await res.json();
+            const r = data.room || data;
+            if (r) {
+              activeSongId = r.active_song;
+              if (r.songs) {
+                const newSongsObj = transformSongs(r.songs);
                 if (Object.keys(newSongsObj).length > 0) songs = newSongsObj;
               }
               updateNowDisplay();
             }
-          } catch (e) {
-            console.warn('[GigSync] Visibility sync hatası:', e);
+          }
+        } catch (e) {
+          console.warn('[GigSync Member] HTTP sync uyarısı:', e);
+        }
+      };
+
+      // WebSocket Canlı Senkronizasyon Bağlantısı
+      const connectWs = () => {
+        if (!S.activeRoomCode || S.activeRoomCode !== code) return;
+        const wsUrl = getWsUrl(`/ws?room=${code}&name=${encodeURIComponent(S.username)}&role=member`);
+        const ws = new WebSocket(wsUrl);
+        memberWs = ws;
+        S.activeWs = ws;
+
+        ws.onopen = () => {
+          console.log('[GigSync Member] Cloudflare WebSocket bağlandı');
+          if (memberPingTimer) clearInterval(memberPingTimer);
+          memberPingTimer = setInterval(() => {
+            if (ws.readyState === WebSocket.OPEN) {
+              ws.send(JSON.stringify({ type: 'PING' }));
+            }
+          }, 20000);
+        };
+
+        ws.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.type === 'SONG_CHANGED') {
+              activeSongId = data.songId;
+              updateNowDisplay();
+            } else if (data.type === 'SETLIST_UPDATED') {
+              if (data.songs) {
+                songs = transformSongs(data.songs);
+                updateNowDisplay();
+              }
+            } else if (data.type === 'INIT') {
+              if (data.room) {
+                activeSongId = data.room.active_song;
+                if (data.room.songs) {
+                  songs = transformSongs(data.room.songs);
+                }
+                updateNowDisplay();
+              }
+            } else if (data.type === 'ROOM_CLOSED') {
+              showToast('Oda lider tarafından kapatıldı');
+              leaveRoom();
+            }
+          } catch (err) {
+            console.error('[GigSync Member] WebSocket parse error:', err);
+          }
+        };
+
+        ws.onclose = () => {
+          if (memberPingTimer) clearInterval(memberPingTimer);
+          if (S.activeRoomCode === code) {
+            memberReconnectTimer = setTimeout(connectWs, 2000);
+          }
+        };
+
+        ws.onerror = (err) => {
+          console.warn('[GigSync Member] WebSocket hatası:', err);
+        };
+      };
+
+      connectWs();
+
+      // Ekran kilidi açılınca / sekmeye dönünce ultra hızlı yeniden bağlanma ve anında sync
+      const onVisibilityChange = async () => {
+        if (document.visibilityState === 'visible' && S.activeRoomCode) {
+          fetchCurrentState();
+          if (!memberWs || memberWs.readyState !== WebSocket.OPEN) {
+            connectWs();
           }
         }
       };
       document.addEventListener('visibilitychange', onVisibilityChange);
 
-      // 1. Subscribe to PostgreSQL changes on the specific room
-      const dbSubscription = supabaseClient
-        .channel(`db_room_${code}`)
-        .on(
-          'postgres_changes',
-          {
-            event: '*',
-            schema: 'public',
-            table: 'gigsync_rooms',
-            filter: `code=eq.${code}`
-          },
-          (payload) => {
-            console.log('DB Change:', payload.eventType);
-            if (payload.eventType === 'DELETE') {
-              showToast('Oda kapatıldı');
-              leaveRoom();
-            } else if (payload.eventType === 'UPDATE') {
-              const updatedRoom = payload.new;
-              if (updatedRoom.active_song !== undefined) activeSongId = updatedRoom.active_song;
-              if (updatedRoom.songs !== undefined) songs = transformSongs(updatedRoom.songs);
-              updateNowDisplay();
-            }
+      const onOnline = () => {
+        if (S.activeRoomCode) {
+          fetchCurrentState();
+          if (!memberWs || memberWs.readyState !== WebSocket.OPEN) {
+            connectWs();
           }
-        )
-        .subscribe();
-
-      // 2. Subscribe to Presence channel
-      const presenceChannel = supabaseClient.channel(`room_${code}`, {
-        config: {
-          presence: {
-            key: S.username,
-          },
-        },
-      });
-
-      presenceChannel.subscribe(async (status) => {
-        if (status === 'SUBSCRIBED') {
-          await presenceChannel.track({ name: S.username, joinedAt: Date.now(), isLeader: false });
         }
-      });
-
-      S.activeChannel = presenceChannel;
-      S.dbSubscription = dbSubscription;
+      };
+      window.addEventListener('online', onOnline);
 
       S.listeners.memberWatch = () => {
-        presenceChannel.unsubscribe();
-        dbSubscription.unsubscribe();
+        if (memberPingTimer) clearInterval(memberPingTimer);
+        if (memberReconnectTimer) clearTimeout(memberReconnectTimer);
         document.removeEventListener('visibilitychange', onVisibilityChange);
+        window.removeEventListener('online', onOnline);
+        if (memberWs) {
+          try { memberWs.close(); } catch (e) {}
+          memberWs = null;
+        }
+        S.activeWs = null;
       };
     }
 
@@ -4202,12 +4368,23 @@
 
     window.closeRoomFromLeader = async () => {
       if (!S.activeRoomCode) return;
+      const code = S.activeRoomCode;
+
+      // 1. WebSocket ile tüm bağlı müzisyenlere anında bildirim gönder
+      if (leaderWs && leaderWs.readyState === WebSocket.OPEN) {
+        leaderWs.send(JSON.stringify({ type: 'CLOSE_ROOM' }));
+      }
+
+      // 2. HTTP DELETE ile Worker depolamasından odayı sil
+      try {
+        await fetch(`${getWorkerUrl()}/api/room/${code}`, {
+          method: 'DELETE'
+        });
+      } catch (e) {
+        console.warn('Oda kapatma isteği iletilemedi:', e);
+      }
+
       if (S.listeners.memberWatch) { S.listeners.memberWatch(); delete S.listeners.memberWatch; }
-      
-      await supabaseClient
-        .from('gigsync_rooms')
-        .delete()
-        .eq('code', S.activeRoomCode);
         
       S.activeRoomCode = null;
       document.getElementById('leader-code').textContent = '—';
@@ -4342,8 +4519,26 @@
       document.querySelectorAll('.theme-btn').forEach(b => b.style.borderColor = 'transparent');
       const btn = document.getElementById('theme-' + cur);
       if (btn) btn.style.borderColor = 'var(--accent)';
+
+      const input = document.getElementById('settings-worker-url');
+      if (input) input.value = getWorkerUrl();
     };
     window.closeSettingsModal = () => document.getElementById('settings-modal').classList.add('hidden');
+
+    window.saveWorkerUrlFromSettings = () => {
+      const input = document.getElementById('settings-worker-url');
+      if (!input) return;
+      const val = input.value.trim();
+      setWorkerUrl(val);
+      showToast('Sunucu adresi kaydedildi');
+    };
+
+    window.resetWorkerUrlFromSettings = () => {
+      setWorkerUrl('');
+      const input = document.getElementById('settings-worker-url');
+      if (input) input.value = getWorkerUrl();
+      showToast('Varsayılan sunucuya dönüldü');
+    };
 
     // Initialization
     window.onload = () => {

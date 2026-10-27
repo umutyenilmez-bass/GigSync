@@ -1,4 +1,4 @@
-const CACHE = 'gigsync-v10';
+const CACHE = 'gigsync-v11-cf';
 const ASSETS = ['/', '/index.html', '/manifest.json'];
 
 self.addEventListener('install', e => {
@@ -14,7 +14,8 @@ self.addEventListener('activate', e => {
 });
 
 self.addEventListener('fetch', e => {
-  if (e.request.url.includes('supabase.co') || e.request.url.includes('supabase.net')) return;
+  // Live stage sync and WebSocket traffic must bypass cache
+  if (e.request.url.includes('/api/') || e.request.url.includes('/ws')) return;
   e.respondWith(
     fetch(e.request).catch(() => caches.match(e.request))
   );
