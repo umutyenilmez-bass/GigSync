@@ -13,7 +13,7 @@ class_name = "SyncRoom"
 # Migrations to register the Durable Object class
 [[migrations]]
 tag = "v1"
-new_classes = ["SyncRoom"]
+new_sqlite_classes = ["SyncRoom"]
 
 [observability]
 enabled = true

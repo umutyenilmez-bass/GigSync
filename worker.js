@@ -171,6 +171,16 @@ export class SyncRoom extends DurableObject {
     return { success: true };
   }
 
+  async saveBackup(data) {
+    await this.ctx.storage.put("user_backup", data);
+    return { success: true, timestamp: Date.now() };
+  }
+
+  async getBackup() {
+    const data = await this.ctx.storage.get("user_backup");
+    return data || null;
+  }
+
   getMemberList() {
     const list = [];
     for (const [, meta] of this.sessions) {
@@ -348,6 +358,224 @@ export default {
       } else {
         // Fallback if Durable Objects not bound
         return handleStatelessWebSocket(request, roomCode, url);
+      }
+    }
+
+    // Backup / Restore Endpoints: /api/backup?user=...
+    if (path === "/api/backup") {
+      const userKey = (url.searchParams.get("user") || "default").trim().toLowerCase();
+      if (request.method === "POST") {
+        try {
+          const body = await request.json();
+          if (env.ROOMS) {
+            const id = env.ROOMS.idFromName("BACKUP_" + userKey);
+            const stub = env.ROOMS.get(id);
+            const res = await stub.saveBackup(body);
+            return jsonResponse(res);
+          } else {
+            memoryRooms.set("BACKUP_" + userKey, body);
+            return jsonResponse({ success: true, timestamp: Date.now() });
+          }
+        } catch (err) {
+          return jsonResponse({ error: "Yedek kaydedilemedi: " + err.message }, 400);
+        }
+      }
+      if (request.method === "GET") {
+        if (env.ROOMS) {
+          const id = env.ROOMS.idFromName("BACKUP_" + userKey);
+          const stub = env.ROOMS.get(id);
+          const data = await stub.getBackup();
+          return jsonResponse({ success: true, data: data || null });
+        } else {
+          const data = memoryRooms.get("BACKUP_" + userKey) || null;
+          return jsonResponse({ success: true, data: data });
+        }
+      }
+    }
+
+    // AI Sahne Direktörü & Asistanı Endpoint: /api/ai/chat
+    if (path === "/api/ai/chat" && request.method === "POST") {
+      try {
+        const body = await request.json();
+        const userMessage = (body.message || "").trim();
+        const history = Array.isArray(body.history) ? body.history : [];
+        const context = body.context || {};
+        const apiKey = (body.apiKey && body.apiKey.trim()) || env.GEMINI_API_KEY;
+
+        if (!userMessage) {
+          return jsonResponse({ error: "Lütfen bir mesaj yazın veya konuşun." }, 400);
+        }
+
+        if (!apiKey) {
+          return jsonResponse({
+            error: "Gemini API anahtarı bulunamadı. Lütfen sağ üstteki Ayarlar (⚙️) menüsünden Google Gemini API anahtarınızı girin."
+          }, 400);
+        }
+
+        const rawSongs = context.allSongs || context.librarySongs || [];
+        const rawSetlists = context.setlists || [];
+
+        // Eksiksiz ve kompakt repertuar listesi (tüm kütüphaneler dahil)
+        const formattedRepertoire = rawSongs.map((s, i) => {
+          const title = s.t || s.title || "İsimsiz";
+          const artist = s.a || s.artist ? ` - ${s.a || s.artist}` : "";
+          const key = s.k || s.key ? ` (${s.k || s.key})` : "";
+          const bpm = s.b || s.bpm ? ` [${s.b || s.bpm} BPM]` : "";
+          const lib = s.l ? ` [${s.l}]` : "";
+          return `${i + 1}. ${title}${artist}${key}${bpm}${lib}`;
+        }).join("\n");
+
+        // Eksiksiz setlistler ve içerdikleri şarkılar
+        const formattedSetlists = rawSetlists.map(sl => {
+          const songList = Array.isArray(sl.songs) ? sl.songs.join(", ") : "";
+          return `- "${sl.name}" (${(sl.songs || []).length} şarkı)${sl.band ? ' [' + sl.band + ']' : ''}: ${songList || 'Boş'}`;
+        }).join("\n");
+
+        const systemInstruction = `Sen GigSync canlı sahne uygulamasının ultra hızlı profesyonel sahne direktörüsün.
+Kullanıcının adı: ${context.username || "Müzisyen"}.
+
+KULLANICININ TÜM VE GÜNCEL REPERTUARI (Toplam ${rawSongs.length} Şarkı):
+${formattedRepertoire || "Repertuarda henüz hiç şarkı yok."}
+
+KULLANICININ TÜM VE GÜNCEL SETLİSTLERİ (Toplam ${rawSetlists.length} Setlist):
+${formattedSetlists || "Henüz hiç setlist yok."}
+
+KRİTİK MÜZİSYEN VE SAHNE KURALLARI:
+1. REPERTUAR VE SETLİST HAKİMİYETİ:
+- Yukarıdaki repertuar ve setlist dökümü kullanıcının anlık, canlı ve eksiksiz verisidir.
+- Kullanıcı aynı isimli şarkıları, silinen/eklenen parçaları veya hangi şarkının hangi setlistte olduğunu sorduğunda bu gerçek listeyi tara ve doğrudan net bilgi ver.
+2. ASLA KAFANA GÖRE ORİJİNAL TON (KEY), BPM VEYA YOUTUBE LİNKİ DOLDURMA!
+Canlı müzikte şarkılar solistin ses rengine göre transpoze edilir. Bu nedenle:
+- YALNIZCA kullanıcı açıkça "orijinal tonlarını yaz", "orijinal tonunu bul", "BPM ekle", "YouTube linklerini bul" gibi özel bir talepte bulunursa bu alanları doldur.
+- Kullanıcı bu detayları özellikle istemediyse key, bpm, link, notes alanlarını BOŞ ("") bırak!
+3. AŞIRI SADELİK VE HIZ (SIFIR BOŞ LAF VE AÇIKLAMA):
+- "Kuralımız gereği tonları ve bpm'leri boş bıraktım...", "Aşağıdaki butona dokunarak setlisti aktarabilirsin...", "Hazırsan iyi sahneler..." gibi gereksiz robotik açıklamaları ve kalıp lafları KESİNLİKLE YAZMA. Kullanıcı zaten butonu görüyor ve biliyor.
+- Sadece 1 kısa cümlelik profesyonel bir sahne yorumu yap, şarkı listesini sırala ve yanıtının sonuna aksiyon JSON bloğunu koy. Lafı uzatma, doğrudan sonuca odaklan!
+4. Kullanıcı senden bir setlist oluşturmanı veya kütüphaneye şarkı eklemeni istediğinde:
+Yanıtının en sonuna aşağıdaki özel formatta bir JSON aksiyon bloğu ekle. GigSync uygulaması bu bloğu okuyup tek dokunuşla ekrana setlist olarak işleyecektir!
+
+Setlist Oluşturma Formatı (Yanıtının EN SONUNA ekle):
+\`\`\`gigsync_action
+{
+  "action": "CREATE_SETLIST",
+  "name": "Setlist Adı",
+  "band": "Grup veya Boş",
+  "songs": [
+    { "title": "Şarkı Adı", "artist": "Sanatçı", "key": "", "bpm": "", "notes": "", "link": "" }
+  ]
+}
+\`\`\`
+
+Kütüphaneye Toplu Şarkı Ekleme Formatı:
+\`\`\`gigsync_action
+{
+  "action": "ADD_TO_LIBRARY",
+  "songs": [
+    { "title": "Şarkı Adı", "artist": "Sanatçı", "key": "", "bpm": "", "notes": "", "link": "" }
+  ]
+}
+\`\`\``;
+
+        const contents = [];
+        // Geçmiş konuşmalar
+        for (const item of history.slice(-6)) {
+          contents.push({
+            role: item.role === "assistant" ? "model" : "user",
+            parts: [{ text: item.content }]
+          });
+        }
+        // Güncel kullanıcı mesajı
+        contents.push({
+          role: "user",
+          parts: [{ text: userMessage }]
+        });
+
+        // Gemini Modelleri (çalışma önceliğine ve hızına göre sıralı)
+        const candidateModels = [
+          "gemini-3.1-flash-lite",
+          "gemini-3.5-flash",
+          "gemini-flash-latest",
+          "gemini-pro-latest"
+        ];
+
+        let geminiRes = null;
+        let lastErrMsg = "";
+
+        for (const model of candidateModels) {
+          try {
+            const geminiUrl = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${apiKey}`;
+            const res = await fetch(geminiUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                systemInstruction: { parts: [{ text: systemInstruction }] },
+                contents,
+                generationConfig: {
+                  temperature: 0.7,
+                  maxOutputTokens: 2048,
+                  thinkingConfig: { thinkingBudget: 0 }
+                }
+              })
+            });
+
+            if (res.ok) {
+              geminiRes = res;
+              break;
+            } else {
+              const errBody = await res.json().catch(() => ({}));
+              lastErrMsg = errBody.error?.message || `HTTP ${res.status}`;
+              // thinkingConfig hatası ise thinkingConfig olmadan dene
+              if (res.status === 400 && lastErrMsg.toLowerCase().includes("thinking")) {
+                const retryRes = await fetch(geminiUrl, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({
+                    systemInstruction: { parts: [{ text: systemInstruction }] },
+                    contents,
+                    generationConfig: {
+                      temperature: 0.7,
+                      maxOutputTokens: 2048
+                    }
+                  })
+                });
+                if (retryRes.ok) {
+                  geminiRes = retryRes;
+                  break;
+                }
+              }
+            }
+          } catch (e) {
+            lastErrMsg = e.message;
+          }
+        }
+
+        if (!geminiRes) {
+          return jsonResponse({ error: `Gemini API Hatası: ${lastErrMsg || "Yanıt alınamadı."}` }, 400);
+        }
+
+        const geminiData = await geminiRes.json();
+        const rawText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || "Bir yanıt oluşturulamadı.";
+
+        // gigsync_action bloğunu ayıkla
+        let action = null;
+        let cleanReply = rawText;
+        const actionMatch = rawText.match(/```gigsync_action\s*([\s\S]*?)\s*```/);
+        if (actionMatch) {
+          try {
+            action = JSON.parse(actionMatch[1]);
+            cleanReply = rawText.replace(/```gigsync_action[\s\S]*?```/, "").trim();
+          } catch (e) {
+            console.warn("Aksiyon bloğu ayrıştırılamadı:", e);
+          }
+        }
+
+        return jsonResponse({
+          success: true,
+          reply: cleanReply,
+          action: action
+        });
+      } catch (err) {
+        return jsonResponse({ error: "İşlem sırasında sunucu hatası: " + err.message }, 500);
       }
     }
 
