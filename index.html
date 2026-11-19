@@ -2189,6 +2189,11 @@
       flex-shrink: 0
     }
 
+    #member .member-hdr {
+      padding: 6px 12px;
+      padding-top: max(env(safe-area-inset-top), 6px);
+    }
+    #member .live-pill { padding: 4px 10px; }
     .member-hdr-info .room-name {
       font-size: 16px;
       font-weight: 600
@@ -3644,13 +3649,10 @@
   <!-- ══ MEMBER (GRUP) ══ -->
   <div id="member" class="screen">
     <div class="member-hdr">
-      <div class="member-hdr-info">
-        <div class="room-name" id="mem-room-name">—</div>
-        <div class="room-band" id="mem-room-band">—</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
-        <div class="live-pill">CANLI</div>
-        <button class="member-hdr-btn" onclick="switchRoleFromMember()" title="Rol değiştir">ROL</button>
+      <div id="mem-live-pill" class="live-pill" style="display:none">CANLI</div>
+      <span id="mem-room-name" hidden></span><span id="mem-room-band" hidden></span>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0;margin-left:auto">
+        <button class="member-hdr-btn" onclick="switchRoleFromMember()" title="Açılış ekranı" style="padding:0 8px"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/><path d="M10 21v-6h4v6"/></svg></button>
         <button class="member-hdr-btn" onclick="showSettingsModal()" title="Ayarlar" style="padding:0 8px">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
             <circle cx="12" cy="12" r="3" />
@@ -7409,14 +7411,21 @@
       joinRoomDirect(true);
     };
 
+    // Grup ekranı: "CANLI" yalnızca yöneticinin sahnesi gerçekten açıkken görünür
+    function setMemberLive(on) {
+      const el = document.getElementById('mem-live-pill');
+      if (el) el.style.display = on ? '' : 'none';
+    }
+
     window.joinRoomDirect = async (silent = false) => {
       const code = 'LIVE';
       let room = { code: 'LIVE', name: 'Canlı Sahne', band: '', songs: [], active_song: null };
+      let roomFound = false;
       try {
         const res = await fetch(`${getWorkerUrl()}/api/room/${code}`);
         if (res.ok) {
           const json = await res.json();
-          if (json.room) room = json.room;
+          if (json.room) { room = json.room; roomFound = true; }
         }
       } catch (e) {
         console.warn('[GigSync] Canlı oda sorgusu:', e);
@@ -7426,7 +7435,7 @@
       S.role = 'member';
 
       // Member ekranını ayarla
-      document.getElementById('mem-room-name').textContent = room.name || 'Canlı Sahne';
+      document.getElementById('mem-room-name').textContent = room.name || 'Canlı Sahne'; setMemberLive(roomFound);
       document.getElementById('mem-room-band').textContent = room.band || '';
       updateUsernameDisplay();
 
@@ -7500,7 +7509,8 @@
           const step = Math.max(0, Math.min(activeStep || 0, parts.length - 1));
           // Tüm ekranı kullan: kart sayısına göre yazı boyu (telefonda genişlik sınırlar)
           mashupDisplay.className = 'mashup-display mashup-full';
-          mashupDisplay.style.setProperty('--mashup-fs', `clamp(20px, min(9vw, ${Math.max(4, Math.round(40 / parts.length))}dvh), 96px)`);
+          const vw = parts.length <= 4 ? 9 : (parts.length <= 6 ? 8 : 7);
+          mashupDisplay.style.setProperty('--mashup-fs', `clamp(18px, min(${vw}vw, ${Math.max(4, Math.round(40 / parts.length))}dvh), 96px)`);
           document.getElementById('now-area')?.classList.add('mashup-mode');
 
           const listEl = document.getElementById('mem-mashup-list');
@@ -7568,7 +7578,7 @@
             activeSongId = null;
             activeStep = 0;
             songs = {};
-            document.getElementById('mem-room-name').textContent = 'Canlı Sahne';
+            document.getElementById('mem-room-name').textContent = 'Canlı Sahne'; setMemberLive(false);
             document.getElementById('mem-room-band').textContent = '';
             updateNowDisplay();
             return;
@@ -7577,6 +7587,7 @@
             const data = await res.json();
             const r = data.room || data;
             if (r) {
+              setMemberLive(true);
               const sig = JSON.stringify([r.active_song, r.active_step, r.songs, r.name, r.band]);
               if (sig === lastPollSig) return;
               lastPollSig = sig;
@@ -7590,6 +7601,7 @@
           }
         } catch (e) {
           console.warn('[GigSync Member] HTTP sync uyarısı:', e);
+          if (!memberWs || memberWs.readyState !== WebSocket.OPEN) setMemberLive(false);
         }
       };
 
@@ -7621,7 +7633,7 @@
             if (data.type !== 'PONG') lastWsChangeAt = Date.now();
             if (data.type === 'ROOM_UPDATED') {
               if (data.room) {
-                document.getElementById('mem-room-name').textContent = data.room.name || 'Canlı Sahne';
+                document.getElementById('mem-room-name').textContent = data.room.name || 'Canlı Sahne'; setMemberLive(true);
                 document.getElementById('mem-room-band').textContent = data.room.band || '';
                 songs = transformSongs(data.room.songs || []);
                 activeSongId = data.room.active_song || null;
@@ -7642,14 +7654,14 @@
               }
             } else if (data.type === 'INIT') {
               if (data.room) {
-                document.getElementById('mem-room-name').textContent = data.room.name || 'Canlı Sahne';
+                document.getElementById('mem-room-name').textContent = data.room.name || 'Canlı Sahne'; setMemberLive(true);
                 document.getElementById('mem-room-band').textContent = data.room.band || '';
                 activeSongId = data.room.active_song;
                 activeStep = (Number.isInteger(data.room.active_step) && data.room.active_step >= 0) ? data.room.active_step : 0;
                 songs = data.room.songs ? transformSongs(data.room.songs) : {};
                 updateNowDisplay();
               } else {
-                document.getElementById('mem-room-name').textContent = 'Canlı Sahne';
+                document.getElementById('mem-room-name').textContent = 'Canlı Sahne'; setMemberLive(false);
                 document.getElementById('mem-room-band').textContent = '';
                 activeSongId = null;
                 activeStep = 0;
@@ -7660,7 +7672,7 @@
               activeSongId = null;
               activeStep = 0;
               songs = {};
-              document.getElementById('mem-room-name').textContent = 'Canlı Sahne';
+              document.getElementById('mem-room-name').textContent = 'Canlı Sahne'; setMemberLive(false);
               document.getElementById('mem-room-band').textContent = '';
               updateNowDisplay();
               showToast('Sahne kapatıldı — yönetici bekleniyor');
@@ -7672,7 +7684,7 @@
               activeStep = 0;
               songs = {};
               updateNowDisplay();
-              showToast('Yönetici tarafından listeden çıkarıldın');
+              showToast('Yönetici tarafından listeden çıkarıldın'); setMemberLive(false);
             } else if (data.type === 'REPLACED') {
               ws._suppressReconnect = true;
               if (memberPingTimer) { clearInterval(memberPingTimer); memberPingTimer = null; }

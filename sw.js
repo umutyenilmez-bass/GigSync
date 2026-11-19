@@ -1,4 +1,4 @@
-const CACHE = 'gigsync-v34-member-autosync';
+const CACHE = 'gigsync-v35-member-header';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/Gig_Sync_Logo.png'];
 
 self.addEventListener('install', e => {
