@@ -1631,8 +1631,23 @@
       text-overflow: ellipsis
     }
 
-    .hist-btns { display: flex; align-items: center; gap: 4px; }
+    .hist-btns {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      padding: 2px;
+      margin-right: 8px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+    }
+    .hist-btns .btn {
+      width: 32px !important;
+      height: 32px !important;
+      border: none;
+      background: transparent;
+    }
     .hist-btns .btn:disabled { opacity: .3; cursor: default; }
+    .hist-btns.hist-empty { visibility: hidden; }
     .home-view {
       flex: 1;
       overflow: hidden;
@@ -2570,6 +2585,7 @@
       margin: 14px 0;
     }
     .picker-panel {
+      flex-shrink: 0;
       background: var(--bg);
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -3207,10 +3223,12 @@
 
     /* Mashup Editor Modal */
     .me-parts-box {
+      flex-shrink: 0;
       border: 1px solid var(--border);
       border-radius: 10px;
       background: var(--surface2);
-      overflow: hidden;
+      max-height: 34dvh;
+      overflow-y: auto;
     }
     .me-part-row {
       display: flex;
@@ -3411,9 +3429,9 @@
       <!-- SAĞ: BUTONLAR -->
       <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-end">
         <div class="header-actions">
-          <div class="hist-btns">
-          <button class="btn btn-icon btn-ghost hist-undo" onclick="historyUndo()" title="Geri al (Ctrl+Z)" disabled style="width:38px;height:38px;border-radius:10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
-          <button class="btn btn-icon btn-ghost hist-redo" onclick="historyRedo()" title="İleri al (Ctrl+Y)" disabled style="width:38px;height:38px;border-radius:10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
+          <div class="hist-btns hist-empty">
+          <button class="btn btn-icon btn-ghost hist-undo" onclick="historyUndo()" title="Geri al (Ctrl+Z)" disabled style="width:38px;height:38px;border-radius:10px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button>
+          <button class="btn btn-icon btn-ghost hist-redo" onclick="historyRedo()" title="İleri al (Ctrl+Y)" disabled style="width:38px;height:38px;border-radius:10px"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></button>
         </div>
           <button class="btn btn-icon btn-ghost" onclick="showScreen('splash')" title="Açılış ekranı"
             style="width:38px;height:38px;border-radius:10px">
@@ -3540,9 +3558,9 @@
           <span id="member-count-dot"
             style="position:absolute;top:4px;right:4px;min-width:16px;height:16px;background:var(--green);color:#000;font-family:var(--font-mono);font-size:9px;font-weight:700;border-radius:999px;display:none;align-items:center;justify-content:center;padding:0 3px">0</span>
         </button>
-        <div class="hist-btns">
-          <button class="btn btn-icon btn-ghost hist-undo" onclick="historyUndo()" title="Geri al (Ctrl+Z)" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
-          <button class="btn btn-icon btn-ghost hist-redo" onclick="historyRedo()" title="İleri al (Ctrl+Y)" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
+        <div class="hist-btns hist-empty">
+          <button class="btn btn-icon btn-ghost hist-undo" onclick="historyUndo()" title="Geri al (Ctrl+Z)" disabled><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button>
+          <button class="btn btn-icon btn-ghost hist-redo" onclick="historyRedo()" title="İleri al (Ctrl+Y)" disabled><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></button>
         </div>
         <button class="btn btn-icon btn-ghost" onclick="goBackFromLeader()" title="Geri">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
@@ -3603,9 +3621,9 @@
           <span id="qs-member-count-dot"
             style="position:absolute;top:4px;right:4px;min-width:16px;height:16px;background:var(--green);color:#000;font-family:var(--font-mono);font-size:9px;font-weight:700;border-radius:999px;display:none;align-items:center;justify-content:center;padding:0 3px">0</span>
         </button>
-        <div class="hist-btns">
-          <button class="btn btn-icon btn-ghost hist-undo" onclick="historyUndo()" title="Geri al (Ctrl+Z)" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
-          <button class="btn btn-icon btn-ghost hist-redo" onclick="historyRedo()" title="İleri al (Ctrl+Y)" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
+        <div class="hist-btns hist-empty">
+          <button class="btn btn-icon btn-ghost hist-undo" onclick="historyUndo()" title="Geri al (Ctrl+Z)" disabled><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button>
+          <button class="btn btn-icon btn-ghost hist-redo" onclick="historyRedo()" title="İleri al (Ctrl+Y)" disabled><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></button>
         </div>
         <button class="btn btn-icon btn-ghost" onclick="goBackFromQuickStage()" title="Geri">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
@@ -3648,9 +3666,9 @@
         <div class="leader-sub"><span id="rep-edit-count" style="color:var(--accent)">0 şarkı</span></div>
       </div>
       <div class="hdr-actions" style="align-items:center">
-        <div class="hist-btns">
-          <button class="btn btn-icon btn-ghost hist-undo" onclick="historyUndo()" title="Geri al (Ctrl+Z)" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
-          <button class="btn btn-icon btn-ghost hist-redo" onclick="historyRedo()" title="İleri al (Ctrl+Y)" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
+        <div class="hist-btns hist-empty">
+          <button class="btn btn-icon btn-ghost hist-undo" onclick="historyUndo()" title="Geri al (Ctrl+Z)" disabled><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg></button>
+          <button class="btn btn-icon btn-ghost hist-redo" onclick="historyRedo()" title="İleri al (Ctrl+Y)" disabled><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.74 2.74L21 8"/><path d="M21 3v5h-5"/></svg></button>
         </div>
         <button class="btn btn-icon btn-ghost" onclick="goBackFromRepEdit()" title="Geri">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
@@ -4113,7 +4131,7 @@
       <div class="layer-divider"></div>
       <div class="picker-panel">
         <input id="me-song-search" class="picker-search" type="search" placeholder="Şarkı veya sanatçı ara..." oninput="renderMashupSongPicker()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-        <div id="me-song-results" class="me-picker-list"></div>
+        <div id="me-song-results" class="me-picker-list" style="max-height:36dvh"></div>
       </div>
       <div class="form-group">
         <div class="form-label">Genel Not (İsteğe Bağlı)</div>
@@ -4482,6 +4500,7 @@
     function updateHistoryButtons() {
       document.querySelectorAll('.hist-undo').forEach(b => { b.disabled = !_histUndo.length; });
       document.querySelectorAll('.hist-redo').forEach(b => { b.disabled = !_histRedo.length; });
+      document.querySelectorAll('.hist-btns').forEach(g => g.classList.toggle('hist-empty', !_histUndo.length && !_histRedo.length));
     }
 
     // Klavye: Ctrl+Z geri, Ctrl+Y / Ctrl+Shift+Z ileri (yazı alanlarında tarayıcının kendi geri alması çalışır)
@@ -5170,6 +5189,8 @@
       const searchEl = document.getElementById('me-song-search');
       if (searchEl) searchEl.value = '';
       renderMashupEditorParts();
+      const partsBox = document.querySelector('#me-parts-list .me-parts-box');
+      if (partsBox) partsBox.scrollTop = partsBox.scrollHeight;
       renderMashupSongPicker();
     };
 
