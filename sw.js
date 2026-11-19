@@ -1,4 +1,4 @@
-const CACHE = 'gigsync-v28-simple-ui-undo';
+const CACHE = 'gigsync-v29-ai-mashup-chip';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/Gig_Sync_Logo.png'];
 
 self.addEventListener('install', e => {
