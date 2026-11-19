@@ -182,17 +182,56 @@ export class SyncRoom extends DurableObject {
   }
 
   getMemberList() {
-    const list = [];
-    for (const [, meta] of this.sessions) {
-      list.push(meta);
+    const byKey = new Map();
+    for (const ws of this.ctx.getWebSockets()) {
+      if (typeof ws.readyState === "number" && ws.readyState >= 2) continue;
+      const meta = ws.deserializeAttachment() || this.sessions.get(ws);
+      if (!meta || !meta.id) continue;
+      const key = meta.nameKey || (meta.name || "müzisyen").trim().toLocaleLowerCase("tr-TR");
+      const prev = byKey.get(key);
+      const metaTime = meta.joinedAt || 0;
+      const prevTime = prev ? (prev.joinedAt || 0) : -1;
+      if (!prev || metaTime > prevTime || (metaTime === prevTime && meta.isLeader && !prev.isLeader)) {
+        byKey.set(key, meta);
+      }
     }
-    return list;
+    return [...byKey.values()].sort((a, b) => {
+      if (a.isLeader !== b.isLeader) return a.isLeader ? -1 : 1;
+      return (a.joinedAt || 0) - (b.joinedAt || 0);
+    });
+  }
+
+  async kickMember(targetId) {
+    for (const ws of this.ctx.getWebSockets()) {
+      const meta = ws.deserializeAttachment() || this.sessions.get(ws);
+      if (meta && meta.id === targetId) {
+        try {
+          ws.send(JSON.stringify({ type: "KICKED", message: "Lider tarafından çıkarıldın" }));
+        } catch (e) {}
+        try {
+          ws.serializeAttachment(null);
+        } catch (e) {}
+        this.sessions.delete(ws);
+        try {
+          ws.close(4002, "Removed by leader");
+        } catch (e) {}
+      }
+    }
+
+    const members = this.getMemberList();
+    this.broadcast({
+      type: "MEMBERS_UPDATE",
+      members,
+      count: members.length,
+    });
+    return { success: true, members };
   }
 
   broadcast(messageObj, excludeWs = null) {
     const payload = typeof messageObj === "string" ? messageObj : JSON.stringify(messageObj);
     for (const ws of this.ctx.getWebSockets()) {
       if (ws === excludeWs) continue;
+      if (typeof ws.readyState === "number" && ws.readyState >= 2) continue;
       try {
         ws.send(payload);
       } catch (err) {
@@ -211,14 +250,41 @@ export class SyncRoom extends DurableObject {
       const pair = new WebSocketPair();
       const [client, server] = Object.values(pair);
 
-      const name = url.searchParams.get("name") || "Müzisyen";
+      const rawName = (url.searchParams.get("name") || "").trim();
+      const cleanName = rawName || "Müzisyen";
+      const nameKey = cleanName.toLocaleLowerCase("tr-TR");
+      const clientId = (url.searchParams.get("clientId") || "").trim();
       const role = url.searchParams.get("role") || "crew";
       const isLeader = role === "leader" || role === "host";
       const memberId = "m_" + Math.random().toString(36).slice(2, 9);
 
+      // Enforce 1 active socket per device (clientId) and per person (nameKey)
+      for (const oldWs of this.ctx.getWebSockets()) {
+        const oldMeta = oldWs.deserializeAttachment() || this.sessions.get(oldWs);
+        if (!oldMeta) continue;
+        const sameClient = Boolean(clientId && oldMeta.clientId && oldMeta.clientId === clientId);
+        const samePerson = oldMeta.nameKey
+          ? oldMeta.nameKey === nameKey
+          : (oldMeta.name || "").trim().toLocaleLowerCase("tr-TR") === nameKey;
+        if (sameClient || samePerson) {
+          try {
+            oldWs.send(JSON.stringify({ type: "REPLACED", message: "Başka bir oturumdan bağlanıldı" }));
+          } catch (e) {}
+          try {
+            oldWs.serializeAttachment(null);
+          } catch (e) {}
+          this.sessions.delete(oldWs);
+          try {
+            oldWs.close(4001, "Replaced by newer connection");
+          } catch (e) {}
+        }
+      }
+
       const meta = {
         id: memberId,
-        name,
+        clientId,
+        name: cleanName,
+        nameKey,
         role,
         isLeader,
         joinedAt: Date.now(),
@@ -229,10 +295,12 @@ export class SyncRoom extends DurableObject {
       server.serializeAttachment(meta);
       this.sessions.set(server, meta);
 
+      const members = this.getMemberList();
+
       // Immediately send current room state to newly connected client
       const initialPayload = {
         type: "INIT",
-        room: this.room ? { ...this.room, members: this.getMemberList() } : null,
+        room: this.room ? { ...this.room, members } : null,
         self: meta,
       };
       server.send(JSON.stringify(initialPayload));
@@ -240,8 +308,8 @@ export class SyncRoom extends DurableObject {
       // Broadcast updated member list to room
       this.broadcast({
         type: "MEMBERS_UPDATE",
-        members: this.getMemberList(),
-        count: this.sessions.size,
+        members,
+        count: members.length,
       });
 
       return new Response(null, {
@@ -286,6 +354,13 @@ export class SyncRoom extends DurableObject {
           break;
         }
 
+        case "KICK_MEMBER": {
+          if (data.memberId) {
+            await this.kickMember(data.memberId);
+          }
+          break;
+        }
+
         case "PING": {
           ws.send(JSON.stringify({ type: "PONG", timestamp: Date.now() }));
           break;
@@ -301,19 +376,37 @@ export class SyncRoom extends DurableObject {
 
   async webSocketClose(ws, code, reason, wasClean) {
     const meta = ws.deserializeAttachment() || this.sessions.get(ws);
+    try {
+      ws.serializeAttachment(null);
+    } catch (e) {}
     this.sessions.delete(ws);
+    if (!meta) return;
 
+    const members = this.getMemberList();
     // Notify room of updated member list
     this.broadcast({
       type: "MEMBERS_UPDATE",
-      members: this.getMemberList(),
-      count: this.sessions.size,
-      left: meta ? meta.name : null,
+      members,
+      count: members.length,
+      left: meta.name || null,
     });
   }
 
   async webSocketError(ws, error) {
+    const meta = ws.deserializeAttachment() || this.sessions.get(ws);
+    try {
+      ws.serializeAttachment(null);
+    } catch (e) {}
     this.sessions.delete(ws);
+    if (!meta) return;
+
+    const members = this.getMemberList();
+    this.broadcast({
+      type: "MEMBERS_UPDATE",
+      members,
+      count: members.length,
+      left: meta.name || null,
+    });
   }
 }
 
@@ -581,9 +674,10 @@ Kütüphaneye Toplu Şarkı Ekleme Formatı:
 
     // REST API Endpoints: /api/room...
     if (path.startsWith("/api/room")) {
-      const parts = path.split("/").filter(Boolean); // ['api', 'room', ':code'?, ':action'?]
+      const parts = path.split("/").filter(Boolean); // ['api', 'room', ':code'?, ':action'?, ':subId'?]
       const code = parts[2] ? parts[2].toUpperCase() : null;
       const action = parts[3] || null;
+      const subId = parts[4] || null;
 
       // POST /api/room -> Create / Upsert room
       if (request.method === "POST" && !code) {
@@ -673,6 +767,18 @@ Kütüphaneye Toplu Şarkı Ekleme Formatı:
             return jsonResponse({ members: room ? room.members : [] });
           } else {
             return jsonResponse({ members: [] });
+          }
+        }
+
+        // DELETE /api/room/:code/member/:memberId -> Kick member
+        if (request.method === "DELETE" && action === "member" && subId) {
+          if (env.ROOMS) {
+            const id = env.ROOMS.idFromName(code);
+            const stub = env.ROOMS.get(id);
+            const res = await stub.kickMember(decodeURIComponent(subId));
+            return jsonResponse(res);
+          } else {
+            return jsonResponse({ success: true, members: [] });
           }
         }
       }

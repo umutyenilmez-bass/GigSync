@@ -1,4 +1,4 @@
-const CACHE = 'gigsync-v22-quickstage-drag-clean';
+const CACHE = 'gigsync-v23-single-member-kick';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/Gig_Sync_Logo.png'];
 
 self.addEventListener('install', e => {

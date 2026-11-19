@@ -3493,6 +3493,45 @@
       return `${wsProto}//${cleanBase}${pathAndQuery}`;
     }
 
+    function getClientId() {
+      let id = localStorage.getItem('gs_client_id');
+      if (!id) {
+        id = 'c_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2, 8);
+        localStorage.setItem('gs_client_id', id);
+      }
+      return id;
+    }
+
+    function dedupeMembers(members) {
+      const arr = Array.isArray(members) ? members : Object.values(members || {});
+      const byKey = new Map();
+      arr.forEach(m => {
+        if (!m) return;
+        const key = m.nameKey || trNormalize((m.name || 'müzisyen').trim());
+        const prev = byKey.get(key);
+        const mTime = m.joinedAt || 0;
+        const pTime = prev ? (prev.joinedAt || 0) : -1;
+        if (!prev || mTime > pTime || (mTime === pTime && m.isLeader && !prev.isLeader)) {
+          byKey.set(key, m);
+        }
+      });
+      return [...byKey.values()].sort((a, b) => {
+        if (Boolean(a.isLeader) !== Boolean(b.isLeader)) return a.isLeader ? -1 : 1;
+        return (a.joinedAt || 0) - (b.joinedAt || 0);
+      });
+    }
+
+    function closeActiveSocketsOnUnload() {
+      if (typeof leaderWs !== 'undefined' && leaderWs && leaderWs.readyState <= 1) {
+        try { leaderWs.close(1000, 'unload'); } catch (e) {}
+      }
+      if (typeof memberWs !== 'undefined' && memberWs && memberWs.readyState <= 1) {
+        try { memberWs.close(1000, 'unload'); } catch (e) {}
+      }
+    }
+    window.addEventListener('beforeunload', closeActiveSocketsOnUnload);
+    window.addEventListener('pagehide', closeActiveSocketsOnUnload);
+
     // ══ STATE ══
     const S = {
       username: '',
@@ -4889,8 +4928,9 @@
 
       const connectWs = () => {
         if (!S.activeRoomCode || S.activeRoomCode !== code) return;
-        const wsUrl = getWsUrl(`/ws?room=${code}&name=${encodeURIComponent(S.username || 'Lider')}&role=leader`);
+        const wsUrl = getWsUrl(`/ws?room=${code}&name=${encodeURIComponent(S.username || 'Lider')}&role=leader&clientId=${encodeURIComponent(getClientId())}`);
         const ws = new WebSocket(wsUrl);
+        ws._suppressReconnect = false;
         leaderWs = ws;
         S.activeWs = ws;
 
@@ -4908,24 +4948,29 @@
           try {
             const data = JSON.parse(event.data);
             if (data.type === 'MEMBERS_UPDATE') {
-              S.currentMembers = Array.isArray(data.members) ? data.members : Object.values(data.members || {});
+              S.currentMembers = dedupeMembers(data.members);
               updateMemberCountDots(S.currentMembers.length);
               renderMembersList(S.currentMembers);
             } else if (data.type === 'INIT') {
               if (data.room && data.room.members) {
-                S.currentMembers = Array.isArray(data.room.members) ? data.room.members : Object.values(data.room.members);
+                S.currentMembers = dedupeMembers(data.room.members);
                 updateMemberCountDots(S.currentMembers.length);
                 renderMembersList(S.currentMembers);
               }
+            } else if (data.type === 'REPLACED' || data.type === 'KICKED') {
+              ws._suppressReconnect = true;
             }
           } catch (err) {
             console.error('[GigSync Leader] WebSocket parse error:', err);
           }
         };
 
-        ws.onclose = () => {
+        ws.onclose = (ev) => {
           if (leaderPingTimer) clearInterval(leaderPingTimer);
-          if (S.activeRoomCode === code) {
+          if (ws._suppressReconnect || (ev && (ev.code === 4001 || ev.code === 4002))) {
+            return;
+          }
+          if (S.activeRoomCode === code && leaderWs === ws) {
             leaderReconnectTimer = setTimeout(connectWs, 2000);
           }
         };
@@ -4952,7 +4997,8 @@
         if (leaderReconnectTimer) clearTimeout(leaderReconnectTimer);
         document.removeEventListener('visibilitychange', onLeaderVisibilityChange);
         if (leaderWs) {
-          try { leaderWs.close(); } catch (e) {}
+          leaderWs._suppressReconnect = true;
+          try { leaderWs.close(1000, 'cleanup'); } catch (e) {}
           leaderWs = null;
         }
         S.activeWs = null;
@@ -4962,18 +5008,48 @@
     function renderMembersList(members) {
       const listEl = document.getElementById('members-list');
       if (!listEl) return;
-      const arr = Array.isArray(members) ? members : Object.values(members || {});
+      const arr = dedupeMembers(members);
       if (!arr.length) {
         listEl.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-family:var(--font-mono);font-size:11px;padding:20px 0">Henüz üye yok</div>';
         return;
       }
-      listEl.innerHTML = arr.map((m) => `
-        <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);border-radius:10px;margin-bottom:6px;border:1px solid var(--border)">
-          <div style="width:30px;height:30px;border-radius:7px;background:var(--accent);color:#000;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px">${esc((m.name || '?').charAt(0).toUpperCase())}</div>
-          <div style="flex:1;font-size:14px">${esc(m.name || '—')} ${m.isLeader ? '<span style="font-size:10px;color:var(--accent);font-family:var(--font-mono);margin-left:6px">(LİDER)</span>' : ''}</div>
-        </div>
-      `).join('');
+      const selfClientId = getClientId();
+      listEl.innerHTML = arr.map((m) => {
+        const isSelfLeader = Boolean(m.isLeader && m.clientId && m.clientId === selfClientId);
+        const removeBtn = (!isSelfLeader && m.id)
+          ? `<button class="qs-row-del" data-member-id="${esc(m.id)}" onclick="kickMemberFromRoom(this.dataset.memberId)" title="Listeden çıkar">×</button>`
+          : '';
+        return `
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);border-radius:10px;margin-bottom:6px;border:1px solid var(--border)">
+            <div style="width:30px;height:30px;border-radius:7px;background:var(--accent);color:var(--accent-text,#000);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">${esc((m.name || '?').charAt(0).toUpperCase())}</div>
+            <div style="flex:1;min-width:0;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(m.name || '—')} ${m.isLeader ? '<span style="font-size:10px;color:var(--accent);font-family:var(--font-mono);margin-left:6px">(LİDER)</span>' : ''}</div>
+            ${removeBtn}
+          </div>
+        `;
+      }).join('');
     }
+
+    window.kickMemberFromRoom = async (memberId) => {
+      if (!memberId || !S.activeRoomCode) return;
+      S.currentMembers = (S.currentMembers || []).filter(m => m.id !== memberId);
+      updateMemberCountDots(S.currentMembers.length);
+      renderMembersList(S.currentMembers);
+
+      if (leaderWs && leaderWs.readyState === WebSocket.OPEN) {
+        try {
+          leaderWs.send(JSON.stringify({ type: 'KICK_MEMBER', memberId }));
+        } catch (e) {}
+      }
+
+      try {
+        await fetch(`${getWorkerUrl()}/api/room/${S.activeRoomCode}/member/${encodeURIComponent(memberId)}`, {
+          method: 'DELETE'
+        });
+      } catch (e) {
+        console.warn('Üye çıkarma isteği iletilemedi:', e);
+      }
+      showToast('Üye listeden çıkarıldı');
+    };
 
     window.showMembersSheet = () => {
       if (!S.activeRoomCode) { showToast('Canlı sahne henüz açılmadı'); return; }
@@ -5689,8 +5765,9 @@
       // WebSocket Canlı Senkronizasyon Bağlantısı
       const connectWs = () => {
         if (!S.activeRoomCode || S.activeRoomCode !== code) return;
-        const wsUrl = getWsUrl(`/ws?room=${code}&name=${encodeURIComponent(S.username || 'Müzisyen')}&role=member`);
+        const wsUrl = getWsUrl(`/ws?room=${code}&name=${encodeURIComponent(S.username || 'Müzisyen')}&role=member&clientId=${encodeURIComponent(getClientId())}`);
         const ws = new WebSocket(wsUrl);
+        ws._suppressReconnect = false;
         memberWs = ws;
         S.activeWs = ws;
 
@@ -5747,15 +5824,27 @@
               document.getElementById('mem-room-band').textContent = '';
               updateNowDisplay();
               showToast('Sahne kapatıldı — lider bekleniyor');
+            } else if (data.type === 'KICKED') {
+              ws._suppressReconnect = true;
+              activeSongId = null;
+              songs = {};
+              updateNowDisplay();
+              showToast('Lider tarafından listeden çıkarıldın');
+            } else if (data.type === 'REPLACED') {
+              ws._suppressReconnect = true;
+              showToast('Yeni oturum açıldı');
             }
           } catch (err) {
             console.error('[GigSync Member] WebSocket parse error:', err);
           }
         };
 
-        ws.onclose = () => {
+        ws.onclose = (ev) => {
           if (memberPingTimer) clearInterval(memberPingTimer);
-          if (S.activeRoomCode === code) {
+          if (ws._suppressReconnect || (ev && (ev.code === 4001 || ev.code === 4002))) {
+            return;
+          }
+          if (S.activeRoomCode === code && memberWs === ws) {
             memberReconnectTimer = setTimeout(connectWs, 2000);
           }
         };
@@ -5771,7 +5860,7 @@
       const onVisibilityChange = async () => {
         if (document.visibilityState === 'visible' && S.activeRoomCode) {
           fetchCurrentState();
-          if (!memberWs || memberWs.readyState !== WebSocket.OPEN) {
+          if (!memberWs || (memberWs.readyState !== WebSocket.OPEN && !memberWs._suppressReconnect)) {
             connectWs();
           }
         }
@@ -5781,7 +5870,7 @@
       const onOnline = () => {
         if (S.activeRoomCode) {
           fetchCurrentState();
-          if (!memberWs || memberWs.readyState !== WebSocket.OPEN) {
+          if (!memberWs || (memberWs.readyState !== WebSocket.OPEN && !memberWs._suppressReconnect)) {
             connectWs();
           }
         }
@@ -5794,7 +5883,8 @@
         document.removeEventListener('visibilitychange', onVisibilityChange);
         window.removeEventListener('online', onOnline);
         if (memberWs) {
-          try { memberWs.close(); } catch (e) {}
+          memberWs._suppressReconnect = true;
+          try { memberWs.close(1000, 'cleanup'); } catch (e) {}
           memberWs = null;
         }
         S.activeWs = null;
@@ -5963,6 +6053,8 @@
       closeNameModal();
       if (S.userRole === 'crew' && S.activeRoomCode === 'LIVE') {
         joinRoomDirect(true);
+      } else if (S.userRole === 'host' && S.activeRoomCode === 'LIVE') {
+        startLeaderRealtime('LIVE');
       }
     };
 
