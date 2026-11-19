@@ -9241,64 +9241,101 @@
       }
     };
 
+    // Buluta gönderim: değişiklik "bekliyor" (gs_cloud_dirty) olarak işaretlenir, gönderilene kadar
+    // tekrar denenir. Gönderim sürerken gelen değişiklik kuyruğa alınır ve hemen ardından gönderilir.
+    var cloudSyncQueued = false;
+    var cloudSyncQueuedForce = false;
+    var cloudSyncRetryTimer = null;
+    var cloudSyncRetryIdx = 0;
+    var CLOUD_RETRY_DELAYS = [2000, 5000, 15000, 30000, 60000];
+
+    function scheduleCloudRetry(delay) {
+      clearTimeout(cloudSyncRetryTimer);
+      cloudSyncRetryTimer = setTimeout(() => cloudSyncRun(false), delay);
+    }
+
+    async function cloudSyncRun(forceWrite = false) {
+      if (S.userRole !== 'host') return;
+      if (isCloudSyncing) {
+        cloudSyncQueued = true;
+        cloudSyncQueuedForce = cloudSyncQueuedForce || forceWrite;
+        return;
+      }
+      if (S.isDefaultLibraryOnly || isOnlyDefaultLibrary(S.libraries, S.setlists)) return;
+      clearTimeout(cloudSyncRetryTimer);
+      isCloudSyncing = true;
+      cloudSyncQueued = false;
+      let retry = false;
+      try {
+        const updatedAt = parseInt(LS.get('gs_last_updated_at') || '0', 10) || Date.now();
+        const backupData = {
+          username: S.username || '',
+          libraries: S.libraries,
+          setlists: S.setlists,
+          groupKey: S.groupKey,
+          groupKeys: S.groupKeys,
+          deletedSetlists: S.deletedSetlists || {},
+          updatedAt: updatedAt,
+          force: forceWrite
+        };
+        const res = await fetch(`${getWorkerUrl()}/api/backup?user=master`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(backupData)
+        });
+        const result = await res.json().catch(() => null);
+        if (res.status === 409 || (result && result.blocked)) {
+          // Koruma kalkanı bilerek reddetti: tekrar denenmez
+          LS.set('gs_cloud_dirty', false);
+          updateCloudSyncBadge(false, '🛡️ KORUNDU');
+          showToast((result && result.error) || 'Senkron koruma kalkanı devreye girdi — toplu şarkı kaybı engellendi');
+        } else if (res.ok) {
+          cloudSyncRetryIdx = 0;
+          if (!cloudSyncQueued) LS.set('gs_cloud_dirty', false);
+          updateCloudSyncBadge(true);
+          // Sunucu başka cihazlarda silinen setlistleri bildirirse burada da kaldır
+          if (result && result.deletedSetlists && applySetlistDeletions(result.deletedSetlists)) {
+            S.isDefaultLibraryOnly = isOnlyDefaultLibrary(S.libraries, S.setlists);
+            renderSetlistCards();
+          }
+        } else {
+          retry = true;
+        }
+      } catch (e) {
+        console.warn('Otomatik bulut senkron hatası:', e);
+        retry = true;
+      } finally {
+        isCloudSyncing = false;
+      }
+      if (cloudSyncQueued) {
+        const f = cloudSyncQueuedForce;
+        cloudSyncQueued = false;
+        cloudSyncQueuedForce = false;
+        cloudSyncRun(f);
+      } else if (retry) {
+        scheduleCloudRetry(CLOUD_RETRY_DELAYS[Math.min(cloudSyncRetryIdx++, CLOUD_RETRY_DELAYS.length - 1)]);
+      }
+    }
+
     window.autoSyncToCloud = (immediate = false, opts = {}) => {
       if (S.userRole !== 'host') return;
       if (S.isDefaultLibraryOnly || isOnlyDefaultLibrary(S.libraries, S.setlists)) return;
 
       const forceWrite = Boolean(opts && opts.force);
       clearTimeout(cloudSyncTimeout);
-      const now = Date.now();
-      LS.set('gs_last_updated_at', now);
+      LS.set('gs_last_updated_at', Date.now());
+      LS.set('gs_cloud_dirty', true);
       updateCloudSyncBadge(false, '☁️ KAYDEDİLİYOR...');
+      cloudSyncRetryIdx = 0;
 
-      const syncFn = async () => {
-        if (isCloudSyncing) return;
-        if (S.isDefaultLibraryOnly || isOnlyDefaultLibrary(S.libraries, S.setlists)) return;
-        isCloudSyncing = true;
-        try {
-          const updatedAt = parseInt(LS.get('gs_last_updated_at') || '0', 10) || Date.now();
-          const backupData = {
-            username: S.username || '',
-            libraries: S.libraries,
-            setlists: S.setlists,
-            groupKey: S.groupKey,
-            groupKeys: S.groupKeys,
-            deletedSetlists: S.deletedSetlists || {},
-            updatedAt: updatedAt,
-            force: forceWrite
-          };
-          const res = await fetch(`${getWorkerUrl()}/api/backup?user=master`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(backupData)
-          });
-          const result = await res.json().catch(() => null);
-          if (res.status === 409 || (result && result.blocked)) {
-            updateCloudSyncBadge(false, '🛡️ KORUNDU');
-            showToast((result && result.error) || 'Senkron koruma kalkanı devreye girdi — toplu şarkı kaybı engellendi');
-            return;
-          }
-          if (res.ok) {
-            updateCloudSyncBadge(true);
-            // Sunucu başka cihazlarda silinen setlistleri bildirirse burada da kaldır
-            if (result && result.deletedSetlists && applySetlistDeletions(result.deletedSetlists)) {
-              S.isDefaultLibraryOnly = isOnlyDefaultLibrary(S.libraries, S.setlists);
-              renderSetlistCards();
-            }
-          }
-        } catch (e) {
-          console.warn('Otomatik bulut senkron hatası:', e);
-        } finally {
-          isCloudSyncing = false;
-        }
-      };
-
-      if (immediate) {
-        syncFn();
-      } else {
-        cloudSyncTimeout = setTimeout(syncFn, 800);
-      }
+      if (immediate) cloudSyncRun(forceWrite);
+      else cloudSyncTimeout = setTimeout(() => cloudSyncRun(forceWrite), 800);
     };
+
+    // İnternet geri gelince bekleyen değişikliği hemen gönder
+    window.addEventListener('online', () => {
+      if (LS.get('gs_cloud_dirty') === true) cloudSyncRun(false);
+    });
 
     window.autoSyncFromCloud = async (silent = true) => {
       if (isCloudSyncing) return;
@@ -9334,6 +9371,9 @@
         const shouldUpdate = isFreshInstall || localHasMangled || (localIsDefaultOnly && !cloudIsDefaultOnly) || (cloudUpdatedAt > localUpdatedAt);
 
         if (shouldUpdate) {
+          // Buluttaki kopya daha yeni: bekleyen yerel gönderim artık geçersiz
+          LS.set('gs_cloud_dirty', false);
+          clearTimeout(cloudSyncRetryTimer);
           if (data.libraries) {
             S.libraries = data.libraries;
             LS.set('gs_libraries', S.libraries);
@@ -9374,7 +9414,7 @@
           updateCloudSyncBadge(true);
         }
 
-        if (hasUnsyncedDeletions && S.userRole === 'host') {
+        if ((hasUnsyncedDeletions || (!shouldUpdate && LS.get('gs_cloud_dirty') === true)) && S.userRole === 'host') {
           autoSyncToCloud();
         }
       } catch (err) {
