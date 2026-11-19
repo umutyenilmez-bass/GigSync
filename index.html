@@ -3771,7 +3771,7 @@
   </div>
 
   <!-- CREATE SETLIST MODAL -->
-  <div class="overlay hidden" id="create-setlist-modal" onclick="if(event.target===this)closeCreateSetlistModal()"
+  <div class="overlay hidden" id="create-setlist-modal" onclick="if(event.target===this)requestCloseCreateSetlist()"
     style="z-index: 220;">
     <div class="sheet">
       <div class="sheet-handle"></div>
@@ -3790,7 +3790,7 @@
         </div>
       </div>
       <div style="display:flex;gap:10px;margin-top:8px">
-        <button class="btn btn-ghost" style="flex:1" onclick="closeCreateSetlistModal()">İptal</button>
+        <button class="btn btn-ghost" style="flex:1" onclick="requestCloseCreateSetlist()">İptal</button>
         <button class="btn btn-primary" style="flex:2" onclick="createSetlist()">Oluştur</button>
       </div>
     </div>
@@ -4124,7 +4124,7 @@
   </div>
 
   <!-- MASHUP OLUŞTUR / DÜZENLE MODALI -->
-  <div class="overlay hidden" id="mashup-editor-modal" onclick="if(event.target===this)closeMashupEditor()" style="z-index: 238;">
+  <div class="overlay hidden" id="mashup-editor-modal" onclick="if(event.target===this)requestCloseMashupEditor()" style="z-index: 238;">
     <div class="sheet" style="max-height:92dvh;overflow-y:auto">
       <div class="sheet-handle"></div>
       <div class="sheet-title" id="me-modal-title">+ MASHUP</div>
@@ -4150,7 +4150,7 @@
       </div>
       <div style="display:flex;gap:8px;margin-top:14px">
         <button id="me-delete-btn" class="btn btn-danger" style="display:none;flex:0 0 auto;padding:0 14px" onclick="deleteMashupFromEditor()">Sil</button>
-        <button class="btn btn-ghost" style="flex:1" onclick="closeMashupEditor()">İptal</button>
+        <button class="btn btn-ghost" style="flex:1" onclick="requestCloseMashupEditor()">İptal</button>
       </div>
     </div>
   </div>
@@ -5092,10 +5092,66 @@
       renderMashupEditorParts();
       renderMashupSongPicker();
       document.getElementById('mashup-editor-modal').classList.remove('hidden');
+      meBaseline = mashupEditorState();
       setTimeout(() => {
         const titleEl = document.getElementById('me-title');
         if (titleEl && !existing) titleEl.focus();
       }, 60);
+    };
+
+    // ══ KAYDEDİLMEDEN ÇIKIŞ KORUMASI ══
+    // Kaydedilmemiş mashup / setlist varken pencere kendiliğinden kapanmaz: "Kaydet" ya da "Kaydetmeden Çık" seçilir
+    let meBaseline = '';
+    function mashupEditorState() {
+      return JSON.stringify([
+        document.getElementById('me-title')?.value || '',
+        document.getElementById('me-notes')?.value || '',
+        meDraftParts
+      ]);
+    }
+    let _leaveSave = null;
+    let _leaveDiscard = null;
+    function askLeave({ onSave, onDiscard }) {
+      let modal = document.getElementById('leave-ask-modal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'leave-ask-modal';
+        modal.className = 'overlay hidden';
+        modal.style.zIndex = '255';
+        modal.onclick = (e) => { if (e.target === modal) closeLeaveAsk(); };
+        modal.innerHTML = `
+          <div class="sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">KAYDEDİLMEDİ</div>
+            <div style="display:flex;gap:10px;margin-top:6px">
+              <button class="btn btn-ghost" style="flex:1" onclick="leaveDiscard()">Kaydetmeden Çık</button>
+              <button class="btn btn-primary" style="flex:2" onclick="leaveSave()">Kaydet</button>
+            </div>
+          </div>`;
+        document.body.appendChild(modal);
+      }
+      _leaveSave = onSave;
+      _leaveDiscard = onDiscard;
+      modal.classList.remove('hidden');
+    }
+    window.closeLeaveAsk = () => {
+      _leaveSave = null;
+      _leaveDiscard = null;
+      document.getElementById('leave-ask-modal')?.classList.add('hidden');
+    };
+    window.leaveSave = () => { const f = _leaveSave; closeLeaveAsk(); if (f) f(); };
+    window.leaveDiscard = () => { const f = _leaveDiscard; closeLeaveAsk(); if (f) f(); };
+
+    window.requestCloseMashupEditor = () => {
+      if (mashupEditorState() === meBaseline) return closeMashupEditor();
+      askLeave({ onSave: () => saveMashupFromEditor(), onDiscard: () => closeMashupEditor() });
+    };
+
+    window.requestCloseCreateSetlist = () => {
+      const typed = (document.getElementById('new-setlist-name')?.value || '').trim();
+      const dirty = !_saveQuickStagePending && (csSelectedIds.length > 0 || typed);
+      if (!dirty) return closeCreateSetlistModal();
+      askLeave({ onSave: () => createSetlist(), onDiscard: () => closeCreateSetlistModal() });
     };
 
     window.closeMashupEditor = () => {
