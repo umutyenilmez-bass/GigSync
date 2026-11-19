@@ -3336,6 +3336,36 @@
     .me-picker-row:last-child { border-bottom: none; }
     .me-picker-row:active { background: var(--surface3); }
 
+    /* Ana ekran bölümleri: başlık kenardan içeride, liste başlığa sol çizgiyle bağlı.
+       Setlistler mavi (vurgu rengi), Mashuplar mor (mavinin yanında uyumlu bir ton). */
+    #setlists-toggle { --sec: var(--accent); }
+    #mashups-toggle { --sec: #a78bfa; }
+    .setlists-section-hdr { margin-left: 16px; margin-right: 16px; }
+    .setlists-section-hdr .home-sec-toggle,
+    .home-sec-toggle {
+      border-color: var(--sec, var(--accent));
+      color: var(--sec, var(--accent));
+      background: color-mix(in srgb, var(--sec, var(--accent)) 14%, transparent);
+    }
+    .setlists-section-hdr .home-sec-toggle.open {
+      background: color-mix(in srgb, var(--sec, var(--accent)) 26%, transparent);
+    }
+    #setlists-list { --sec: var(--accent); }
+    #mashups-body { --sec: #a78bfa; }
+    #setlists-list,
+    #mashups-body {
+      margin: 0 16px 14px 30px;
+      padding-left: 12px;
+      border-left: 2px solid var(--sec);
+    }
+    #setlists-list:empty { display: none; }
+    #mashups-body .mashup-home-list { margin-top: 0; }
+    .mashup-home-list .mashup-badge {
+      color: #a78bfa;
+      background: rgba(167, 139, 250, 0.14);
+      border-color: rgba(167, 139, 250, 0.35);
+    }
+
     /* ══ MOBİL UYUMLULUK ══ */
     .home-header {
       grid-template-columns: minmax(0, 1fr) auto;
