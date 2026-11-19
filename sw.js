@@ -1,4 +1,4 @@
-const CACHE = 'gigsync-v44-section-tree';
+const CACHE = 'gigsync-v45-drag-reorder';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/Gig_Sync_Logo.png'];
 
 self.addEventListener('install', e => {
