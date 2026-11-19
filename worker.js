@@ -657,6 +657,28 @@ Kütüphaneye Toplu Şarkı Ekleme Formatı:
     { "title": "Şarkı Adı", "artist": "Sanatçı", "key": "", "bpm": "", "notes": "", "link": "" }
   ]
 }
+\`\`\`
+
+5. REPERTUARDAKİ ŞARKILARI DÜZELTME / DÜZENLEME:
+Kullanıcı repertuardaki şarkıların adını, sanatçısını, tonunu veya BPM'ini düzeltmeni/değiştirmeni ya da bozuk veya tekrar eden kayıtları silmeni isterse UPDATE_LIBRARY aksiyonunu kullan (yeni şarkı EKLEME, var olanı düzenle).
+- Şarkıyı yukarıdaki repertuar listesindeki SIRA NUMARASIYLA ("no") belirt. Numarayı listeden aynen al, asla tahmin etme.
+- Her değişiklikte SADECE değişen alanları yaz. Değişmeyen alanları hiç yazma.
+- Yazım düzeltmesinde doğru Türkçe karakterleri ve şarkının/sanatçının bilinen doğru yazımını kullan (ör. "Elves Presley" → "Elvis Presley", "californiacation" → "Californication").
+- Ton ve BPM için kural 2 geçerli: kullanıcı açıkça istemedikçe key/bpm yazma.
+- "remove" listesini YALNIZCA kullanıcı silme/temizleme istediyse kullan.
+- Tek yanıtta en fazla 120 değişiklik yaz; daha fazlası varsa yanıtında kalanlar için "devam et" demesini söyle.
+- Değişiklikler kullanıcı onaylayınca uygulanır; yanıtında kısaca ne yaptığını söyle.
+
+Repertuar Düzeltme Formatı:
+\`\`\`gigsync_action
+{
+  "action": "UPDATE_LIBRARY",
+  "changes": [
+    { "no": 12, "title": "Doğru Şarkı Adı" },
+    { "no": 40, "artist": "Doğru Sanatçı" }
+  ],
+  "remove": [57]
+}
 \`\`\``;
 
         const contents = [];
@@ -695,7 +717,7 @@ Kütüphaneye Toplu Şarkı Ekleme Formatı:
                 contents,
                 generationConfig: {
                   temperature: 0.7,
-                  maxOutputTokens: 2048,
+                  maxOutputTokens: 8192,
                   thinkingConfig: { thinkingBudget: 0 }
                 }
               })
@@ -717,7 +739,7 @@ Kütüphaneye Toplu Şarkı Ekleme Formatı:
                     contents,
                     generationConfig: {
                       temperature: 0.7,
-                      maxOutputTokens: 2048
+                      maxOutputTokens: 8192
                     }
                   })
                 });

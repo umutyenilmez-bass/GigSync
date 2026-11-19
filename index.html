@@ -2759,6 +2759,52 @@
       color: var(--text-muted);
       padding: 14px 0;
     }
+    .rep-clean-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px 8px 12px;
+      margin-bottom: 8px;
+      border-radius: 10px;
+      border: 1px dashed var(--accent);
+      background: var(--accent-glow);
+      font-size: 12px;
+      color: var(--text);
+      flex-shrink: 0;
+    }
+    .rep-clean-btn {
+      flex-shrink: 0;
+      height: 32px;
+      padding: 0 14px;
+      border-radius: 8px;
+      border: none;
+      background: var(--accent);
+      color: var(--accent-text, #fff);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .rep-clean-item {
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+      color: var(--text);
+    }
+    .rep-clean-ex {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 3px;
+      word-break: break-word;
+    }
+    .rep-clean-total {
+      padding: 12px 0 2px;
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--accent);
+      text-align: center;
+    }
 
     /* ══ MOBİL UYUMLULUK ══ */
     .home-header {
@@ -3629,6 +3675,10 @@
           oninput="renderRepEditList()" style="flex:1;min-width:0" autocomplete="off" />
         <button id="rep-edit-missing-btn" class="rep-edit-chip" onclick="toggleRepEditMissing()" title="Tonu veya BPM'i eksik olanlar">Eksik</button>
       </div>
+      <div id="rep-clean-bar" class="rep-clean-bar" style="display:none">
+        <span id="rep-clean-text" style="flex:1;min-width:0"></span>
+        <button class="rep-clean-btn" onclick="openRepClean()">Temizle</button>
+      </div>
       <div id="rep-edit-list" class="rep-edit-list"></div>
       <button class="btn btn-secondary" style="width:100%;margin-top:12px;flex-shrink:0" onclick="closeRepEdit()">Kapat</button>
     </div>
@@ -3659,6 +3709,20 @@
       <div style="display:flex;gap:10px;margin-top:14px">
         <button class="btn btn-ghost" style="flex:1" onclick="closeRepSongEdit()">İptal</button>
         <button class="btn btn-primary" style="flex:2" onclick="saveRepSongEdit()">Kaydet</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- REPERTUAR TEMİZLE (önizleme + onay) -->
+  <div class="overlay hidden" id="rep-clean-modal" onclick="if(event.target===this)closeRepClean()" style="z-index: 238;">
+    <div class="sheet" style="max-height:88dvh;overflow-y:auto">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title">REPERTUARI TEMİZLE</div>
+      <div id="rep-clean-summary"></div>
+      <button class="btn btn-ghost" style="width:100%;margin-top:10px;height:40px;font-size:13px;flex-shrink:0" onclick="downloadBackupJson()">⬇ Önce yedek indir (önerilir)</button>
+      <div style="display:flex;gap:10px;margin-top:10px;flex-shrink:0">
+        <button class="btn btn-ghost" style="flex:1" onclick="closeRepClean()">Vazgeç</button>
+        <button class="btn btn-primary" style="flex:2" onclick="applyRepClean()">Temizle</button>
       </div>
     </div>
   </div>
@@ -4117,6 +4181,7 @@
       repEditMissingOnly = false;
       document.getElementById('rep-edit-modal').classList.remove('hidden');
       renderRepEditList();
+      refreshRepCleanBar();
     };
     window.closeRepEdit = () => document.getElementById('rep-edit-modal').classList.add('hidden');
 
@@ -4202,9 +4267,21 @@
       const key = document.getElementById('rse-key').value.trim();
       const bpmNum = parseInt(document.getElementById('rse-bpm').value, 10);
       const bpm = Number.isFinite(bpmNum) && bpmNum > 0 ? String(bpmNum) : '';
-      const patch = { title, artist, key, bpm };
 
-      // Aynı şarkının diğer kütüphanelerdeki kopyaları ve setlistlerdeki halleri de güncellenir
+      const { setlistsChanged } = patchRepSong(repEditSongId, { title, artist, key, bpm });
+      afterRepertoireChange(setlistsChanged);
+
+      closeRepSongEdit();
+      renderRepEditList();
+      refreshRepCleanBar();
+      showToast(`"${title}" güncellendi`);
+    };
+
+    // Bir repertuar şarkısını günceller. Diğer kütüphanelerdeki aynı ad + sanatçılı kopyaları ve
+    // setlistlerdeki halleri de değişir. Kaydetmez (afterRepertoireChange çağrılmalı).
+    function patchRepSong(id, patch) {
+      const orig = findRepSong(id);
+      if (!orig) return { found: false, setlistsChanged: false };
       const origTitle = String(orig.title || '').trim();
       const origArtist = String(orig.artist || '').trim();
       const sameSong = (s) => s && String(s.title || '').trim() === origTitle && String(s.artist || '').trim() === origArtist;
@@ -4213,7 +4290,7 @@
       Object.values(S.libraries || {}).forEach(lib => {
         if (!lib || !Array.isArray(lib.songs)) return;
         lib.songs = lib.songs.map(s => {
-          if (!s || !(s.id === repEditSongId || sameSong(s))) return s;
+          if (!s || !(s.id === id || sameSong(s))) return s;
           libIds.add(s.id);
           return { ...s, ...patch };
         });
@@ -4232,12 +4309,15 @@
       if (Array.isArray(S.liveSongs)) {
         S.liveSongs = S.liveSongs.map(s => inSetlist(s) ? { ...s, ...patch } : s);
       }
+      return { found: true, setlistsChanged };
+    }
 
+    // Repertuar değiştikten sonra: kaydet, buluta eşitle, canlı setlisti ve ekranları güncelle
+    function afterRepertoireChange(setlistsChanged) {
       LS.set('gs_last_updated_at', Date.now());
       saveLibraries();
       if (setlistsChanged) saveSetlists();
 
-      // Canlı yayındaki setlist bu şarkıyı içeriyorsa grup ekranları da güncellensin
       if (setlistsChanged && S.activeRoomCode === 'LIVE' && S.liveMode === 'setlist'
           && S.liveSetlistId && S.liveSetlistId === S.activeSetlistId && typeof pushSetlistToWorker === 'function') {
         pushSetlistToWorker();
@@ -4247,10 +4327,206 @@
       renderSetlistCards();
       if (S.activeSetlistId && document.getElementById('leader')?.classList.contains('active')) renderLeaderSongList();
       if (document.getElementById('quick-stage')?.classList.contains('active')) renderQuickStageView();
+    }
 
-      closeRepSongEdit();
+    // ══════════ REPERTUAR TEMİZLE ══════════
+    const CLEAN_PAIR_RE = /^\s*"([^"]+)"\s*:\s*"([^"]+)"\s*,?\s*$/;
+    const CLEAN_KEY_ONLY_RE = /^\s*[-–—]?\s*[A-G][#b♯♭]?m?(\s*\/\s*[A-G][#b♯♭]?m?)*\s*$/;
+    const CLEAN_DIVIDER_RE = /^[\s\-–—_.=*•·|~"'“”]*$/;
+    const CLEAN_PAIR_FRAGMENT_RE = /^\s*"[^"]*"\s*:/; // bölünmüş düzeltme satırı: "the wall": "A
+    // Yanlışlıkla yapıştırılmış program kodu satırları (# yorum, x = y, .replace( ..., "for x in y:")
+    const CLEAN_CODE_RE = /^\s*#|^\s*[{}\[\]()]\s*$|\s=\s|==|=\s*[\[{(]|\b(re\.sub|\.replace|\.strip|\.append|\.lower|\.upper|\.split|\.rsplit|\.sort|\.items|\.read|\.startswith)\s*\(|\\n|"""|^\s*(if|for|with|def|elif|else|try|except|while|return)\b.*:\s*$|\b(range|print|len|open)\s*\(|^\s*return\s+[a-z_]+\s*$|'[^']*'\s+in\s+\w/i;
+    const CLEAN_MAX_LEN = 80; // bundan uzun ad/sanatçı şarkı değil, yapıştırılmış cümle
+    const CLEAN_TRAILING_KEY_RE = /^(.*?)\s*\(\s*([A-Ga-g][#b♯♭]?m?)\s*\)\s*$/;
+
+    // "dm" → "Dm", "f#m" → "F#m", "b" → "B"; tanınmayan yazımlar olduğu gibi kalır
+    function normalizeKeyName(k) {
+      const raw = String(k || '').trim();
+      const m = raw.match(/^([A-Ga-g])([#b♯♭]?)(m?)$/);
+      if (!m) return raw;
+      const acc = m[2] === '♯' ? '#' : m[2] === '♭' ? 'b' : m[2];
+      return m[1].toUpperCase() + acc + m[3];
+    }
+
+    // Bozuk kayıtları bulur ve temizlenmiş kütüphanelerin kopyasını hazırlar (S'yi değiştirmez)
+    function planRepertoireCleanup(libraries) {
+      const libs = JSON.parse(JSON.stringify(libraries || {}));
+      const stats = { pairs: 0, renamed: 0, junk: 0, keysMoved: 0, keysFixed: 0, merged: 0 };
+      const examples = { pairs: [], renamed: [], junk: [], keysMoved: [], keysFixed: [], merged: [] };
+      const addEx = (k, v) => { if (examples[k].length < 3 && !examples[k].includes(v)) examples[k].push(v); };
+      const idMap = {};
+      const nk = (t) => trNormalize(String(t || '')).replace(/[’'`´".,!?()\[\]\-–—_/\\]/g, ' ').replace(/\s+/g, ' ').trim();
+      const has = (v) => String(v || '').trim() !== '';
+
+      // 1) Yanlışlıkla şarkı olarak eklenmiş düzeltme listesi satırları: "yanlış": "Doğru",
+      const fixMap = new Map();
+      Object.values(libs).forEach(lib => (lib && Array.isArray(lib.songs) ? lib.songs : []).forEach(s => {
+        const m = String((s && s.title) || '').match(CLEAN_PAIR_RE);
+        if (m) {
+          s._pair = m[2].trim();
+          fixMap.set(nk(m[1]), m[2].trim());
+        }
+      }));
+
+      Object.values(libs).forEach(lib => {
+        if (!lib || !Array.isArray(lib.songs)) return;
+
+        // 2) Listede yanlış yazılmış olarak geçen şarkıları doğru ada çevir
+        lib.songs.forEach(s => {
+          if (!s || s._pair) return;
+          const right = fixMap.get(nk(s.title));
+          if (right && String(s.title || '').trim() !== right) {
+            addEx('renamed', `${String(s.title).trim()} → ${right}`);
+            s.title = right;
+            stats.renamed++;
+          }
+        });
+
+        const titlesInLib = new Set(lib.songs.filter(s => s && !s._pair).map(s => nk(s.title)));
+        lib.songs = lib.songs.filter(s => {
+          if (!s) return false;
+          if (s._pair !== undefined) {
+            const right = s._pair;
+            delete s._pair;
+            stats.pairs++;
+            addEx('pairs', right);
+            if (!right || titlesInLib.has(nk(right))) return false; // doğru adıyla zaten var
+            s.title = right;
+            titlesInLib.add(nk(right));
+            return true;
+          }
+          // 3) Sadece ton ("-A/Am") ya da çizgi ("——") olan kayıtlar
+          const t = String(s.title || '');
+          const a = String(s.artist || '');
+          if (CLEAN_DIVIDER_RE.test(t) || CLEAN_KEY_ONLY_RE.test(t) || CLEAN_PAIR_FRAGMENT_RE.test(t)
+              || CLEAN_CODE_RE.test(t) || CLEAN_CODE_RE.test(a)
+              || t.length > CLEAN_MAX_LEN || a.length > CLEAN_MAX_LEN) {
+            stats.junk++;
+            addEx('junk', t.trim() || '(boş)');
+            return false;
+          }
+          return true;
+        });
+
+        lib.songs.forEach(s => {
+          // 4) Ad ya da sanatçının sonundaki "(Dm)" tonunu Ton alanına taşı
+          ['artist', 'title'].forEach(field => {
+            const m = String(s[field] || '').match(CLEAN_TRAILING_KEY_RE);
+            if (!m || (field === 'title' && !m[1].trim())) return;
+            const found = normalizeKeyName(m[2]);
+            const cur = String(s.key || '').trim();
+            if (!cur || normalizeKeyName(cur) === found) {
+              s[field] = m[1].trim();
+              s.key = found;
+              stats.keysMoved++;
+              addEx('keysMoved', `${s.title}${s.artist ? ' – ' + s.artist : ''}: ${found}`);
+            }
+          });
+          // 5) Ton yazımını düzelt (dm → Dm)
+          const cur = String(s.key || '').trim();
+          if (cur) {
+            const fixed = normalizeKeyName(cur);
+            if (fixed !== cur) {
+              stats.keysFixed++;
+              addEx('keysFixed', `${cur} → ${fixed}`);
+            }
+            s.key = fixed;
+          }
+        });
+
+        // 6) Tekrar eden kayıtları birleştir (bilgisi en dolu olan kalır, boş alanları diğerlerinden dolar)
+        const score = (s) => (has(s.artist) ? 4 : 0) + (has(s.key) ? 2 : 0) + (has(s.bpm) ? 2 : 0)
+          + ((has(s.notes) || has(s.link)) ? 1 : 0) + (/[çğıöşüÇĞİÖŞÜ]/.test(s.title || '') ? 1 : 0);
+        const byTitle = new Map();
+        lib.songs.forEach((s, i) => {
+          const k = nk(s.title);
+          if (!byTitle.has(k)) byTitle.set(k, []);
+          byTitle.get(k).push(i);
+        });
+        const drop = new Set();
+        byTitle.forEach(idxs => {
+          if (idxs.length < 2) return;
+          // Aynı adda tek sanatçı (ya da hiç) varsa hepsi aynı şarkı; farklı sanatçılar ayrı tutulur
+          const artists = new Set(idxs.map(i => nk(lib.songs[i].artist)).filter(Boolean));
+          const buckets = new Map();
+          idxs.forEach(i => {
+            const bk = artists.size <= 1 ? '*' : (nk(lib.songs[i].artist) || '?');
+            if (!buckets.has(bk)) buckets.set(bk, []);
+            buckets.get(bk).push(i);
+          });
+          buckets.forEach(b => {
+            if (b.length < 2) return;
+            const sorted = [...b].sort((x, y) => score(lib.songs[y]) - score(lib.songs[x]) || x - y);
+            const keep = lib.songs[sorted[0]];
+            sorted.slice(1).forEach(i => {
+              const other = lib.songs[i];
+              ['artist', 'key', 'bpm', 'notes', 'link'].forEach(f => {
+                if (!has(keep[f]) && has(other[f])) keep[f] = other[f];
+              });
+              if (other.id && keep.id) idMap[other.id] = keep.id;
+              drop.add(i);
+              stats.merged++;
+            });
+            addEx('merged', `${keep.title}${keep.artist ? ' – ' + keep.artist : ''} (${b.length}→1)`);
+          });
+        });
+        if (drop.size) lib.songs = lib.songs.filter((_, i) => !drop.has(i));
+      });
+
+      const count = (o) => Object.values(o || {}).reduce((n, l) => n + ((l && Array.isArray(l.songs)) ? l.songs.length : 0), 0);
+      const total = Object.values(stats).reduce((a, b) => a + b, 0);
+      return { libraries: libs, idMap, stats, examples, total, before: count(libraries), after: count(libs) };
+    }
+
+    function refreshRepCleanBar() {
+      const bar = document.getElementById('rep-clean-bar');
+      if (!bar) return;
+      const plan = planRepertoireCleanup(S.libraries);
+      if (!plan.total) { bar.style.display = 'none'; return; }
+      document.getElementById('rep-clean-text').textContent = `🧹 ${plan.total} düzeltme önerisi (${plan.before} → ${plan.after} kayıt)`;
+      bar.style.display = 'flex';
+    }
+
+    window.openRepClean = () => {
+      const p = planRepertoireCleanup(S.libraries);
+      if (!p.total) { refreshRepCleanBar(); return showToast('Temizlenecek bir şey yok'); }
+      const rows = [
+        ['pairs', 'düzeltme listesi satırı (doğru ada çevrilecek ya da fazlası silinecek)'],
+        ['renamed', 'yanlış yazılmış şarkı adı düzeltilecek'],
+        ['junk', 'şarkı olmayan kayıt silinecek (ton/çizgi satırı, kod satırı, cümle)'],
+        ['keysMoved', 'ad/sanatçı içindeki ton "Ton" alanına taşınacak'],
+        ['keysFixed', 'ton yazımı düzeltilecek'],
+        ['merged', 'tekrar eden kayıt birleştirilecek'],
+      ].filter(([k]) => p.stats[k] > 0);
+      document.getElementById('rep-clean-summary').innerHTML = rows.map(([k, label]) => `
+        <div class="rep-clean-item">
+          <div><b>${p.stats[k]}</b> ${label}</div>
+          <div class="rep-clean-ex">${p.examples[k].map(esc).join(' · ')}${p.stats[k] > p.examples[k].length ? ' …' : ''}</div>
+        </div>`).join('') + `<div class="rep-clean-total">${p.before} kayıt → ${p.after} kayıt</div>`;
+      document.getElementById('rep-clean-modal').classList.remove('hidden');
+    };
+    window.closeRepClean = () => document.getElementById('rep-clean-modal').classList.add('hidden');
+
+    window.applyRepClean = () => {
+      const p = planRepertoireCleanup(S.libraries); // güncel veriyle yeniden hesapla
+      if (!p.total) return closeRepClean();
+      S.libraries = p.libraries;
+
+      // Setlistlerdeki şarkı bağlantılarını birleştirilen kayda yönlendir
+      const remap = (s) => (s && s.libId && p.idMap[s.libId]) ? { ...s, libId: p.idMap[s.libId] } : s;
+      let setlistsChanged = false;
+      Object.values(S.setlists || {}).forEach(sl => {
+        if (!sl || !Array.isArray(sl.songs)) return;
+        const next = sl.songs.map(remap);
+        if (next.some((s, i) => s !== sl.songs[i])) { sl.songs = next; setlistsChanged = true; }
+      });
+      if (Array.isArray(S.liveSongs)) S.liveSongs = S.liveSongs.map(remap);
+
+      afterRepertoireChange(setlistsChanged);
+      closeRepClean();
       renderRepEditList();
-      showToast(`"${title}" güncellendi`);
+      refreshRepCleanBar();
+      showToast(`Repertuar temizlendi: ${p.before} → ${p.after} kayıt`);
     };
 
     window.updateUsernameDisplay = () => {
@@ -6538,12 +6814,14 @@
 
       // Kullanıcının TÜM kütüphanelerindeki ve setlistlerindeki eksiksiz güncel durumunu hazırla
       const allSongs = [];
+      const aiSongIds = []; // AI'nin "no" ile işaret ettiği şarkıları bulmak için (allSongs ile aynı sırada)
       const seenIds = new Set();
       Object.entries(S.libraries || {}).forEach(([libId, lib]) => {
         const libName = lib.name || 'Genel';
         (lib.songs || []).forEach(s => {
           if (s && s.id && !seenIds.has(s.id)) {
             seenIds.add(s.id);
+            aiSongIds.push(s.id);
             allSongs.push({
               t: s.title || '',
               a: s.artist || '',
@@ -6589,6 +6867,9 @@
 
         const data = await res.json();
         const reply = data.reply || 'Bir yanıt oluşturulamadı.';
+        if (data.action && data.action.action === 'UPDATE_LIBRARY') {
+          data.action._songIds = aiSongIds;
+        }
 
         // Geçmişe ekle
         aiChatHistory.push({ role: 'user', content: text });
@@ -6652,6 +6933,9 @@
         actionCard.style.cssText = 'background:var(--surface3);border:1px solid var(--green);border-radius:12px;padding:10px 12px;margin-top:10px;font-size:12px;color:var(--green);font-family:var(--font-mono)';
         actionCard.innerHTML = `✅ ${(action.songs || []).length} şarkı kütüphanene başarıyla eklendi!`;
         bubbleDiv.appendChild(actionCard);
+      } else if (action && action.action === 'UPDATE_LIBRARY') {
+        // Düzeltmeler hemen uygulanmaz: önce liste gösterilir, kullanıcı onaylar
+        bubbleDiv.appendChild(buildLibraryUpdateCard(action));
       }
 
       msgDiv.appendChild(bubbleDiv);
@@ -6725,6 +7009,118 @@
         if (S.userRole === 'host') renderLibrary();
         showToast(`${songs.length} şarkı kütüphaneye eklendi! 📚`);
       }
+    }
+
+    // ══════════ AI REPERTUAR DÜZELTMESİ (UPDATE_LIBRARY) ══════════
+    // AI şarkıları repertuar listesindeki sıra numarasıyla ("no") belirtir; numara o istekte
+    // gönderilen listeye göre şarkı kimliğine çevrilir.
+    function resolveAiLibraryUpdate(action) {
+      const ids = Array.isArray(action._songIds) ? action._songIds : [];
+      const byNo = (no) => {
+        const n = parseInt(no, 10);
+        return (n >= 1 && n <= ids.length) ? ids[n - 1] : null;
+      };
+      const changes = [];
+      const removes = [];
+      let skipped = 0;
+
+      (Array.isArray(action.changes) ? action.changes : []).forEach(c => {
+        const id = c ? byNo(c.no) : null;
+        const song = id ? findRepSong(id) : null;
+        if (!song) { skipped++; return; }
+        const patch = {};
+        ['title', 'artist', 'key', 'bpm'].forEach(f => {
+          if (c[f] !== undefined && c[f] !== null) patch[f] = String(c[f]).trim();
+        });
+        if ('title' in patch && !patch.title) delete patch.title;
+        if ('key' in patch) patch.key = normalizeKeyName(patch.key);
+        if ('bpm' in patch) {
+          const n = parseInt(patch.bpm, 10);
+          patch.bpm = Number.isFinite(n) && n > 0 ? String(n) : '';
+        }
+        Object.keys(patch).forEach(f => { if (String(song[f] || '').trim() === patch[f]) delete patch[f]; });
+        if (Object.keys(patch).length) changes.push({ id, song, patch });
+      });
+
+      const removeIds = new Set();
+      (Array.isArray(action.remove) ? action.remove : []).forEach(r => {
+        const id = byNo(r && typeof r === 'object' ? r.no : r);
+        const song = id ? findRepSong(id) : null;
+        if (!song) { skipped++; return; }
+        if (removeIds.has(id)) return;
+        removeIds.add(id);
+        removes.push({ id, song });
+      });
+      return { changes, removes, skipped };
+    }
+
+    function buildLibraryUpdateCard(action) {
+      const card = document.createElement('div');
+      card.style.cssText = 'background:var(--surface3);border:1px solid var(--accent);border-radius:12px;padding:12px;margin-top:10px';
+      const r = resolveAiLibraryUpdate(action);
+      if (!r.changes.length && !r.removes.length) {
+        card.innerHTML = '<div style="font-size:12px;color:var(--text-muted)">Uygulanacak bir değişiklik bulunamadı.</div>';
+        return card;
+      }
+      const fmt = (title, artist) => `${title || '—'}${artist ? ' – ' + artist : ''}`;
+      const lines = [
+        ...r.changes.map(c => {
+          const p = c.patch;
+          const parts = [];
+          if ('title' in p || 'artist' in p) {
+            parts.push(`${fmt(c.song.title, c.song.artist)} → ${fmt(p.title ?? c.song.title, p.artist ?? c.song.artist)}`);
+          } else {
+            parts.push(fmt(c.song.title, c.song.artist));
+          }
+          if ('key' in p) parts.push(`Ton: ${p.key || '—'}`);
+          if ('bpm' in p) parts.push(`BPM: ${p.bpm || '—'}`);
+          return '✏️ ' + parts.join(' · ');
+        }),
+        ...r.removes.map(x => '🗑 ' + fmt(x.song.title, x.song.artist)),
+      ];
+      const head = [
+        r.changes.length ? `${r.changes.length} düzenleme` : '',
+        r.removes.length ? `${r.removes.length} silme` : '',
+      ].filter(Boolean).join(' · ');
+      const shown = lines.slice(0, 8).map(l =>
+        `<div style="font-size:12px;color:var(--text);padding:4px 0;border-bottom:1px solid var(--border);word-break:break-word">${esc(l)}</div>`).join('');
+      const more = lines.length > 8
+        ? `<div style="font-size:11px;color:var(--text-muted);padding-top:6px">+${lines.length - 8} değişiklik daha</div>` : '';
+      card.innerHTML = `
+        <div style="font-weight:700;color:var(--accent);font-size:13px;margin-bottom:6px;font-family:var(--font-mono)">📝 Repertuar: ${esc(head)}</div>
+        ${shown}${more}
+        <button class="btn btn-primary" style="width:100%;height:36px;font-size:12px;padding:0;margin-top:10px">Değişiklikleri Uygula</button>`;
+      const btn = card.querySelector('button');
+      btn.onclick = () => {
+        const res = applyAiLibraryUpdate(action);
+        btn.disabled = true;
+        btn.textContent = res.applied ? `Uygulandı ✓ (${res.applied})` : 'Değişiklik kalmadı';
+      };
+      return card;
+    }
+
+    function applyAiLibraryUpdate(action) {
+      const r = resolveAiLibraryUpdate(action); // güncel veriye göre yeniden çöz
+      let setlistsChanged = false;
+      r.changes.forEach(c => {
+        if (patchRepSong(c.id, c.patch).setlistsChanged) setlistsChanged = true;
+      });
+      if (r.removes.length) {
+        const ids = new Set(r.removes.map(x => x.id));
+        Object.values(S.libraries || {}).forEach(lib => {
+          if (lib && Array.isArray(lib.songs)) lib.songs = lib.songs.filter(s => !s || !ids.has(s.id));
+        });
+      }
+      const applied = r.changes.length + r.removes.length;
+      if (applied) {
+        afterRepertoireChange(setlistsChanged);
+        if (!document.getElementById('rep-edit-modal').classList.contains('hidden')) {
+          renderRepEditList();
+          refreshRepCleanBar();
+        }
+        showToast(`Repertuar güncellendi: ${applied} değişiklik`);
+      }
+      return { applied };
     }
 
     // ══════════ SES TANIMA & CANLI SES DALGASI (WEB AUDIO + SPEECH) ══════════
