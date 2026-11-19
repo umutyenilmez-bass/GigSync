@@ -1,4 +1,4 @@
-const CACHE = 'gigsync-v47-layout-polish';
+const CACHE = 'gigsync-v48-inline-sections';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/Gig_Sync_Logo.png'];
 
 self.addEventListener('install', e => {
