@@ -3782,6 +3782,7 @@
       </div>
       <input id="new-setlist-band" type="hidden" value="" />
       <div id="cs-picker-group">
+        <div id="cs-selected"></div>
         <div class="layer-divider"></div>
         <div class="picker-panel">
           <input id="cs-search" class="picker-search" type="search" placeholder="Şarkı veya sanatçı ara..." oninput="renderCreateSetlistPicker()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
@@ -5159,7 +5160,7 @@
       if (!resultsEl) return;
       const q = trNormalize((document.getElementById('me-song-search')?.value || '').trim());
       const candidates = sortRepertoireSongs(
-        getAllRepertoireSongs().filter(s => s && s.id && !isMashupSong(s) && matchesSongQuery(s, q)));
+        getAllRepertoireSongs().filter(s => s && s.id && !isMashupSong(s) && !meDraftParts.some(p => p.libId === s.id) && matchesSongQuery(s, q)));
 
       if (!candidates.length) {
         resultsEl.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:12px;padding:14px">Eşleşen şarkı yok</div>';
@@ -5167,11 +5168,10 @@
       }
 
       resultsEl.innerHTML = candidates.map(s => {
-        const cnt = meDraftParts.filter(p => p.libId === s.id).length;
         return `
         <div class="me-picker-row" data-id="${esc(s.id)}" onclick="addSongToMashupDraft(this.dataset.id)">
           ${songMainHtml(s)}
-          <div class="rep-edit-tags">${cnt ? `<span class="rep-tag">×${cnt}</span>` : ''}${songTagsHtml(s)}</div>
+          <div class="rep-edit-tags">${songTagsHtml(s)}</div>
           <span style="color:var(--accent);font-weight:700;font-size:16px;line-height:1;flex-shrink:0">+</span>
         </div>`;
       }).join('');
@@ -5592,8 +5592,24 @@
 
     window.toggleCreateSetlistSong = (id) => {
       const i = csSelectedIds.indexOf(id);
-      if (i >= 0) csSelectedIds.splice(i, 1);
-      else csSelectedIds.push(id);
+      if (i >= 0) {
+        csSelectedIds.splice(i, 1);
+        renderCreateSetlistPicker();
+        return;
+      }
+      csSelectedIds.push(id);
+      const search = document.getElementById('cs-search');
+      if (search) search.value = '';
+      renderCreateSetlistPicker();
+      const box = document.querySelector('#cs-selected .me-parts-box');
+      if (box) box.scrollTop = box.scrollHeight;
+    };
+
+    window.moveCreateSetlistSong = (idx, dir) => {
+      const t = idx + dir;
+      if (t < 0 || t >= csSelectedIds.length) return;
+      const [x] = csSelectedIds.splice(idx, 1);
+      csSelectedIds.splice(t, 0, x);
       renderCreateSetlistPicker();
     };
 
@@ -5602,22 +5618,35 @@
       if (!el) return;
       const countEl = document.getElementById('cs-pick-count');
       if (countEl) countEl.textContent = `(${csSelectedIds.length})`;
+      const repAll = getAllRepertoireSongs();
+      const selEl = document.getElementById('cs-selected');
+      if (selEl) {
+        const chosen = csSelectedIds.map(id => repAll.find(x => x && x.id === id)).filter(Boolean);
+        selEl.innerHTML = chosen.length ? '<div class="me-parts-box">' + chosen.map((x, i) => `
+          <div class="me-part-row">
+            <span class="me-part-num">${i + 1}</span>
+            ${songMainHtml(x)}
+            <div class="rep-edit-tags">${songTagsHtml(x)}</div>
+            <div class="me-part-btns">
+              <button type="button" class="me-icon-btn" onclick="moveCreateSetlistSong(${i}, -1)" ${i === 0 ? 'disabled style="opacity:.3"' : ''} title="Yukarı">↑</button>
+              <button type="button" class="me-icon-btn" onclick="moveCreateSetlistSong(${i}, 1)" ${i === chosen.length - 1 ? 'disabled style="opacity:.3"' : ''} title="Aşağı">↓</button>
+              <button type="button" class="me-icon-btn del" data-id="${esc(x.id)}" onclick="toggleCreateSetlistSong(this.dataset.id)" title="Çıkar">×</button>
+            </div>
+          </div>`).join('') + '</div>' : '';
+      }
+
       const q = trNormalize((document.getElementById('cs-search')?.value || '').trim());
-      const all = sortRepertoireSongs(getAllRepertoireSongs().filter(x => x && x.id && matchesSongQuery(x, q)));
+      const all = sortRepertoireSongs(repAll.filter(x => x && x.id && !csSelectedIds.includes(x.id) && matchesSongQuery(x, q)));
       const ordered = [...all.filter(isMashupSong), ...all.filter(x => !isMashupSong(x))];
       if (!ordered.length) {
         el.innerHTML = '<div class="rep-edit-note">Eşleşen şarkı yok</div>';
         return;
       }
-      el.innerHTML = ordered.map(x => {
-        const idx = csSelectedIds.indexOf(x.id);
-        const sel = idx >= 0;
-        return `<div class="me-picker-row" data-id="${esc(x.id)}" onclick="toggleCreateSetlistSong(this.dataset.id)" style="${sel ? 'background:var(--accent-glow);' : ''}">
+      el.innerHTML = ordered.map(x => `<div class="me-picker-row" data-id="${esc(x.id)}" onclick="toggleCreateSetlistSong(this.dataset.id)">
           ${songMainHtml(x)}
           <div class="rep-edit-tags">${songTagsHtml(x)}</div>
-          <span style="font-family:var(--font-mono);font-size:12px;font-weight:700;color:${sel ? 'var(--accent)' : 'var(--text-dim)'};flex-shrink:0;min-width:26px;text-align:right">${sel ? '#' + (idx + 1) : '+'}</span>
-        </div>`;
-      }).join('');
+          <span style="color:var(--accent);font-weight:700;font-size:16px;line-height:1;flex-shrink:0">+</span>
+        </div>`).join('');
     };
 
     // ══ CREATE SETLIST ══

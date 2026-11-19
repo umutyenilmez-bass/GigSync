@@ -1,4 +1,4 @@
-const CACHE = 'gigsync-v39-section-bars';
+const CACHE = 'gigsync-v40-picked-out';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/Gig_Sync_Logo.png'];
 
 self.addEventListener('install', e => {
