@@ -5342,8 +5342,9 @@
       if (setlistsChanged) saveSetlists();
 
       if (setlistsChanged && S.activeRoomCode === 'LIVE' && S.liveMode === 'setlist'
-          && S.liveSetlistId && S.liveSetlistId === S.activeSetlistId && typeof pushSetlistToWorker === 'function') {
-        pushSetlistToWorker();
+          && S.liveSetlistId && S.setlists[S.liveSetlistId] && typeof pushSetlistToWorker === 'function') {
+        if (S.liveSetlistId === S.activeSetlistId) pushSetlistToWorker();
+        else pushLiveSetlistFromStorage();
       }
       if (quickChanged && S.activeRoomCode === 'LIVE' && S.liveMode === 'quick' && typeof ensureLiveRoomOpen === 'function') {
         ensureLiveRoomOpen({
@@ -7000,6 +7001,22 @@
         window.stepLiveMashup(-1);
       }
     });
+
+    // Canlı setlist, ekranda açık olmasa bile (ör. ana ekrandan mashup düzenlenince) kayıtlı kopyasından gönderilir
+    window.pushLiveSetlistFromStorage = async () => {
+      const sl = S.setlists[S.liveSetlistId];
+      if (!S.activeRoomCode || !sl) return;
+      const songsArr = (sl.songs || []).map((s, i) => ({ ...s, order: i }));
+      try {
+        await fetch(`${getWorkerUrl()}/api/room/${S.activeRoomCode}/setlist`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ songs: songsArr })
+        });
+      } catch (error) {
+        console.error('Canlı setlist güncellenemedi:', error);
+      }
+    };
 
     window.pushSetlistToWorker = async () => {
       if (!S.activeRoomCode) return;

@@ -1,4 +1,4 @@
-const CACHE = 'gigsync-v42-leave-guard';
+const CACHE = 'gigsync-v43-live-mashup-sync';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/Gig_Sync_Logo.png'];
 
 self.addEventListener('install', e => {
