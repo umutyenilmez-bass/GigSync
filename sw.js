@@ -1,4 +1,4 @@
-const CACHE = 'gigsync-v45-drag-reorder';
+const CACHE = 'gigsync-v46-fullpage-create';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/Gig_Sync_Logo.png'];
 
 self.addEventListener('install', e => {

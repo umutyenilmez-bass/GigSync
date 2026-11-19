@@ -3339,6 +3339,119 @@
     #cs-selected .me-parts-box { max-height: 26dvh; overflow-y: auto; }
     #cs-selected .me-part-row,
     #me-parts-list .me-part-row { cursor: grab; touch-action: none; user-select: none; }
+    /* ══ TAM SAYFA OLUŞTURMA EKRANLARI (setlist / mashup) ══
+       Üstte ad + kaydet, altında sabit bölme: üstte seçilenler (sürüklenir), altta şarkı listesi.
+       Bölme sabit olduğu için alt liste seçim yaptıkça kaymaz. */
+    .overlay.fp {
+      align-items: stretch;
+      background: var(--surface);
+      backdrop-filter: none;
+      animation: none;
+    }
+    .fp-page {
+      width: 100%;
+      height: 100%;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+    }
+    .fp-top {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 12px;
+      padding-top: max(env(safe-area-inset-top), 10px);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .fp-name { flex: 1; min-width: 0; height: 44px; }
+    .fp-save { flex-shrink: 0; height: 44px; padding: 0 18px; }
+    .fp-note {
+      flex-shrink: 0;
+      margin: 8px 12px 0;
+      height: 36px;
+      padding: 0 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: transparent;
+      color: var(--text);
+      font-size: 13px;
+      outline: none;
+    }
+    .fp-strip {
+      flex-shrink: 0;
+      margin: 8px 12px 0;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--accent);
+    }
+    .fp-body {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      margin-top: 8px;
+    }
+    .fp-chosen {
+      flex: 0 0 38%;
+      min-height: 0;
+      position: relative;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      background: var(--surface2);
+    }
+    .fp-picker {
+      flex: 1;
+      min-height: 0;
+      display: flex;
+      flex-direction: column;
+      background: var(--bg);
+      border-top: 1px solid var(--border2);
+    }
+    .fp-picker .picker-search { flex-shrink: 0; height: 46px; }
+    .fp-picker .me-picker-list {
+      flex: 1;
+      min-height: 0;
+      max-height: none;
+      margin: 0;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    #cs-selected .me-parts-box,
+    #me-parts-list .me-parts-box {
+      max-height: none;
+      overflow: visible;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+    }
+    #cs-selected .me-part-row,
+    #me-parts-list .me-part-row { touch-action: pan-y; }
+    .me-part-row.dragging {
+      position: relative;
+      z-index: 6;
+      background: var(--surface3);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .5);
+    }
+    /* Hızlı Sahne "Setlist Olarak Kaydet": sadece ad kutusu, alttan açılır */
+    .overlay.fp.fp-compact {
+      align-items: flex-end;
+      background: rgba(4, 8, 18, .85);
+      backdrop-filter: blur(6px);
+    }
+    .fp-compact .fp-page {
+      height: auto;
+      background: var(--surface);
+      border-radius: 24px 24px 0 0;
+      border-top: 1px solid var(--border2);
+      padding-bottom: max(env(safe-area-inset-bottom), 12px);
+    }
+    .fp-compact .fp-top { border-bottom: none; padding-top: 16px; }
+    .fp-compact .fp-body { display: none; }
+
     /* Ana ekran bölümleri: başlık kenardan içeride, liste başlığa sol çizgiyle bağlı.
        Setlistler mavi (vurgu rengi), Mashuplar mor (mavinin yanında uyumlu bir ton). */
     #setlists-toggle { --sec: var(--accent); }
@@ -3804,27 +3917,22 @@
   </div>
 
   <!-- CREATE SETLIST MODAL -->
-  <div class="overlay hidden" id="create-setlist-modal" onclick="if(event.target===this)requestCloseCreateSetlist()"
-    style="z-index: 220;">
-    <div class="sheet">
-      <div class="sheet-handle"></div>
-      <div class="sheet-title">+ SETLİST</div>
-      <div class="form-group">
-        <div class="form-label">Setlist Adı</div>
-        <input id="new-setlist-name" class="form-input" type="text" placeholder="ör. Rixos Bodrum" maxlength="60" />
+  <div class="overlay hidden fp" id="create-setlist-modal" style="z-index: 220;">
+    <div class="fp-page">
+      <div class="fp-top">
+        <button class="btn btn-icon btn-ghost" onclick="requestCloseCreateSetlist()" title="Geri">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7" /></svg>
+        </button>
+        <input id="new-setlist-name" class="form-input fp-name" type="text" placeholder="Setlist adı (ör. Rixos Bodrum)" maxlength="60" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();createSetlist();}" />
+        <button class="btn btn-primary fp-save" onclick="createSetlist()">Oluştur</button>
       </div>
       <input id="new-setlist-band" type="hidden" value="" />
-      <div id="cs-picker-group">
-        <div id="cs-selected"></div>
-        <div class="layer-divider"></div>
-        <div class="picker-panel">
+      <div id="cs-picker-group" class="fp-body">
+        <div id="cs-selected" class="fp-chosen"></div>
+        <div class="fp-picker">
           <input id="cs-search" class="picker-search" type="search" placeholder="Şarkı veya sanatçı ara..." oninput="renderCreateSetlistPicker()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-          <div id="cs-picker" class="me-picker-list" style="max-height:34dvh"></div>
+          <div id="cs-picker" class="me-picker-list"></div>
         </div>
-      </div>
-      <div style="display:flex;gap:10px;margin-top:8px">
-        <button class="btn btn-ghost" style="flex:1" onclick="requestCloseCreateSetlist()">İptal</button>
-        <button class="btn btn-primary" style="flex:2" onclick="createSetlist()">Oluştur</button>
       </div>
     </div>
   </div>
@@ -4157,33 +4265,27 @@
   </div>
 
   <!-- MASHUP OLUŞTUR / DÜZENLE MODALI -->
-  <div class="overlay hidden" id="mashup-editor-modal" onclick="if(event.target===this)requestCloseMashupEditor()" style="z-index: 238;">
-    <div class="sheet" style="max-height:92dvh;overflow-y:auto">
-      <div class="sheet-handle"></div>
-      <div class="sheet-title" id="me-modal-title">+ MASHUP</div>
-      <div class="form-group">
-        <div class="form-label">Mashup Adı</div>
-        <div style="display:flex;gap:8px">
-          <input id="me-title" class="form-input" style="flex:1;min-width:0" type="text" maxlength="80" placeholder="ör. Roman Potpuri / 90'lar Pop" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();saveMashupFromEditor();}" />
-          <button class="btn btn-primary" style="flex-shrink:0;padding:0 20px" onclick="saveMashupFromEditor()">Kaydet</button>
+  <div class="overlay hidden fp" id="mashup-editor-modal" style="z-index: 238;">
+    <div class="fp-page">
+      <span id="me-modal-title" hidden></span>
+      <div class="fp-top">
+        <button class="btn btn-icon btn-ghost" onclick="requestCloseMashupEditor()" title="Geri">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7" /></svg>
+        </button>
+        <input id="me-title" class="form-input fp-name" type="text" maxlength="80" placeholder="Mashup adı (ör. Roman Potpuri)" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();saveMashupFromEditor();}" />
+        <button id="me-delete-btn" class="btn btn-icon btn-ghost" style="display:none;color:var(--red)" onclick="deleteMashupFromEditor()" title="Sil">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+        </button>
+        <button class="btn btn-primary fp-save" onclick="saveMashupFromEditor()">Kaydet</button>
+      </div>
+      <input id="me-notes" class="fp-note" type="text" maxlength="300" placeholder="Not (isteğe bağlı)" autocomplete="off" />
+      <div id="me-parts-count" class="fp-strip" style="display:none"></div>
+      <div class="fp-body">
+        <div id="me-parts-list" class="fp-chosen"></div>
+        <div class="fp-picker">
+          <input id="me-song-search" class="picker-search" type="search" placeholder="Şarkı veya sanatçı ara..." oninput="renderMashupSongPicker()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          <div id="me-song-results" class="me-picker-list"></div>
         </div>
-      </div>
-      <div class="form-group">
-        <div class="form-label" id="me-parts-count" style="display:none"></div>
-        <div id="me-parts-list"></div>
-      </div>
-      <div class="layer-divider"></div>
-      <div class="picker-panel">
-        <input id="me-song-search" class="picker-search" type="search" placeholder="Şarkı veya sanatçı ara..." oninput="renderMashupSongPicker()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-        <div id="me-song-results" class="me-picker-list" style="max-height:36dvh"></div>
-      </div>
-      <div class="form-group">
-        <div class="form-label">Genel Not (İsteğe Bağlı)</div>
-        <textarea id="me-notes" class="form-input" rows="2" maxlength="300" placeholder="Tüm potpuri için sahne notu..." style="height:auto;padding-top:8px;padding-bottom:8px;resize:vertical"></textarea>
-      </div>
-      <div style="display:flex;gap:8px;margin-top:14px">
-        <button id="me-delete-btn" class="btn btn-danger" style="display:none;flex:0 0 auto;padding:0 14px" onclick="deleteMashupFromEditor()">Sil</button>
-        <button class="btn btn-ghost" style="flex:1" onclick="requestCloseMashupEditor()">İptal</button>
       </div>
     </div>
   </div>
@@ -5255,6 +5357,7 @@
         return;
       }
 
+      const keepTop = resultsEl.scrollTop;
       resultsEl.innerHTML = candidates.map(s => {
         return `
         <div class="me-picker-row" data-id="${esc(s.id)}" onclick="addSongToMashupDraft(this.dataset.id)">
@@ -5263,6 +5366,7 @@
           <span style="color:var(--accent);font-weight:700;font-size:16px;line-height:1;flex-shrink:0">+</span>
         </div>`;
       }).join('');
+      resultsEl.scrollTop = keepTop;
     };
 
     window.startReplaceMashupPart = (idx) => {
@@ -5281,10 +5385,8 @@
       } else {
         meDraftParts.push(part);
       }
-      const searchEl = document.getElementById('me-song-search');
-      if (searchEl) searchEl.value = '';
       renderMashupEditorParts();
-      const partsBox = document.querySelector('#me-parts-list .me-parts-box');
+      const partsBox = document.getElementById('me-parts-list');
       if (partsBox) partsBox.scrollTop = partsBox.scrollHeight;
       renderMashupSongPicker();
     };
@@ -5685,55 +5787,129 @@
     function rowDragRows(key) {
       return [...document.querySelectorAll('#' + DRAG_LISTS[key].box + ' .me-part-row')];
     }
-    // Satıra basılıp biraz kaydırılınca sürükleme başlar (liderin setlist ekranındaki gibi). Kısa dokunuş satırı çıkarır.
+    // Satırı basılı tutup sürükleyerek sıralama. Fare: 6 px kaydırınca başlar. Dokunmatik: yaklaşık 0,2 sn basılı tutunca başlar
+    // (böylece listeyi parmakla kaydırmak hâlâ mümkün). Satır parmağı izler, diğer satırlar kayarak yer açar.
     window.rowPress = (e, key) => {
+      if (_rowDrag) return;
       if (e.target.closest && e.target.closest('input,button')) return;
-      _rowDrag = { key, row: e.currentTarget, sy: e.clientY, active: false };
+      if (e.pointerType === 'mouse' && e.button !== 0) return;
+      const row = e.currentTarget;
+      const box = document.getElementById(DRAG_LISTS[key].box);
+      const d = { key, row, box, sx: e.clientX, sy: e.clientY, y: e.clientY, grab: 0, active: false, touch: e.pointerType === 'touch', timer: null, raf: 0 };
+      _rowDrag = d;
+      if (d.touch) {
+        d.timer = setTimeout(() => {
+          if (_rowDrag === d && !d.active) {
+            rowDragBegin(d);
+            try { navigator.vibrate && navigator.vibrate(8); } catch (_) {}
+          }
+        }, 220);
+      }
       window.addEventListener('pointermove', rowDragMove);
       window.addEventListener('pointerup', rowDragEnd);
-      window.addEventListener('pointercancel', rowDragEnd);
+      window.addEventListener('pointercancel', rowDragCancel);
+      window.addEventListener('touchmove', rowTouchMove, { passive: false });
     };
+    function rowBoxTop(d) {
+      return d.box.getBoundingClientRect().top - d.box.scrollTop;
+    }
+    function rowDragBegin(d) {
+      d.active = true;
+      d.grab = d.sy - (rowBoxTop(d) + d.row.offsetTop);
+      d.row.classList.add('dragging');
+      const step = () => {
+        if (_rowDrag !== d || !d.active) return;
+        const r = d.box.getBoundingClientRect();
+        const edge = 56;
+        let v = 0;
+        if (d.y < r.top + edge) v = -Math.ceil((r.top + edge - d.y) / 6);
+        else if (d.y > r.bottom - edge) v = Math.ceil((d.y - (r.bottom - edge)) / 6);
+        if (v) { d.box.scrollTop += v; rowDragUpdate(d); }
+        d.raf = requestAnimationFrame(step);
+      };
+      d.raf = requestAnimationFrame(step);
+    }
+    function rowTouchMove(e) {
+      if (_rowDrag && _rowDrag.active && e.cancelable) e.preventDefault();
+    }
     function rowDragMove(e) {
-      if (!_rowDrag) return;
-      if (!_rowDrag.active) {
-        if (Math.abs(e.clientY - _rowDrag.sy) < 8) return;
-        _rowDrag.active = true;
-        _rowDrag.row.style.opacity = '.55';
+      const d = _rowDrag;
+      if (!d) return;
+      d.y = e.clientY;
+      if (!d.active) {
+        const moved = Math.hypot(e.clientX - d.sx, e.clientY - d.sy);
+        if (d.touch) { if (moved > 8) rowDragStop(d); return; } // parmak kayıyor: liste kaydırılıyor, sürükleme değil
+        if (moved < 6) return;
+        rowDragBegin(d);
       }
-      const arr = DRAG_LISTS[_rowDrag.key].arr();
-      const rows = rowDragRows(_rowDrag.key);
-      const cur = rows.indexOf(_rowDrag.row);
+      rowDragUpdate(d);
+    }
+    function rowDragUpdate(d) {
+      const rows = rowDragRows(d.key);
+      const cur = rows.indexOf(d.row);
       if (cur < 0) return;
+      const boxTop = rowBoxTop(d);
+      const center = (r) => boxTop + r.offsetTop + r.offsetHeight / 2;
+      const desiredTop = d.y - d.grab;
+      const desiredCenter = desiredTop + d.row.offsetHeight / 2;
       let target = cur;
       for (let i = 0; i < rows.length; i++) {
-        const r = rows[i].getBoundingClientRect();
-        const mid = r.top + r.height / 2;
-        if (i < cur && e.clientY < mid) { target = i; break; }
-        if (i > cur && e.clientY > mid) target = i;
+        if (i < cur && desiredCenter < center(rows[i])) { target = i; break; }
+        if (i > cur && desiredCenter > center(rows[i])) target = i;
       }
-      if (target === cur) return;
-      const [item] = arr.splice(cur, 1);
-      arr.splice(target, 0, item);
-      if (target < cur) rows[target].before(_rowDrag.row);
-      else rows[target].after(_rowDrag.row);
-      rowDragRows(_rowDrag.key).forEach((r, i) => {
-        const n = r.querySelector('.me-part-num');
-        if (n) n.textContent = i + 1;
-      });
+      if (target !== cur) {
+        const firsts = new Map(rows.map(r => [r, r.offsetTop]));
+        const arr = DRAG_LISTS[d.key].arr();
+        const [item] = arr.splice(cur, 1);
+        arr.splice(target, 0, item);
+        if (target < cur) rows[target].before(d.row);
+        else rows[target].after(d.row);
+        rowDragRows(d.key).forEach((r, i) => {
+          const n = r.querySelector('.me-part-num');
+          if (n) n.textContent = i + 1;
+          if (r === d.row) return;
+          const dy = firsts.get(r) - r.offsetTop;
+          if (dy) {
+            r.style.transition = 'none';
+            r.style.transform = 'translateY(' + dy + 'px)';
+            void r.offsetHeight;
+            r.style.transition = 'transform 150ms ease';
+            r.style.transform = '';
+          }
+        });
+      }
+      d.row.style.transform = 'translateY(' + (desiredTop - (boxTop + d.row.offsetTop)) + 'px)';
     }
-    function rowDragEnd() {
+    function rowDragStop(d) {
+      clearTimeout(d.timer);
+      cancelAnimationFrame(d.raf);
       window.removeEventListener('pointermove', rowDragMove);
       window.removeEventListener('pointerup', rowDragEnd);
-      window.removeEventListener('pointercancel', rowDragEnd);
-      if (!_rowDrag) return;
+      window.removeEventListener('pointercancel', rowDragCancel);
+      window.removeEventListener('touchmove', rowTouchMove);
+      if (_rowDrag === d) _rowDrag = null;
+    }
+    function rowDragEnd() {
       const d = _rowDrag;
-      _rowDrag = null;
-      if (!d.active) return; // kısa dokunuş: satırın click'i çıkarır
+      if (!d) return;
+      const wasActive = d.active;
+      rowDragStop(d);
+      if (!wasActive) return; // kısa dokunuş: satırın click'i çıkarır
       // Sürüklemenin ardından gelen click'i yut (satır yanlışlıkla çıkmasın)
       const swallow = (ev) => { ev.stopPropagation(); ev.preventDefault(); };
       window.addEventListener('click', swallow, { capture: true, once: true });
-      setTimeout(() => window.removeEventListener('click', swallow, { capture: true }), 60);
-      DRAG_LISTS[d.key].redraw();
+      setTimeout(() => window.removeEventListener('click', swallow, { capture: true }), 80);
+      // Satır yerine oturur, sonra liste veriden yeniden çizilir
+      d.row.style.transition = 'transform 140ms ease';
+      d.row.style.transform = 'translateY(0px)';
+      setTimeout(() => DRAG_LISTS[d.key].redraw(), 150);
+    }
+    function rowDragCancel() {
+      const d = _rowDrag;
+      if (!d) return;
+      const wasActive = d.active;
+      rowDragStop(d);
+      if (wasActive) DRAG_LISTS[d.key].redraw();
     }
 
     // ══ CREATE SETLIST · ŞARKI / MASHUP SEÇİMİ ══
@@ -5747,10 +5923,8 @@
         return;
       }
       csSelectedIds.push(id);
-      const search = document.getElementById('cs-search');
-      if (search) search.value = '';
       renderCreateSetlistPicker();
-      const box = document.querySelector('#cs-selected .me-parts-box');
+      const box = document.getElementById('cs-selected');
       if (box) box.scrollTop = box.scrollHeight;
     };
 
@@ -5786,11 +5960,13 @@
         el.innerHTML = '<div class="rep-edit-note">Eşleşen şarkı yok</div>';
         return;
       }
+      const keepTop = el.scrollTop;
       el.innerHTML = ordered.map(x => `<div class="me-picker-row" data-id="${esc(x.id)}" onclick="toggleCreateSetlistSong(this.dataset.id)">
           ${songMainHtml(x)}
           <div class="rep-edit-tags">${songTagsHtml(x)}</div>
           <span style="color:var(--accent);font-weight:700;font-size:16px;line-height:1;flex-shrink:0">+</span>
         </div>`).join('');
+      el.scrollTop = keepTop;
     };
 
     // ══ CREATE SETLIST ══
@@ -5806,7 +5982,10 @@
       renderCreateSetlistPicker();
       document.getElementById('new-setlist-name').value = '';
       document.getElementById('new-setlist-band').value = '';
-      document.getElementById('create-setlist-modal').classList.remove('hidden');
+      const csModal = document.getElementById('create-setlist-modal');
+      csModal.classList.remove('fp-compact');
+      csModal.classList.remove('hidden');
+      setTimeout(() => document.getElementById('new-setlist-name')?.focus(), 60);
     };
     window.closeCreateSetlistModal = () => {
       _saveQuickStagePending = false;
@@ -7647,7 +7826,9 @@
       if (pickGroup) pickGroup.style.display = 'none';
       document.getElementById('new-setlist-name').value = 'Sahne ' + new Date().toLocaleDateString('tr-TR');
       document.getElementById('new-setlist-band').value = '';
-      document.getElementById('create-setlist-modal').classList.remove('hidden');
+      const csModal = document.getElementById('create-setlist-modal');
+      csModal.classList.add('fp-compact');
+      csModal.classList.remove('hidden');
     };
 
     async function broadcastQuickStage(activeEntryId, stepIndex = 0) {
