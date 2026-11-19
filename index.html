@@ -3336,20 +3336,9 @@
     .me-picker-row:last-child { border-bottom: none; }
     .me-picker-row:active { background: var(--surface3); }
 
-    .row-grip {
-      flex-shrink: 0;
-      width: 22px;
-      text-align: center;
-      font-size: 18px;
-      line-height: 1;
-      color: var(--text-muted);
-      cursor: grab;
-      touch-action: none;
-      user-select: none;
-    }
     #cs-selected .me-parts-box { max-height: 26dvh; overflow-y: auto; }
     #cs-selected .me-part-row,
-    #me-parts-list .me-part-row { cursor: pointer; }
+    #me-parts-list .me-part-row { cursor: grab; touch-action: none; user-select: none; }
     /* Ana ekran bölümleri: başlık kenardan içeride, liste başlığa sol çizgiyle bağlı.
        Setlistler mavi (vurgu rengi), Mashuplar mor (mavinin yanında uyumlu bir ton). */
     #setlists-toggle { --sec: var(--accent); }
@@ -5237,8 +5226,7 @@
         return;
       }
       list.innerHTML = '<div class="me-parts-box">' + meDraftParts.map((p, i) => `
-        <div class="me-part-row${meReplaceIdx === i ? ' is-replacing' : ''}" onclick="if(!event.target.closest('input,button'))removeMashupPart(${i})">
-          <span class="row-grip" onpointerdown="rowDragStart(event,'me')" onclick="event.stopPropagation()">≡</span>
+        <div class="me-part-row${meReplaceIdx === i ? ' is-replacing' : ''}" onclick="if(!event.target.closest('input,button'))removeMashupPart(${i})" onpointerdown="rowPress(event,'me')">
           <span class="me-part-num">${i + 1}</span>
           <div class="rep-edit-row-main">
             <div class="rep-edit-row-title">${esc(p.title || '—')}</div>
@@ -5697,18 +5685,21 @@
     function rowDragRows(key) {
       return [...document.querySelectorAll('#' + DRAG_LISTS[key].box + ' .me-part-row')];
     }
-    window.rowDragStart = (e, key) => {
-      e.preventDefault();
-      const row = e.currentTarget.closest('.me-part-row');
-      if (!row) return;
-      _rowDrag = { key, row };
-      row.style.opacity = '.55';
+    // Satıra basılıp biraz kaydırılınca sürükleme başlar (liderin setlist ekranındaki gibi). Kısa dokunuş satırı çıkarır.
+    window.rowPress = (e, key) => {
+      if (e.target.closest && e.target.closest('input,button')) return;
+      _rowDrag = { key, row: e.currentTarget, sy: e.clientY, active: false };
       window.addEventListener('pointermove', rowDragMove);
       window.addEventListener('pointerup', rowDragEnd);
       window.addEventListener('pointercancel', rowDragEnd);
     };
     function rowDragMove(e) {
       if (!_rowDrag) return;
+      if (!_rowDrag.active) {
+        if (Math.abs(e.clientY - _rowDrag.sy) < 8) return;
+        _rowDrag.active = true;
+        _rowDrag.row.style.opacity = '.55';
+      }
       const arr = DRAG_LISTS[_rowDrag.key].arr();
       const rows = rowDragRows(_rowDrag.key);
       const cur = rows.indexOf(_rowDrag.row);
@@ -5735,9 +5726,14 @@
       window.removeEventListener('pointerup', rowDragEnd);
       window.removeEventListener('pointercancel', rowDragEnd);
       if (!_rowDrag) return;
-      const key = _rowDrag.key;
+      const d = _rowDrag;
       _rowDrag = null;
-      DRAG_LISTS[key].redraw();
+      if (!d.active) return; // kısa dokunuş: satırın click'i çıkarır
+      // Sürüklemenin ardından gelen click'i yut (satır yanlışlıkla çıkmasın)
+      const swallow = (ev) => { ev.stopPropagation(); ev.preventDefault(); };
+      window.addEventListener('click', swallow, { capture: true, once: true });
+      setTimeout(() => window.removeEventListener('click', swallow, { capture: true }), 60);
+      DRAG_LISTS[d.key].redraw();
     }
 
     // ══ CREATE SETLIST · ŞARKI / MASHUP SEÇİMİ ══
@@ -5776,8 +5772,7 @@
       if (selEl) {
         const chosen = csSelectedIds.map(id => repAll.find(x => x && x.id === id)).filter(Boolean);
         selEl.innerHTML = chosen.length ? '<div class="me-parts-box">' + chosen.map((x, i) => `
-          <div class="me-part-row" data-id="${esc(x.id)}" onclick="toggleCreateSetlistSong(this.dataset.id)">
-            <span class="row-grip" onpointerdown="rowDragStart(event,'cs')" onclick="event.stopPropagation()">≡</span>
+          <div class="me-part-row" data-id="${esc(x.id)}" onclick="toggleCreateSetlistSong(this.dataset.id)" onpointerdown="rowPress(event,'cs')">
             <span class="me-part-num">${i + 1}</span>
             ${songMainHtml(x)}
             <div class="rep-edit-tags">${songTagsHtml(x)}</div>
