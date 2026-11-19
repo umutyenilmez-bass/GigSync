@@ -1,4 +1,4 @@
-const CACHE = 'gigsync-v19-logo-sync';
+const CACHE = 'gigsync-v20-instant-stage';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/Gig_Sync_Logo.png'];
 
 self.addEventListener('install', e => {

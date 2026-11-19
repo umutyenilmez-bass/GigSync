@@ -44,6 +44,7 @@
       --accent: #4f8ef7;
       --accent2: #7eb3ff;
       --accent-glow: rgba(79, 142, 247, .2);
+      --accent-text: #ffffff;
       --text: #e8edf5;
       --text-muted: #4a5870;
       --text-dim: #1e2a3a;
@@ -66,6 +67,7 @@
       --accent: #f97316;
       --accent2: #fb923c;
       --accent-glow: rgba(249, 115, 22, .2);
+      --accent-text: #000000;
       --text: #f5ede4;
       --text-muted: #7a5f45;
       --text-dim: #2d1f0e;
@@ -81,6 +83,7 @@
       --accent: #f5c400;
       --accent2: #fdd835;
       --accent-glow: rgba(245, 196, 0, .2);
+      --accent-text: #000000;
       --text: #f5f0d8;
       --text-muted: #7a6e3a;
       --text-dim: #2d2700;
@@ -96,6 +99,7 @@
       --accent: #1C1917;         /* Kömür siyahı aksan */
       --accent2: #44403C;
       --accent-glow: rgba(28, 25, 23, .12);
+      --accent-text: #FAF7F0;    /* Açık krem buton metni */
       --text: #1C1917;           /* Kömür siyahı ana metin */
       --text-muted: #78716C;     /* Eskitilmiş koyu gri metin */
       --text-dim: #A8A29E;       /* Silik metinler */
@@ -113,6 +117,7 @@
       --accent: #ffffff;
       --accent2: #cccccc;
       --accent-glow: rgba(255, 255, 255, .1);
+      --accent-text: #000000;
       --text: #ffffff;
       --text-muted: #888888;
       --text-dim: #333333;
@@ -523,6 +528,13 @@
       width: 38px !important;
       height: 38px !important;
     }
+    body.theme-stage .fab-ai {
+      right: 120px !important;
+      height: 88px !important;
+      padding: 0 24px !important;
+      font-size: 16px !important;
+      border-radius: 20px !important;
+    }
 
     /* Setlist card (home) */
     body.theme-stage .setlist-card {
@@ -540,10 +552,57 @@
       font-size: 16px !important;
     }
 
-    /* Oda kodu (büyük olsun) */
-    body.theme-stage #room-code-display {
-      font-size: 72px !important;
-      letter-spacing: 18px !important;
+    /* Hızlı Sahne & Canlı Şerit (Stage Mode) */
+    body.theme-stage .home-live-banner {
+      padding: 14px 18px !important;
+      font-size: 18px !important;
+    }
+    body.theme-stage .quick-stage-card {
+      padding: 20px 18px !important;
+      margin-bottom: 16px !important;
+    }
+    body.theme-stage .quick-stage-card-title {
+      font-size: 26px !important;
+    }
+    body.theme-stage .quick-stage-card-sub {
+      font-size: 16px !important;
+    }
+    body.theme-stage .qs-now-title {
+      font-size: 26px !important;
+    }
+    body.theme-stage .qs-search-input {
+      font-size: 22px !important;
+      padding: 16px 42px 16px 16px !important;
+    }
+    body.theme-stage .qs-row {
+      padding: 18px 16px !important;
+      margin-bottom: 12px !important;
+    }
+    body.theme-stage .qs-row-title {
+      font-size: 24px !important;
+      font-weight: 700 !important;
+    }
+    body.theme-stage .qs-row-meta {
+      font-size: 16px !important;
+    }
+    body.theme-stage .qs-row-key {
+      font-size: 24px !important;
+    }
+    body.theme-stage .qs-section-title {
+      font-size: 15px !important;
+    }
+    body.theme-stage .qs-mini-btn {
+      font-size: 14px !important;
+      padding: 8px 12px !important;
+    }
+    body.theme-stage .member-hdr-btn {
+      font-size: 15px !important;
+      height: 44px !important;
+      padding: 0 12px !important;
+    }
+    body.theme-stage .member-footer {
+      font-size: 16px !important;
+      padding: 14px 18px !important;
     }
 
     /* Üyeler listesi */
@@ -571,6 +630,7 @@
       --accent: #94a3b8;
       --accent2: #cbd5e1;
       --accent-glow: rgba(148, 163, 184, .15);
+      --accent-text: #0f1014;
       --text: #e2e8f0;
       --text-muted: #64748b;
       --text-dim: #1e2028;
@@ -589,6 +649,7 @@
       --accent: #ef4444;
       --accent2: #f87171;
       --accent-glow: rgba(239, 68, 68, .2);
+      --accent-text: #ffffff;
       --text: #fef2f2;
       --text-muted: #7c3030;
       --text-dim: #2c1010;
@@ -607,6 +668,7 @@
       --accent: #22c55e;
       --accent2: #4ade80;
       --accent-glow: rgba(34, 197, 94, .2);
+      --accent-text: #050d08;
       --text: #f0fdf4;
       --text-muted: #3d7a50;
       --text-dim: #0f2018;
@@ -625,6 +687,7 @@
       --accent: #a855f7;
       --accent2: #c084fc;
       --accent-glow: rgba(168, 85, 247, .2);
+      --accent-text: #ffffff;
       --text: #faf5ff;
       --text-muted: #6b3fa0;
       --text-dim: #1e1030;
@@ -643,6 +706,7 @@
       --accent: #f43f5e;
       --accent2: #fb7185;
       --accent-glow: rgba(244, 63, 94, .2);
+      --accent-text: #ffffff;
       --text: #fff1f2;
       --text-muted: #7c2d42;
       --text-dim: #2c0f18;
@@ -661,6 +725,7 @@
       --accent: #06b6d4;
       --accent2: #22d3ee;
       --accent-glow: rgba(6, 182, 212, .2);
+      --accent-text: #040e0f;
       --text: #ecfeff;
       --text-muted: #2d6b75;
       --text-dim: #0c2228;
@@ -679,6 +744,7 @@
       --accent: #f59e0b;
       --accent2: #fbbf24;
       --accent-glow: rgba(245, 158, 11, .2);
+      --accent-text: #000000;
       --text: #fffbeb;
       --text-muted: #786010;
       --text-dim: #2a2000;
@@ -697,6 +763,7 @@
       --accent: #6366f1;
       --accent2: #818cf8;
       --accent-glow: rgba(99, 102, 241, .2);
+      --accent-text: #ffffff;
       --text: #eef2ff;
       --text-muted: #4040a0;
       --text-dim: #141830;
@@ -715,6 +782,7 @@
       --accent: #a855f7;
       --accent2: #c084fc;
       --accent-glow: rgba(168, 85, 247, .25);
+      --accent-text: #ffffff;
       --text: #f3e8ff;
       --text-muted: #7e3cb5;
       --text-dim: #1a0d2e;
@@ -733,6 +801,7 @@
       --accent: #06b6d4;
       --accent2: #22d3ee;
       --accent-glow: rgba(6, 182, 212, .25);
+      --accent-text: #021018;
       --text: #e0f7ff;
       --text-muted: #4a8a9c;
       --text-dim: #08222e;
@@ -751,6 +820,7 @@
       --accent: #fb7185;
       --accent2: #fda4af;
       --accent-glow: rgba(251, 113, 133, .25);
+      --accent-text: #ffffff;
       --text: #ffe4ec;
       --text-muted: #a04d6a;
       --text-dim: #1d0c14;
@@ -769,6 +839,7 @@
       --accent: #2dd4bf;
       --accent2: #5eead4;
       --accent-glow: rgba(45, 212, 191, .25);
+      --accent-text: #051210;
       --text: #e0fff8;
       --text-muted: #4a9080;
       --text-dim: #0a1f1c;
@@ -787,11 +858,395 @@
       --accent: #e0e0ff;
       --accent2: #ffffff;
       --accent-glow: rgba(224, 224, 255, .15);
+      --accent-text: #000000;
       --text: #ffffff;
       --text-muted: #6a6a7a;
       --text-dim: #14141c;
       --green: #34d98e;
       --red: #f05b5b;
+    }
+
+    /* LEADER OPEN BUTTON */
+    .btn-leader-open {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      padding: 10px 18px;
+      border-radius: 12px;
+      border: 1px solid var(--accent);
+      background: var(--accent);
+      color: var(--accent-text, #ffffff) !important;
+      cursor: pointer;
+      letter-spacing: 1.5px;
+      font-weight: 700;
+      box-shadow: 0 0 24px var(--accent-glow);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all .15s ease;
+    }
+    .btn-leader-open svg {
+      fill: currentColor;
+    }
+    .btn-leader-open:hover {
+      filter: brightness(1.15);
+      transform: translateY(-1px);
+    }
+    .btn-leader-open:active {
+      transform: scale(0.97);
+    }
+    body.theme-light .btn-leader-open {
+      background: #1C1917 !important;
+      color: #FAF7F0 !important;
+      border-color: #1C1917 !important;
+      box-shadow: 0 4px 16px rgba(28, 25, 23, 0.2) !important;
+    }
+    body.theme-light .btn-leader-open svg {
+      fill: #FAF7F0 !important;
+    }
+    body.theme-stage .btn-leader-open {
+      font-size: 20px !important;
+      padding: 14px 28px !important;
+      border-radius: 16px !important;
+    }
+
+    /* HOME LIVE BANNER (Persistent background broadcast) */
+    .home-live-banner {
+      display: none;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      background: rgba(52, 217, 142, 0.1);
+      border-bottom: 1px solid rgba(52, 217, 142, 0.28);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .home-live-banner:active {
+      background: rgba(52, 217, 142, 0.18);
+    }
+    .home-live-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--green);
+      flex-shrink: 0;
+      animation: pulse 1.5s ease infinite;
+    }
+    .home-live-info {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .home-live-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--green);
+      letter-spacing: .8px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .home-live-song {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .home-live-close-btn {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      padding: 6px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(240, 91, 91, 0.35);
+      background: rgba(240, 91, 91, 0.12);
+      color: var(--red);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    body.theme-light .home-live-banner {
+      background: rgba(21, 128, 61, 0.08);
+      border-bottom-color: rgba(21, 128, 61, 0.25);
+    }
+    body.theme-light .home-live-close-btn {
+      border-color: rgba(185, 28, 28, 0.35);
+      background: rgba(185, 28, 28, 0.1);
+    }
+
+    /* QUICK STAGE CARD (HOME) */
+    .quick-stage-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 15px 16px;
+      margin-bottom: 14px;
+      border-radius: 16px;
+      background: linear-gradient(135deg, rgba(79, 142, 247, 0.16) 0%, var(--surface2) 100%);
+      border: 1px solid var(--accent);
+      box-shadow: 0 4px 20px var(--accent-glow);
+      cursor: pointer;
+      transition: transform .15s, border-color .2s;
+    }
+    .quick-stage-card:active {
+      transform: scale(0.985);
+    }
+    .quick-stage-card.live {
+      border-color: var(--green);
+      background: linear-gradient(135deg, rgba(52, 217, 142, 0.14) 0%, var(--surface2) 100%);
+      box-shadow: 0 4px 20px rgba(52, 217, 142, 0.18);
+    }
+    .quick-stage-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      background: var(--accent);
+      color: var(--accent-text, #fff);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+    .quick-stage-card.live .quick-stage-icon {
+      background: var(--green);
+      color: #000;
+    }
+    .quick-stage-card-title {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .quick-stage-card-sub {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+    body.theme-light .quick-stage-card {
+      background: linear-gradient(135deg, rgba(28, 25, 23, 0.08) 0%, var(--surface) 100%);
+    }
+
+    /* QUICK STAGE SCREEN */
+    .qs-now-bar {
+      display: none;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      background: rgba(52, 217, 142, 0.1);
+      border-bottom: 1px solid rgba(52, 217, 142, 0.25);
+      flex-shrink: 0;
+    }
+    .qs-now-label {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--green);
+    }
+    .qs-now-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .qs-now-meta {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .qs-now-key {
+      font-family: var(--font-mono);
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .qs-search-wrap {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      position: relative;
+      flex-shrink: 0;
+    }
+    .qs-search-input {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border2);
+      border-radius: 12px;
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      padding: 12px 40px 12px 14px;
+      outline: none;
+    }
+    .qs-search-input:focus {
+      border-color: var(--accent);
+    }
+    .qs-search-input::placeholder {
+      color: var(--text-muted);
+    }
+    .qs-search-clear {
+      position: absolute;
+      right: 22px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 28px;
+      height: 28px;
+      border-radius: 999px;
+      border: none;
+      background: var(--surface3);
+      color: var(--text-muted);
+      font-size: 16px;
+      cursor: pointer;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .qs-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 12px 14px;
+      padding-bottom: max(env(safe-area-inset-bottom), 20px);
+      -webkit-overflow-scrolling: touch;
+    }
+    .qs-section-hdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin: 4px 0 10px 0;
+    }
+    .qs-section-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      color: var(--text-muted);
+      text-transform: uppercase;
+    }
+    .qs-mini-btn {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border2);
+      background: var(--surface2);
+      color: var(--accent);
+      cursor: pointer;
+    }
+    .qs-mini-btn.danger {
+      color: var(--red);
+      border-color: rgba(240, 91, 91, 0.3);
+    }
+    .qs-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 13px 14px;
+      border-radius: 12px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      margin-bottom: 8px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .qs-row:active {
+      transform: scale(0.985);
+    }
+    .qs-row.active {
+      border-color: var(--green);
+      background: rgba(52, 217, 142, 0.1);
+    }
+    .qs-row-info {
+      flex: 1;
+      min-width: 0;
+    }
+    .qs-row-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .qs-row-meta {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .qs-row-key {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--accent);
+      flex-shrink: 0;
+    }
+    .qs-row-del {
+      width: 28px;
+      height: 28px;
+      border: none;
+      border-radius: 8px;
+      background: transparent;
+      color: var(--text-muted);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+    .qs-row-del:hover {
+      background: rgba(240, 91, 91, 0.15);
+      color: var(--red);
+    }
+
+    /* MEMBER HEADER & COMPACT FOOTER */
+    .member-hdr-btn {
+      height: 32px;
+      padding: 0 10px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .member-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 18px;
+      padding-bottom: max(env(safe-area-inset-bottom), 10px);
+      border-top: 1px solid var(--border);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text-muted);
+      flex-shrink: 0;
     }
 
     body {
@@ -1147,7 +1602,7 @@
       font-size: 24px;
       box-shadow: 0 4px 24px var(--accent-glow), 0 8px 40px rgba(79, 142, 247, .15);
       transition: all .2s;
-      z-index: 10
+      z-index: 90
     }
 
     .fab:active {
@@ -2025,11 +2480,11 @@
     /* AI CHAT ASİSTANI STİLLERİ */
     .fab-ai {
       position: fixed;
-      bottom: 24px;
-      right: 24px;
-      height: 48px;
-      padding: 0 16px;
-      border-radius: 999px;
+      bottom: max(env(safe-area-inset-bottom), 24px);
+      right: 86px;
+      height: 54px;
+      padding: 0 18px;
+      border-radius: 16px;
       background: linear-gradient(135deg, #4f8ef7, #8b5cf6);
       color: #fff;
       border: none;
@@ -2042,10 +2497,14 @@
       gap: 6px;
       box-shadow: 0 4px 20px rgba(79,142,247,0.35);
       cursor: pointer;
-      z-index: 95;
-      transition: transform .2s, box-shadow .2s;
+      z-index: 85;
+      transition: transform .2s, box-shadow .2s, right .2s;
     }
     .fab-ai:hover { transform: scale(1.04); box-shadow: 0 6px 24px rgba(139,92,246,0.45); }
+    #fab-create[style*="none"] ~ #fab-ai,
+    #fab-create[style*="none"] + #fab-ai {
+      right: 20px;
+    }
     .ai-chip {
       background: var(--surface2);
       border: 1px solid var(--border);
@@ -2117,8 +2576,8 @@
           YÖNETİCİ
         </button>
         <div
-          style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);text-align:center;letter-spacing:1px">
-          Setlist oluşturur · Oda açar · Şarkı seçer</div>
+          style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);text-align:center;letter-spacing:1px">
+          Hızlı sahne · Setlist · Tek tık canlı yayın</div>
 
         <div style="height:8px"></div>
 
@@ -2134,8 +2593,8 @@
           GRUP
         </button>
         <div
-          style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);text-align:center;letter-spacing:1px">
-          Sadece görüntüleme · Senkronize takip</div>
+          style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);text-align:center;letter-spacing:1px">
+          Uygulamayı aç · Anında canlı takip</div>
       </div>
     </div>
   </div>
@@ -2198,10 +2657,36 @@
     </div>
 
     <div class="home-view">
+      <!-- PERSISTENT LIVE BANNER -->
+      <div id="home-live-banner" class="home-live-banner" onclick="returnToActiveLiveStage()">
+        <div class="home-live-dot"></div>
+        <div class="home-live-info">
+          <div class="home-live-title" id="home-live-title">● CANLI YAYINDA · DÖN</div>
+          <div class="home-live-song" id="home-live-song">Sahneye dönmek için dokun</div>
+        </div>
+        <button class="home-live-close-btn" onclick="event.stopPropagation(); closeRoomFromLeader()">KAPAT</button>
+      </div>
+
       <div class="setlists-scroll" id="setlists-scroll">
+        <!-- QUICK STAGE ENTRY (HOST) -->
+        <div id="quick-stage-card" class="quick-stage-card" onclick="openQuickStage()" style="display:none">
+          <div class="quick-stage-icon">⚡</div>
+          <div style="flex:1;min-width:0">
+            <div class="quick-stage-card-title">
+              <span>HIZLI SAHNE</span>
+              <span id="qs-card-live-badge" class="live-badge on" style="display:none">● CANLI</span>
+            </div>
+            <div class="quick-stage-card-sub" id="qs-card-count">Setlistsiz doğrudan repertuardan çal</div>
+          </div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
+            <path d="M5 12h14M12 5l7 7-7 7"/>
+          </svg>
+        </div>
+
+        <div id="setlists-section-label" style="display:none;font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--text-muted);margin:2px 2px 8px 2px;font-weight:700">SETLİSTLER</div>
         <div id="setlists-list"></div>
 
-        <!-- CREW JOIN AREA -->
+        <!-- CREW JOIN AREA (FALLBACK) -->
         <div id="crew-join-area" style="display:none; text-align:center; padding:40px 20px; flex-direction:column; align-items:center; gap:24px; justify-content:center; min-height:50dvh">
           <div style="background:var(--surface2); width:80px; height:80px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:1px solid var(--border); box-shadow:0 8px 32px rgba(0,0,0,0.2)">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -2212,11 +2697,11 @@
             </svg>
           </div>
           <div style="display:flex; flex-direction:column; gap:8px">
-            <div style="font-size:18px; font-weight:700; color:var(--text); font-family: var(--font-sans)">Grup Üyesi Girişi</div>
-            <div style="font-size:13px; color:var(--text-dim); max-width:260px; margin:0 auto; line-height:1.6">Sahnede liderin seçtiği şarkıları canlı takip etmek için doğrudan katılın.</div>
+            <div style="font-size:18px; font-weight:700; color:var(--text); font-family: var(--font-sans)">Canlı Sahne Takibi</div>
+            <div style="font-size:13px; color:var(--text-muted); max-width:260px; margin:0 auto; line-height:1.6">Liderin seçtiği şarkıları canlı takip etmek için tek dokunuşla bağlanın.</div>
           </div>
           <button class="btn btn-primary" onclick="joinRoomDirect()" style="width:100%; max-width:260px; box-shadow:0 0 24px var(--accent-glow); font-weight: 700; height: 48px; border-radius: 12px; font-family: var(--font-mono); letter-spacing: 2px;">
-            ODAYA KATIL
+            CANLI SAHNEYE BAĞLAN
           </button>
         </div>
 
@@ -2252,15 +2737,9 @@
             ● CANLI · KAPAT</div>
         </div>
         <div id="leader-open-btn" style="display:none;align-items:center;gap:6px">
-          <button onclick="openRoomDirect()"
-            style="font-family:var(--font-mono);font-size:14px;padding:10px 22px;border-radius:12px;border:1px solid var(--accent);background:var(--accent);color:#000;cursor:pointer;letter-spacing:2px;font-weight:700;box-shadow:0 0 24px var(--accent-glow);display:flex;align-items:center;gap:8px">
+          <button onclick="openRoomDirect()" class="btn-leader-open">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="6,4 20,12 6,20"/></svg>
-            ODAYI AÇ
-          </button>
-          <button onclick="showOpenRoomModal()" title="Kodu değiştir"
-            style="width:36px;height:40px;border-radius:10px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;display:flex;align-items:center;justify-content:center;transition:color .15s"
-            onmouseenter="this.style.color='var(--accent)'" onmouseleave="this.style.color='var(--text-muted)'">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+            CANLI BAŞLAT
           </button>
         </div>
         <button class="btn btn-icon btn-secondary" onclick="showMembersSheet()" title="Üyeler"
@@ -2301,7 +2780,7 @@
         </svg>
         Ekle
         <span id="setlist-count-badge"
-          style="background:var(--accent);color:#000;font-family:var(--font-mono);font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;display:none">0</span>
+          style="background:var(--accent);color:var(--accent-text,#fff);font-family:var(--font-mono);font-size:11px;font-weight:600;padding:2px 7px;border-radius:999px;display:none">0</span>
       </button>
       <button class="btn btn-secondary btn-sm" style="flex:1;opacity:.85" onclick="showAddToSetlistSheet('request')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
@@ -2313,6 +2792,59 @@
     </div>
   </div>
 
+  <!-- ══ QUICK STAGE (HOST) ══ -->
+  <div id="quick-stage" class="screen">
+    <div class="leader-header">
+      <div>
+        <div class="leader-title">⚡ HIZLI SAHNE</div>
+        <div class="leader-sub"><span id="qs-username" style="color:var(--text-muted)"></span> · <span id="qs-lib-count" style="color:var(--accent)">0 şarkı</span></div>
+      </div>
+      <div class="hdr-actions" style="align-items:center">
+        <div id="qs-live-btn" style="display:none" onclick="closeRoomFromLeader()">
+          <div style="font-family:var(--font-mono);font-size:11px;padding:6px 14px;border-radius:999px;letter-spacing:1px;background:rgba(52,217,142,.15);color:var(--green);border:1px solid rgba(52,217,142,.3);cursor:pointer">
+            ● CANLI · KAPAT</div>
+        </div>
+        <div id="qs-ready-pill"
+          style="font-family:var(--font-mono);font-size:10px;padding:5px 10px;border-radius:999px;letter-spacing:1px;background:var(--surface2);color:var(--text-muted);border:1px solid var(--border)">
+          HAZIR</div>
+        <button class="btn btn-icon btn-secondary" onclick="showMembersSheet()" title="Üyeler" style="position:relative">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+            <circle cx="9" cy="7" r="4" />
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87" />
+            <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+          </svg>
+          <span id="qs-member-count-dot"
+            style="position:absolute;top:4px;right:4px;min-width:16px;height:16px;background:var(--green);color:#000;font-family:var(--font-mono);font-size:9px;font-weight:700;border-radius:999px;display:none;align-items:center;justify-content:center;padding:0 3px">0</span>
+        </button>
+        <button class="btn btn-icon btn-ghost" onclick="goBackFromQuickStage()" title="Geri">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M19 12H5M12 5l-7 7 7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div id="qs-now-bar" class="qs-now-bar">
+      <div class="home-live-dot"></div>
+      <div style="flex:1;min-width:0">
+        <div class="qs-now-label">● ŞU AN EKRANDA</div>
+        <div class="qs-now-title" id="qs-now-title">—</div>
+        <div class="qs-now-meta" id="qs-now-artist"></div>
+      </div>
+      <div class="qs-now-key" id="qs-now-key"></div>
+    </div>
+
+    <div class="qs-search-wrap">
+      <input id="qs-search-input" class="qs-search-input" type="search"
+        placeholder="Şarkı veya sanatçı ara..." oninput="renderQuickStageView()"
+        autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+      <button id="qs-search-clear" class="qs-search-clear" onclick="clearQuickStageSearch()" title="Temizle">×</button>
+    </div>
+
+    <div class="qs-list" id="qs-content"></div>
+  </div>
+
   <!-- ══ MEMBER ══ -->
   <div id="member" class="screen">
     <div class="member-hdr">
@@ -2320,7 +2852,16 @@
         <div class="room-name" id="mem-room-name">—</div>
         <div class="room-band" id="mem-room-band">—</div>
       </div>
-      <div class="live-pill">CANLI</div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="live-pill">CANLI</div>
+        <button class="member-hdr-btn" onclick="switchRoleFromMember()" title="Rol değiştir">ROL</button>
+        <button class="member-hdr-btn" onclick="showSettingsModal()" title="Ayarlar" style="padding:0 8px">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <circle cx="12" cy="12" r="3" />
+            <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+          </svg>
+        </button>
+      </div>
     </div>
     <div class="now-area" id="now-area">
       <div class="wait-state" id="wait-state">
@@ -2348,64 +2889,12 @@
       <div class="next-title" id="mem-next-title">—</div>
       <div class="next-key" id="mem-next-key"></div>
     </div>
-    <div
-      style="padding:12px 18px;border-top:1px solid var(--border);padding-bottom:max(env(safe-area-inset-bottom),12px)">
-      <button class="btn btn-danger" style="width:100%" onclick="leaveRoom()">Odadan Ayrıl</button>
-    </div>
-  </div>
-
-
-  <!-- OPEN ROOM MODAL (LEADER) -->
-  <div class="overlay hidden" id="open-room-modal" onclick="if(event.target===this)closeOpenRoomModal()" style="z-index: 220;">
-    <div class="sheet">
-      <div class="sheet-handle"></div>
-      <div class="sheet-title">ODAYI KUR</div>
-      <div class="form-group">
-        <div class="form-label" style="display:flex; justify-content:space-between; align-items:center;">
-          <span>Oda Kodu / İsmi</span>
-          <span style="font-size:10px; color:var(--text-muted)">En az 3, en fazla 12 karakter</span>
-        </div>
-        <div style="display:flex; gap:10px; align-items:center;">
-          <input id="leader-custom-code-input" class="form-input" type="text" placeholder="ABCD" maxlength="12"
-            style="text-transform:uppercase;letter-spacing:4px;font-family:var(--font-mono);font-size:20px;text-align:center;flex:1;height:48px;border-radius:12px;" />
-          <button class="btn btn-secondary btn-icon" onclick="regenerateLeaderRandomCode()" style="height:48px; width:48px; border-radius:12px; display:flex; align-items:center; justify-content:center;" title="Rastgele Kod Üret">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38" />
-            </svg>
-          </button>
-        </div>
-        <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);margin-top:8px;line-height:1.4">
-          Varsayılan rastgele kodu kullanabilir veya kendi özel kodunuzu yazabilirsiniz (örn: GRUBUMUZ, SAHNE1). Türkçe karakter ve sembol kullanamazsınız.
-        </div>
-      </div>
-      <div style="display:flex;gap:10px;margin-top:16px">
-        <button class="btn btn-ghost" style="flex:1" onclick="closeOpenRoomModal()">Vazgeç</button>
-        <button class="btn btn-primary" style="flex:2; font-weight:700" onclick="confirmOpenRoomFromLeader()">Odayı Aç</button>
-      </div>
-    </div>
-  </div>
-
-
-  <!-- JOIN ROOM MODAL (CREW) -->
-  <div class="overlay hidden" id="join-room-modal" onclick="if(event.target===this)closeJoinRoomModal()" style="z-index: 220;">
-    <div class="sheet">
-      <div class="sheet-handle"></div>
-      <div class="sheet-title">ODAYA KATIL</div>
-      <div class="form-group">
-        <div class="form-label">Oda Kodu / İsmi</div>
-        <input id="join-code-input" class="form-input" type="text" placeholder="KODU GİRİN" maxlength="12"
-          style="text-transform:uppercase;letter-spacing:4px;font-family:var(--font-mono);font-size:20px;text-align:center;height:48px;border-radius:12px;" />
-      </div>
-      <div id="recent-rooms-container" style="display:none; margin-top:16px;">
-        <div class="form-label" style="margin-bottom:8px">Son Katıldığın Odalar (Dokun-Katıl)</div>
-        <div id="recent-rooms-list" style="display:flex; flex-direction:column; gap:8px; max-height:260px; overflow-y:auto; padding-right:4px;">
-          <!-- Son odalar buraya yüklenecek -->
-        </div>
-      </div>
-      <div style="display:flex;gap:10px;margin-top:16px">
-        <button class="btn btn-ghost" style="flex:1" onclick="closeJoinRoomModal()">İptal</button>
-        <button class="btn btn-primary" style="flex:2" onclick="joinRoomByCode()">Katıl</button>
-      </div>
+    <div class="member-footer">
+      <span onclick="showNameModal()" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px" title="Adını düzenle">
+        <span>👤</span>
+        <span id="member-username-display" style="color:var(--text);font-weight:600">Müzisyen</span>
+      </span>
+      <button class="member-hdr-btn" onclick="joinRoomDirect(false)" title="Bağlantıyı yenile">↻ Yenile</button>
     </div>
   </div>
 
@@ -2413,13 +2902,12 @@
   <div class="overlay hidden" id="members-sheet" onclick="if(event.target===this)closeMembersSheet()" style="z-index: 220;">
     <div class="sheet">
       <div class="sheet-handle"></div>
-      <div class="sheet-title">ODA</div>
-      <div style="text-align:center;margin-bottom:20px">
-        <div style="font-family:var(--font-mono);font-size:11px;color:var(--text-dim);letter-spacing:2px;margin-bottom:8px">ODA KODU</div>
-        <div id="room-code-display" style="font-family:var(--font-mono);font-size:48px;color:var(--accent);letter-spacing:12px;font-weight:700">—</div>
-        <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);margin-top:8px">Üyelerinle paylaş</div>
+      <div class="sheet-title">CANLI SAHNE</div>
+      <div style="text-align:center;margin-bottom:18px">
+        <div style="font-family:var(--font-mono);font-size:11px;color:var(--green);letter-spacing:1.5px;font-weight:700;margin-bottom:4px">● ŞİFRESİZ OTOMATİK BAĞLANTI</div>
+        <div style="font-size:12px;color:var(--text-muted)">Grup üyeleri uygulamayı açınca otomatik bağlanır</div>
       </div>
-      <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:2px;color:var(--text-dim);margin-bottom:8px">ÜYELER</div>
+      <div style="font-family:var(--font-mono);font-size:11px;letter-spacing:2px;color:var(--text-muted);margin-bottom:8px">BAĞLI ÜYELER</div>
       <div id="members-list" style="max-height:40dvh;overflow-y:auto"></div>
       <button class="btn btn-secondary" style="width:100%;margin-top:14px" onclick="closeMembersSheet()">Kapat</button>
     </div>
@@ -2435,11 +2923,11 @@
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
         <div class="sheet-title" style="margin-bottom:0">REPERTUAR</div>
         <div id="lib-count-badge"
-          style="background:var(--accent);color:#000;font-family:var(--font-mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px">
+          style="background:var(--accent);color:var(--accent-text,#fff);font-family:var(--font-mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px">
           0</div>
         <div style="margin-left:auto; display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end">
           <button id="lib-bulk-send-btn" class="btn btn-xs" onclick="showSendToLibSheet([...selectedLibIds])"
-            style="display:none; font-size:10px; padding:0 8px; height:24px; background:var(--accent); color:#000; border-color:var(--accent)">GÖNDER (<span
+            style="display:none; font-size:10px; padding:0 8px; height:24px; background:var(--accent); color:var(--accent-text,#fff); border-color:var(--accent)">GÖNDER (<span
               id="lib-sel-send-count">0</span>)</button>
           <button id="lib-bulk-del-btn" class="btn btn-danger btn-xs" onclick="deleteSelectedFromLibrary()"
             style="display:none; font-size:10px; padding:0 8px; height:24px">SİL (<span
@@ -2516,7 +3004,7 @@
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
         <div id="add-sheet-title" class="sheet-title" style="margin-bottom:0">ŞARKI EKLE</div>
         <div id="sheet-count-badge" onclick="closeAddToSetlistSheet()"
-          style="background:var(--accent);color:#000;font-family:var(--font-mono);font-size:13px;font-weight:600;padding:4px 12px;border-radius:999px;display:none;cursor:pointer">
+          style="background:var(--accent);color:var(--accent-text,#fff);font-family:var(--font-mono);font-size:13px;font-weight:600;padding:4px 12px;border-radius:999px;display:none;cursor:pointer">
           0 seçili</div>
       </div>
       <div id="add-lib-tabs" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px;scrollbar-width:none"></div>
@@ -2705,7 +3193,7 @@
         </div>
         <input type="file" id="backup-file-input" accept=".json" style="display:none" onchange="handleBackupFileSelect(event)">
         <div style="display:flex;gap:8px">
-          <button class="btn btn-primary" style="flex:1;height:36px;font-size:11px;padding:0;min-height:unset;background:var(--accent);color:#000" onclick="saveBackupToCloud()">
+          <button class="btn btn-primary" style="flex:1;height:36px;font-size:11px;padding:0;min-height:unset;background:var(--accent);color:var(--accent-text,#fff)" onclick="saveBackupToCloud()">
             ☁️ Buluta Yedekle
           </button>
           <button class="btn btn-secondary" style="flex:1;height:36px;font-size:11px;padding:0;min-height:unset" onclick="restoreBackupFromCloud()">
@@ -2877,7 +3365,7 @@
   <!-- UNDO TOAST -->
   <div id="undo-toast" class="undo-toast">
     <span id="undo-toast-msg"></span>
-    <button id="undo-toast-btn" onclick="triggerUndo()" style="margin-left:12px;background:var(--accent);color:#000;border:none;border-radius:999px;padding:4px 12px;font-family:var(--font-mono);font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px">GERİ AL</button>
+    <button id="undo-toast-btn" onclick="triggerUndo()" style="margin-left:12px;background:var(--accent);color:var(--accent-text,#fff);border:none;border-radius:999px;padding:4px 12px;font-family:var(--font-mono);font-size:11px;font-weight:700;cursor:pointer;letter-spacing:.5px">GERİ AL</button>
   </div>
 
   <script>
@@ -2919,18 +3407,13 @@
       liveSongs: [],
       liveActiveSong: null,
       activeRoomCode: null,
+      liveMode: null, // 'setlist' | 'quick' | null
+      liveSetlistId: null,
+      liveRoomName: '',
+      quickSongs: [],
+      isDefaultLibraryOnly: false,
       role: null,
       memberId: null,
-    };
-
-    const currentLib = () => (S.libraries[S.activeLibId] || S.libraries['default']).songs;
-    const saveLibraries = () => {
-      LS.set('gs_libraries', S.libraries);
-      if (window.autoSyncToCloud) window.autoSyncToCloud();
-    };
-    const saveSetlists = () => {
-      LS.set('gs_setlists', S.setlists);
-      if (window.autoSyncToCloud) window.autoSyncToCloud();
     };
 
     const DEFAULT_LIB = [
@@ -2938,6 +3421,66 @@
       { title: 'Fly Me To The Moon', artist: 'Frank Sinatra', key: 'C' },
       { title: 'Smooth Operator', artist: 'Sade', key: 'Am' }
     ];
+    const DEFAULT_TITLES = new Set(DEFAULT_LIB.map(s => s.title));
+
+    function isOnlyDefaultLibrary(libs, setlists) {
+      if (setlists && Object.keys(setlists).length > 0) return false;
+      if (!libs || typeof libs !== 'object') return true;
+      for (const [libId, lib] of Object.entries(libs)) {
+        if (libId !== 'default' && Array.isArray(lib?.songs) && lib.songs.length > 0) {
+          return false;
+        }
+      }
+      const defSongs = libs.default?.songs || [];
+      if (defSongs.length > DEFAULT_LIB.length) return false;
+      return defSongs.every(s => s && DEFAULT_TITLES.has(s.title));
+    }
+
+    function getAllRepertoireSongs() {
+      const seen = new Set();
+      const out = [];
+      const addFromLib = (lib) => {
+        if (!lib || !Array.isArray(lib.songs)) return;
+        lib.songs.forEach(s => {
+          if (!s) return;
+          if (s.id) {
+            if (seen.has(s.id)) return;
+            seen.add(s.id);
+          }
+          out.push(s);
+        });
+      };
+      if (S.libraries.default) addFromLib(S.libraries.default);
+      Object.entries(S.libraries || {}).forEach(([id, lib]) => {
+        if (id !== 'default') addFromLib(lib);
+      });
+      return out;
+    }
+
+    function updateQuickStageCount() {
+      const count = getAllRepertoireSongs().length;
+      const cardSub = document.getElementById('qs-card-count');
+      if (cardSub) {
+        cardSub.textContent = count > 0
+          ? `${count} şarkı · Setlistsiz doğrudan ara ve çal`
+          : 'Setlistsiz doğrudan repertuardan çal';
+      }
+      const qsCount = document.getElementById('qs-lib-count');
+      if (qsCount) qsCount.textContent = `${count} şarkı`;
+    }
+
+    const currentLib = () => (S.libraries[S.activeLibId] || S.libraries['default']).songs;
+    const saveLibraries = () => {
+      S.isDefaultLibraryOnly = isOnlyDefaultLibrary(S.libraries, S.setlists);
+      LS.set('gs_libraries', S.libraries);
+      updateQuickStageCount();
+      if (window.autoSyncToCloud) window.autoSyncToCloud();
+    };
+    const saveSetlists = () => {
+      S.isDefaultLibraryOnly = isOnlyDefaultLibrary(S.libraries, S.setlists);
+      LS.set('gs_setlists', S.setlists);
+      if (window.autoSyncToCloud) window.autoSyncToCloud();
+    };
 
     // ══ HELPERS ══
     const esc = (t) => {
@@ -2949,6 +3492,97 @@
       get: k => { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
       set: (k, v) => localStorage.setItem(k, JSON.stringify(v)),
     };
+
+    function trNormalize(str) {
+      if (!str) return '';
+      return String(str)
+        .replace(/İ/g, 'i')
+        .replace(/I/g, 'ı')
+        .toLowerCase()
+        .replace(/ç/g, 'c')
+        .replace(/ğ/g, 'g')
+        .replace(/ı/g, 'i')
+        .replace(/ö/g, 'o')
+        .replace(/ş/g, 's')
+        .replace(/ü/g, 'u');
+    }
+
+    function healTurkishData() {
+      if (!S.libraries || !S.libraries.default || !S.libraries.default.songs) return;
+      const libSongs = S.libraries.default.songs;
+      if (!libSongs.length) return;
+
+      const idMap = new Map();
+      const skelMap = new Map();
+
+      function skeleton(str) {
+        if (!str) return '';
+        let s = String(str).toLowerCase();
+        const trMap = { 'ı': 'i', 'ğ': 'g', 'ü': 'u', 'ş': 's', 'ö': 'o', 'ç': 'c', 'İ': 'i' };
+        s = s.replace(/[ığüşöçİ]/g, c => trMap[c] || c);
+        return s.replace(/[\uFFFD\?\.\,\(\)\-\s_aeiou]/g, '');
+      }
+
+      libSongs.forEach(s => {
+        if (s.id) idMap.set(s.id, s);
+        const sk = skeleton(s.title);
+        if (sk && !skelMap.has(sk)) skelMap.set(sk, s);
+      });
+
+      let changed = false;
+
+      // 1. Heal all setlists
+      if (S.setlists) {
+        Object.values(S.setlists).forEach(sl => {
+          if (!sl || !sl.songs || !Array.isArray(sl.songs)) return;
+          sl.songs.forEach(s => {
+            const match = (s.libId && idMap.get(s.libId)) || skelMap.get(skeleton(s.title));
+            if (match) {
+              if (s.title !== match.title) {
+                s.title = match.title;
+                changed = true;
+              }
+              if (match.artist && (s.artist !== match.artist || s.subtitle !== match.artist)) {
+                s.artist = match.artist;
+                if (s.subtitle !== undefined) s.subtitle = match.artist;
+                changed = true;
+              }
+              if (match.key && !s.key) {
+                s.key = match.key;
+                changed = true;
+              }
+            }
+          });
+        });
+      }
+
+      // 2. Heal active liveSongs
+      if (S.liveSongs && Array.isArray(S.liveSongs)) {
+        S.liveSongs.forEach(s => {
+          const match = (s.libId && idMap.get(s.libId)) || skelMap.get(skeleton(s.title));
+          if (match) {
+            if (s.title !== match.title) {
+              s.title = match.title;
+              changed = true;
+            }
+            if (match.artist && (s.artist !== match.artist || s.subtitle !== match.artist)) {
+              s.artist = match.artist;
+              if (s.subtitle !== undefined) s.subtitle = match.artist;
+              changed = true;
+            }
+            if (match.key && !s.key) {
+              s.key = match.key;
+              changed = true;
+            }
+          }
+        });
+      }
+
+      if (changed) {
+        saveSetlists();
+        if (S.activeSetlistId) renderLeaderSongList();
+      }
+    }
 
     function showToast(m) {
       const t = document.getElementById('toast');
@@ -2983,21 +3617,6 @@
       S.username = LS.get('gs_username') || '';
       S.userRole = LS.get('gs_user_role') || null;
 
-      // Load libraries; migrate legacy gs_library if needed
-      const savedLibs = LS.get('gs_libraries');
-      if (savedLibs && typeof savedLibs === 'object' && !Array.isArray(savedLibs)) {
-        S.libraries = savedLibs;
-      } else {
-        const legacySongs = LS.get('gs_library');
-        const songs = legacySongs || DEFAULT_LIB.map((s, i) => ({ id: `lib_${i}`, ...s }));
-        S.libraries = { default: { id: 'default', name: 'Ana Kütüphane', songs } };
-        saveLibraries();
-      }
-      if (!S.libraries['default']) {
-        S.libraries['default'] = { id: 'default', name: 'Ana Kütüphane', songs: [] };
-      }
-      S.activeLibId = 'default';
-      
       // Legacy compatibility: If gs_setlists is stored as an Array, migrate it to an Object
       let loadedSetlists = LS.get('gs_setlists') || {};
       if (Array.isArray(loadedSetlists)) {
@@ -3010,21 +3629,73 @@
       }
       S.setlists = loadedSetlists;
 
+      // Load libraries; never push empty/default starter data to cloud on fresh install
+      const savedLibs = LS.get('gs_libraries');
+      if (savedLibs && typeof savedLibs === 'object' && !Array.isArray(savedLibs)) {
+        S.libraries = savedLibs;
+        S.isDefaultLibraryOnly = isOnlyDefaultLibrary(S.libraries, S.setlists);
+      } else {
+        const legacySongs = LS.get('gs_library');
+        if (Array.isArray(legacySongs) && legacySongs.length > 0) {
+          S.libraries = { default: { id: 'default', name: 'Ana Kütüphane', songs: legacySongs } };
+          LS.set('gs_libraries', S.libraries);
+          S.isDefaultLibraryOnly = isOnlyDefaultLibrary(S.libraries, S.setlists);
+        } else {
+          const songs = DEFAULT_LIB.map((s, i) => ({ id: `lib_${i}`, ...s }));
+          S.libraries = { default: { id: 'default', name: 'Ana Kütüphane', songs } };
+          S.isDefaultLibraryOnly = true;
+        }
+      }
+      if (!S.libraries['default']) {
+        S.libraries['default'] = { id: 'default', name: 'Ana Kütüphane', songs: [] };
+      }
+      S.activeLibId = 'default';
+
       S.groupKey = LS.get('gs_group_key') || 'default';
       S.groupKeys = LS.get('gs_group_keys') || ['default'];
       if (!S.groupKeys.includes(S.groupKey)) S.groupKeys.push(S.groupKey);
+      healTurkishData();
+      updateQuickStageCount();
     }
 
     window.selectRole = (role) => {
+      if (role === 'host' && S.role === 'member') {
+        if (S.listeners.memberWatch) { S.listeners.memberWatch(); delete S.listeners.memberWatch; }
+        S.activeRoomCode = null;
+        S.role = null;
+      } else if (role === 'crew' && S.role !== 'member' && S.listeners.memberWatch) {
+        S.listeners.memberWatch();
+        delete S.listeners.memberWatch;
+        S.activeRoomCode = null;
+        S.liveMode = null;
+        S.liveSetlistId = null;
+        S.liveRoomName = '';
+        S.liveActiveSong = null;
+      }
+
       S.userRole = role;
       LS.set('gs_user_role', role);
-      sessionStorage.setItem('gs_role_selected', '1');
       applyRole();
-      showScreen('home');
-      renderSetlistCards();
-      if (role === 'host') renderLibrary();
-      autoSyncFromCloud(true);
-      if (!S.username) showNameModal();
+
+      if (role === 'crew') {
+        joinRoomDirect(true);
+      } else {
+        showScreen('home');
+        renderSetlistCards();
+        renderLibrary();
+        updateQuickStageCount();
+        updateHomeLiveBanner();
+        autoSyncFromCloud(true);
+      }
+    };
+
+    window.switchRoleFromMember = () => {
+      if (S.listeners.memberWatch) { S.listeners.memberWatch(); delete S.listeners.memberWatch; }
+      S.activeRoomCode = null;
+      S.memberId = null;
+      S.role = null;
+      currentDetailSong = null;
+      showScreen('splash');
     };
 
     window.applyRole = () => {
@@ -3033,6 +3704,10 @@
       if (libBtn) libBtn.style.display = isHost ? '' : 'none';
       const fab = document.getElementById('fab-create');
       if (fab) fab.style.display = isHost ? '' : 'none';
+      const quickCard = document.getElementById('quick-stage-card');
+      if (quickCard) quickCard.style.display = isHost ? 'flex' : 'none';
+      const slLabel = document.getElementById('setlists-section-label');
+      if (slLabel) slLabel.style.display = isHost ? 'block' : 'none';
       const setlistsList = document.getElementById('setlists-list');
       if (setlistsList) setlistsList.style.display = isHost ? '' : 'none';
       const crewArea = document.getElementById('crew-join-area');
@@ -3046,6 +3721,8 @@
         badge.style.border = '1px solid var(--border)';
       }
       updateUsernameDisplay();
+      updateQuickStageCount();
+      updateHomeLiveBanner();
     };
 
     window.showRepertuarModal = () => {
@@ -3057,6 +3734,10 @@
     window.updateUsernameDisplay = () => {
       const el = document.getElementById('home-username-display');
       if (el) el.textContent = S.username || 'İSİM GİR';
+      const memEl = document.getElementById('member-username-display');
+      if (memEl) memEl.textContent = S.username || 'Müzisyen';
+      const qsEl = document.getElementById('qs-username');
+      if (qsEl) qsEl.textContent = S.username || 'Lider';
     };
 
     window.showScreen = (id) => {
@@ -3076,9 +3757,12 @@
 
     function renderLibrary() {
       renderLibTabs();
-      const q = document.getElementById('lib-search-input').value.toLowerCase();
+      const q = trNormalize(document.getElementById('lib-search-input').value);
       const list = document.getElementById('lib-list');
-      const filtered = currentLib().filter(s => s.title.toLowerCase().includes(q) || (s.artist || '').toLowerCase().includes(q));
+      const filtered = currentLib().filter(s => {
+        if (!q) return true;
+        return trNormalize(s.title).includes(q) || trNormalize(s.artist || '').includes(q);
+      });
 
       const badge = document.getElementById('lib-count-badge');
       if (badge) badge.textContent = filtered.length;
@@ -3106,9 +3790,10 @@
       if (selectedLibIds.has(id)) selectedLibIds.delete(id);
       else selectedLibIds.add(id);
 
+      const q = trNormalize(document.getElementById('lib-search-input').value);
       const filtered = currentLib().filter(s => {
-        const q = document.getElementById('lib-search-input').value.toLowerCase();
-        return s.title.toLowerCase().includes(q) || (s.artist || '').toLowerCase().includes(q);
+        if (!q) return true;
+        return trNormalize(s.title).includes(q) || trNormalize(s.artist || '').includes(q);
       });
       updateBulkDeleteUI(filtered);
     };
@@ -3340,20 +4025,35 @@
     };
 
     // ══ CREATE SETLIST ══
-    window.showCreateSetlistModal = () => document.getElementById('create-setlist-modal').classList.remove('hidden');
-    window.closeCreateSetlistModal = () => document.getElementById('create-setlist-modal').classList.add('hidden');
+    let _saveQuickStagePending = false;
+
+    window.showCreateSetlistModal = () => {
+      _saveQuickStagePending = false;
+      document.getElementById('new-setlist-name').value = '';
+      document.getElementById('new-setlist-band').value = '';
+      document.getElementById('create-setlist-modal').classList.remove('hidden');
+    };
+    window.closeCreateSetlistModal = () => {
+      _saveQuickStagePending = false;
+      document.getElementById('create-setlist-modal').classList.add('hidden');
+    };
     window.createSetlist = () => {
       const name = document.getElementById('new-setlist-name').value.trim();
       const band = document.getElementById('new-setlist-band').value.trim();
       if (!name) { showToast('Setlist adı gir'); return; }
+      const wasQuickSave = _saveQuickStagePending;
+      const songs = wasQuickSave
+        ? S.quickSongs.map((s, i) => ({ ...s, id: `live_${Date.now()}_${i}`, order: i }))
+        : [];
+      _saveQuickStagePending = false;
       const id = `sl_${Date.now()}`;
-      S.setlists[id] = { id, name, band, songs: [], createdAt: Date.now() };
+      S.setlists[id] = { id, name, band, songs, createdAt: Date.now() };
       saveSetlists();
       closeCreateSetlistModal();
       document.getElementById('new-setlist-name').value = '';
       document.getElementById('new-setlist-band').value = '';
       renderSetlistCards();
-      showToast(`"${name}" oluşturuldu`);
+      showToast(wasQuickSave ? `"${name}" (${songs.length} şarkı) kaydedildi` : `"${name}" oluşturuldu`);
     };
 
     // ══ ADD TO SETLIST SHEET — tek dokunuşla ekle ══
@@ -3390,7 +4090,7 @@
 
     window.renderAddList = () => {
       renderAddListTabs();
-      const q = document.getElementById('add-search').value.toLowerCase();
+      const q = trNormalize(document.getElementById('add-search').value);
       const list = document.getElementById('add-list');
       const currentIds = new Set(S.liveSongs.map(s => s.libId || s.id));
       const sourceSongs = addListActiveLibId === 'all'
@@ -3398,7 +4098,7 @@
         : (S.libraries[addListActiveLibId]?.songs || []);
       const filtered = sourceSongs.filter(s =>
         !currentIds.has(s.id) &&
-        (s.title.toLowerCase().includes(q) || (s.artist || '').toLowerCase().includes(q))
+        (!q || trNormalize(s.title).includes(q) || trNormalize(s.artist || '').includes(q))
       );
 
       if (!filtered.length) {
@@ -3440,7 +4140,9 @@
       const title = S.liveSongs[idx].title;
       S.liveSongs.splice(idx, 1);
       S.liveSongs.forEach((s, i) => s.order = i);
-      if (S.liveActiveSong === liveId) S.liveActiveSong = null;
+      if (S.liveMode === 'setlist' && S.liveSetlistId === S.activeSetlistId && S.liveActiveSong === liveId) {
+        S.liveActiveSong = null;
+      }
       saveLeaderSongs();
       renderLeaderSongList();
       showToast(`"${title}" setlistten kaldırıldı`);
@@ -3638,15 +4340,17 @@
       const localSl = Object.values(S.setlists).sort((a, b) => b.createdAt - a.createdAt);
 
       if (localSl.length === 0) {
-        list.innerHTML = `<div style="text-align:center;padding:40px;color:var(--text-dim)">Setlist yok</div>`;
+        list.innerHTML = `<div style="text-align:center;padding:28px 16px;color:var(--text-muted);font-size:13px;line-height:1.6">Kayıtlı setlist yok — yukarıdan <strong style="color:var(--text)">Hızlı Sahne</strong> açabilir veya sağ alttaki <strong style="color:var(--text)">+</strong> ile setlist oluşturabilirsin.</div>`;
         return;
       }
 
-      list.innerHTML = localSl.map(sl => `
-    <div class="setlist-card" style="display:flex;align-items:center;gap:8px">
+      list.innerHTML = localSl.map(sl => {
+        const isLive = S.activeRoomCode === 'LIVE' && S.liveMode === 'setlist' && S.liveSetlistId === sl.id;
+        return `
+    <div class="setlist-card${isLive ? ' live' : ''}" style="display:flex;align-items:center;gap:8px">
       <div class="setlist-card-info" onclick="openLeader('${sl.id}')" style="flex:1;cursor:pointer">
-        <div class="setlist-card-name">${esc(sl.name)}</div>
-        <div class="setlist-card-meta">${esc(sl.band || '—')} · ${sl.songs.length} şarkı</div>
+        <div class="setlist-card-name">${esc(sl.name)}${isLive ? ' <span class="live-badge on" style="margin-left:8px;vertical-align:middle">● CANLI</span>' : ''}</div>
+        <div class="setlist-card-meta">${esc(sl.band || '—')} · ${(sl.songs || []).length} şarkı</div>
       </div>
       <button onclick="event.stopPropagation();showSetlistEditMenu('${sl.id}')" title="Düzenle"
         style="background:transparent;border:1px solid var(--border);color:var(--text-muted);padding:8px 10px;border-radius:8px;cursor:pointer;flex-shrink:0">
@@ -3655,7 +4359,8 @@
         </svg>
       </button>
     </div>
-  `).join('');
+  `;
+      }).join('');
     }
 
     // Düzenleme menüsü
@@ -3715,10 +4420,12 @@
       if (!sl) return;
       if (!confirm(`"${sl.name}" silinecek. Emin misin?`)) return;
       delete S.setlists[slId];
+      LS.set('gs_last_updated_at', Date.now());
       saveSetlists();
       modal.classList.add('hidden');
       renderSetlistCards();
       showToast('Silindi');
+      if (window.autoSyncToCloud) window.autoSyncToCloud(true);
     };
 
     window.openSetlist = (id) => window.openLeader(id);
@@ -3726,16 +4433,12 @@
       const sl = S.setlists[id];
       if (!sl) return;
       S.activeSetlistId = id;
+      healTurkishData();
       S.liveSongs = [...(sl.songs || [])];
-      S.activeRoomCode = null;
-      S.liveActiveSong = null;
       document.getElementById('leader-setlist-name').textContent = sl.name;
-      document.getElementById('leader-username').textContent = S.username;
-      document.getElementById('leader-code').textContent = '—';
-      document.getElementById('leader-open-btn').style.display = 'flex';
-      document.getElementById('leader-live-btn').style.display = 'none';
-      const dot = document.getElementById('member-count-dot');
-      if (dot) dot.style.display = 'none';
+      document.getElementById('leader-username').textContent = S.username || 'Lider';
+      document.getElementById('leader-code').textContent = S.activeRoomCode === 'LIVE' ? 'CANLI' : '—';
+      syncLiveUI();
       renderLeaderSongList();
       showScreen('leader');
     };
@@ -3746,7 +4449,9 @@
       saveSetlists();
       const countEl = document.getElementById('leader-song-count');
       if (countEl) countEl.textContent = `${S.liveSongs.length} şarkı`;
-      if (S.activeRoomCode) pushSetlistToWorker();
+      if (S.activeRoomCode === 'LIVE' && S.liveMode === 'setlist' && S.liveSetlistId === S.activeSetlistId) {
+        pushSetlistToWorker();
+      }
     }
 
     function renderLeaderSongList() {
@@ -3762,10 +4467,13 @@
       }
       if (emptyEl) emptyEl.style.display = 'none';
 
+      const isLiveThisSetlist = S.activeRoomCode === 'LIVE' && S.liveMode === 'setlist' && S.liveSetlistId === S.activeSetlistId;
       listEl.style.padding = '12px 14px';
-      listEl.innerHTML = S.liveSongs.map((s, i) => `
+      listEl.innerHTML = S.liveSongs.map((s, i) => {
+        const isRowActive = isLiveThisSetlist && S.liveActiveSong === s.id;
+        return `
         <div class="drag-row" data-id="${s.id}"
-          style="display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:12px;cursor:grab;border:1px solid ${S.liveActiveSong === s.id ? 'var(--accent)' : 'var(--border)'};background:${S.liveActiveSong === s.id ? 'rgba(79,142,247,0.12)' : 'var(--surface2)'};margin-bottom:8px;user-select:none;will-change:transform;touch-action:none">
+          style="display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:12px;cursor:grab;border:1px solid ${isRowActive ? 'var(--accent)' : 'var(--border)'};background:${isRowActive ? 'rgba(79,142,247,0.12)' : 'var(--surface2)'};margin-bottom:8px;user-select:none;will-change:transform;touch-action:none">
           <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--accent);min-width:32px;text-align:center;flex-shrink:0">${i + 1}</div>
           <div style="flex:1;min-width:0">
             <div style="font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(s.title)}</div>
@@ -3783,7 +4491,8 @@
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
           </button>
         </div>
-      `).join('');
+      `;
+      }).join('');
 
       // ── Drag & Drop: tüm satır sürüklenebilir (sil/düzenle hariç) ──
       let dragRow = null, startY = 0, currentY = 0, dragHeight = 0;
@@ -3913,152 +4622,161 @@
     let leaderWs = null;
     let leaderPingTimer = null;
     let leaderReconnectTimer = null;
+    let _qsSearchResults = [];
+    let _qsBrowseResults = [];
 
-    function makeRoomCode() {
-      const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-      let code = '';
-      for (let i = 0; i < 4; i++) code += chars[Math.floor(Math.random() * chars.length)];
-      return code;
+    function updateMemberCountDots(count) {
+      ['member-count-dot', 'qs-member-count-dot'].forEach(id => {
+        const dot = document.getElementById(id);
+        if (dot) {
+          dot.textContent = count;
+          dot.style.display = count > 0 ? 'flex' : 'none';
+        }
+      });
+    }
+
+    function updateHomeLiveBanner() {
+      const banner = document.getElementById('home-live-banner');
+      if (!banner) return;
+      if (S.userRole !== 'host' || S.activeRoomCode !== 'LIVE') {
+        banner.style.display = 'none';
+        return;
+      }
+
+      const titleEl = document.getElementById('home-live-title');
+      const songEl = document.getElementById('home-live-song');
+      if (titleEl) {
+        titleEl.textContent = `● CANLI: ${S.liveRoomName || 'Sahne'} · DÖN`;
+      }
+
+      let activeSong = null;
+      if (S.liveActiveSong) {
+        if (S.liveMode === 'quick') {
+          activeSong = S.quickSongs.find(s => s.id === S.liveActiveSong) || null;
+        } else if (S.liveSetlistId && S.setlists[S.liveSetlistId]) {
+          activeSong = (S.setlists[S.liveSetlistId].songs || []).find(s => s.id === S.liveActiveSong) || null;
+        }
+      }
+      if (songEl) {
+        songEl.textContent = activeSong
+          ? `${activeSong.title}${activeSong.key ? ' (' + activeSong.key + ')' : ''}`
+          : 'Henüz şarkı seçilmedi — sahneye dönmek için dokun';
+      }
+      banner.style.display = 'flex';
+    }
+
+    function syncLiveUI() {
+      const isLive = S.activeRoomCode === 'LIVE';
+      const isSetlistLive = isLive && S.liveMode === 'setlist' && S.liveSetlistId === S.activeSetlistId;
+      const isQuickLive = isLive && S.liveMode === 'quick';
+
+      const openBtn = document.getElementById('leader-open-btn');
+      const liveBtn = document.getElementById('leader-live-btn');
+      if (openBtn) openBtn.style.display = isSetlistLive ? 'none' : 'flex';
+      if (liveBtn) liveBtn.style.display = isSetlistLive ? '' : 'none';
+
+      const qsLiveBtn = document.getElementById('qs-live-btn');
+      const qsReadyPill = document.getElementById('qs-ready-pill');
+      if (qsLiveBtn) qsLiveBtn.style.display = isQuickLive ? '' : 'none';
+      if (qsReadyPill) qsReadyPill.style.display = isQuickLive ? 'none' : '';
+
+      const qsCard = document.getElementById('quick-stage-card');
+      const qsCardBadge = document.getElementById('qs-card-live-badge');
+      if (qsCard) qsCard.classList.toggle('live', isQuickLive);
+      if (qsCardBadge) qsCardBadge.style.display = isQuickLive ? 'inline-flex' : 'none';
+
+      updateMemberCountDots(isLive ? (S.currentMembers || []).length : 0);
+      updateHomeLiveBanner();
+    }
+
+    window.returnToActiveLiveStage = () => {
+      if (S.activeRoomCode !== 'LIVE') return;
+      if (S.liveMode === 'quick') {
+        openQuickStage();
+      } else if (S.liveSetlistId && S.setlists[S.liveSetlistId]) {
+        openLeader(S.liveSetlistId);
+      }
+    };
+
+    async function ensureLiveRoomOpen({ mode, setlistId = null, name = 'Canlı Sahne', band = '', songs = [], activeSongId = null, forceUpsert = false }) {
+      const code = 'LIVE';
+      const leader = S.username || 'Lider';
+      const wasOffline = !S.activeRoomCode;
+      const prevState = {
+        code: S.activeRoomCode,
+        mode: S.liveMode,
+        setlistId: S.liveSetlistId,
+        roomName: S.liveRoomName
+      };
+
+      const needsUpsert = forceUpsert || wasOffline || S.liveMode !== mode || (mode === 'setlist' && S.liveSetlistId !== setlistId);
+      S.activeRoomCode = code;
+      S.liveMode = mode;
+      S.liveSetlistId = setlistId || null;
+      S.liveRoomName = name || 'Canlı Sahne';
+
+      if (needsUpsert) {
+        const roomData = {
+          code,
+          name: S.liveRoomName,
+          band: band || '',
+          leader,
+          active_song: activeSongId !== undefined ? activeSongId : null,
+          songs: Array.isArray(songs) ? songs : []
+        };
+
+        try {
+          const res = await fetch(`${getWorkerUrl()}/api/room`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(roomData)
+          });
+          if (!res.ok) {
+            const errData = await res.json().catch(() => ({}));
+            throw new Error(errData.error || `HTTP ${res.status}`);
+          }
+        } catch (err) {
+          showToast('Canlı sahne açılamadı! Sunucu bağlantısını kontrol edin.');
+          console.error('Cloudflare Worker Error:', err);
+          S.activeRoomCode = prevState.code;
+          S.liveMode = prevState.mode;
+          S.liveSetlistId = prevState.setlistId;
+          S.liveRoomName = prevState.roomName;
+          syncLiveUI();
+          return false;
+        }
+      }
+
+      const codeEl = document.getElementById('leader-code');
+      if (codeEl) codeEl.textContent = 'CANLI';
+
+      if (!leaderWs || leaderWs.readyState === WebSocket.CLOSED || leaderWs.readyState === WebSocket.CLOSING) {
+        startLeaderRealtime(code);
+      }
+
+      syncLiveUI();
+      if (wasOffline) showToast('Canlı sahne açıldı! 🔴');
+      return true;
     }
 
     // Tek dokunuşta doğrudan oda aç (Şifresiz / Sabit Canlı Oda)
     window.openRoomDirect = async () => {
-      if (!S.username) { showNameModal(); return; }
       if (!S.activeSetlistId || !S.setlists[S.activeSetlistId]) return;
-
-      const code = 'LIVE';
       const sl = S.setlists[S.activeSetlistId];
-      S.activeRoomCode = code;
+      const isSameSetlist = S.activeRoomCode === 'LIVE' && S.liveMode === 'setlist' && S.liveSetlistId === S.activeSetlistId;
+      if (!isSameSetlist) S.liveActiveSong = null;
 
-      const roomData = {
-        code,
+      await ensureLiveRoomOpen({
+        mode: 'setlist',
+        setlistId: S.activeSetlistId,
         name: sl.name,
         band: sl.band || '',
-        leader: S.username,
-        active_song: null,
-        songs: S.liveSongs.map((s, i) => ({ ...s, order: i }))
-      };
-
-      try {
-        const res = await fetch(`${getWorkerUrl()}/api/room`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(roomData)
-        });
-
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({}));
-          throw new Error(errData.error || `HTTP ${res.status}`);
-        }
-      } catch (err) {
-        showToast('Oda açılamadı! Sunucu bağlantısını kontrol edin.');
-        console.error('Cloudflare Worker Error:', err);
-        S.activeRoomCode = null;
-        return;
-      }
-
-      localStorage.setItem('last_room_code', code);
-      document.getElementById('leader-code').textContent = 'CANLI';
-      const openBtn = document.getElementById('leader-open-btn');
-      if (openBtn) openBtn.style.display = 'none';
-      document.getElementById('leader-live-btn').style.display = '';
-
-      startLeaderRealtime(code);
-      showToast('Canlı sahne odası açıldı! 🔴');
-    };
-
-    window.showOpenRoomModal = () => {
-      if (!S.username) { showNameModal(); return; }
-      if (!S.activeSetlistId || !S.setlists[S.activeSetlistId]) return;
-      
-      let code = localStorage.getItem('last_room_code');
-      if (!code) {
-        code = makeRoomCode();
-      }
-      
-      const inputEl = document.getElementById('leader-custom-code-input');
-      if (inputEl) inputEl.value = code;
-      
-      const modal = document.getElementById('open-room-modal');
-      if (modal) modal.classList.remove('hidden');
-    };
-
-    window.closeOpenRoomModal = () => {
-      const modal = document.getElementById('open-room-modal');
-      if (modal) modal.classList.add('hidden');
-    };
-
-    window.regenerateLeaderRandomCode = () => {
-      const code = makeRoomCode();
-      const inputEl = document.getElementById('leader-custom-code-input');
-      if (inputEl) inputEl.value = code;
-    };
-
-    window.confirmOpenRoomFromLeader = async () => {
-      const inputEl = document.getElementById('leader-custom-code-input');
-      if (!inputEl) return;
-      
-      let code = inputEl.value.trim().toUpperCase();
-      
-      // Türkçe karakterleri standart harflere çevir ve geçersiz sembolleri temizle
-      code = code
-        .replace(/Ğ/g, 'G').replace(/Ü/g, 'U').replace(/Ş/g, 'S')
-        .replace(/İ/g, 'I').replace(/Ö/g, 'O').replace(/Ç/g, 'C')
-        .replace(/[^A-Z0-9-]/g, '');
-
-      if (!code || code.length < 3) {
-        showToast('Oda kodu en az 3 karakter olmalıdır!');
-        return;
-      }
-      if (code.length > 12) {
-        showToast('Oda kodu en fazla 12 karakter olmalıdır!');
-        return;
-      }
-
-      const sl = S.setlists[S.activeSetlistId];
-      S.activeRoomCode = code;
-
-      const roomData = {
-        code: code,
-        name: sl.name,
-        band: sl.band || '',
-        leader: S.username,
-        active_song: null,
-        songs: S.liveSongs.map((s, i) => ({ ...s, order: i }))
-      };
-
-      try {
-        const res = await fetch(`${getWorkerUrl()}/api/room`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(roomData)
-        });
-
-        if (!res.ok) {
-          const errData = await res.json().catch(() => ({}));
-          throw new Error(errData.error || `HTTP ${res.status}`);
-        }
-      } catch (err) {
-        showToast('Oda oluşturulurken sunucu hatası oluştu!');
-        console.error('Cloudflare Worker Error:', err);
-        return;
-      }
-
-      // Modalı Kapat
-      closeOpenRoomModal();
-
-      // Tercih edilen oda kodunu gelecekte hatırlamak üzere kaydet
-      localStorage.setItem('last_room_code', code);
-
-      // UI güncelle
-      document.getElementById('leader-code').textContent = code;
-      document.getElementById('leader-open-btn').style.display = 'none';
-      document.getElementById('leader-live-btn').style.display = '';
-
-      // Realtime WebSocket bağlantısını başlat
-      startLeaderRealtime(code);
-
-      showToast(`Oda açıldı: ${code}`);
+        songs: S.liveSongs.map((s, i) => ({ ...s, order: i })),
+        activeSongId: isSameSetlist ? S.liveActiveSong : null,
+        forceUpsert: true
+      });
+      renderLeaderSongList();
+      renderSetlistCards();
     };
 
     function startLeaderRealtime(code) {
@@ -4073,7 +4791,7 @@
 
       const connectWs = () => {
         if (!S.activeRoomCode || S.activeRoomCode !== code) return;
-        const wsUrl = getWsUrl(`/ws?room=${code}&name=${encodeURIComponent(S.username)}&role=leader`);
+        const wsUrl = getWsUrl(`/ws?room=${code}&name=${encodeURIComponent(S.username || 'Lider')}&role=leader`);
         const ws = new WebSocket(wsUrl);
         leaderWs = ws;
         S.activeWs = ws;
@@ -4093,22 +4811,12 @@
             const data = JSON.parse(event.data);
             if (data.type === 'MEMBERS_UPDATE') {
               S.currentMembers = Array.isArray(data.members) ? data.members : Object.values(data.members || {});
-              const count = S.currentMembers.length;
-              const dot = document.getElementById('member-count-dot');
-              if (dot) {
-                dot.textContent = count;
-                dot.style.display = count > 0 ? 'flex' : 'none';
-              }
+              updateMemberCountDots(S.currentMembers.length);
               renderMembersList(S.currentMembers);
             } else if (data.type === 'INIT') {
               if (data.room && data.room.members) {
                 S.currentMembers = Array.isArray(data.room.members) ? data.room.members : Object.values(data.room.members);
-                const count = S.currentMembers.length;
-                const dot = document.getElementById('member-count-dot');
-                if (dot) {
-                  dot.textContent = count;
-                  dot.style.display = count > 0 ? 'flex' : 'none';
-                }
+                updateMemberCountDots(S.currentMembers.length);
                 renderMembersList(S.currentMembers);
               }
             }
@@ -4158,7 +4866,7 @@
       if (!listEl) return;
       const arr = Array.isArray(members) ? members : Object.values(members || {});
       if (!arr.length) {
-        listEl.innerHTML = '<div style="text-align:center;color:var(--text-dim);font-family:var(--font-mono);font-size:11px;padding:20px 0">Henüz üye yok</div>';
+        listEl.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-family:var(--font-mono);font-size:11px;padding:20px 0">Henüz üye yok</div>';
         return;
       }
       listEl.innerHTML = arr.map((m) => `
@@ -4170,21 +4878,41 @@
     }
 
     window.showMembersSheet = () => {
-      if (!S.activeRoomCode) { showToast('Oda açık değil'); return; }
-      document.getElementById('room-code-display').textContent = S.activeRoomCode;
+      if (!S.activeRoomCode) { showToast('Canlı sahne henüz açılmadı'); return; }
       document.getElementById('members-sheet').classList.remove('hidden');
       renderMembersList(S.currentMembers || []);
     };
     window.closeMembersSheet = () => document.getElementById('members-sheet').classList.add('hidden');
 
     window.selectSongInRoom = async (songId) => {
-      if (!S.activeRoomCode) return;
-      
+      if (!S.activeSetlistId || !S.setlists[S.activeSetlistId]) return;
+      const sl = S.setlists[S.activeSetlistId];
+      const alreadyThisSetlist = S.activeRoomCode === 'LIVE' && S.liveMode === 'setlist' && S.liveSetlistId === S.activeSetlistId;
+
       S.liveActiveSong = songId;
-      document.querySelectorAll('.drag-row').forEach(r => {
+      document.querySelectorAll('#leader-song-list .drag-row').forEach(r => {
         r.style.borderColor = r.dataset.id === songId ? 'var(--accent)' : 'var(--border)';
         r.style.background = r.dataset.id === songId ? 'rgba(79,142,247,0.12)' : 'var(--surface2)';
       });
+
+      if (!alreadyThisSetlist) {
+        const ok = await ensureLiveRoomOpen({
+          mode: 'setlist',
+          setlistId: S.activeSetlistId,
+          name: sl.name,
+          band: sl.band || '',
+          songs: S.liveSongs.map((s, i) => ({ ...s, order: i })),
+          activeSongId: songId,
+          forceUpsert: true
+        });
+        if (!ok) {
+          S.liveActiveSong = null;
+          renderLeaderSongList();
+          return;
+        }
+        renderSetlistCards();
+        return;
+      }
 
       // 1. WebSocket ile 10 ms içinde ultra hızlı yayın iletimi
       let sentWs = false;
@@ -4203,6 +4931,7 @@
       } catch (error) {
         if (!sentWs) console.error('Şarkı seçilirken hata oluştu:', error);
       }
+      updateHomeLiveBanner();
     };
 
     window.pushSetlistToWorker = async () => {
@@ -4226,71 +4955,290 @@
       }
     };
 
-    // ══════════ CREW: ODAYA KATIL ══════════
-    function renderRecentRooms() {
-      const container = document.getElementById('recent-rooms-container');
-      const listEl = document.getElementById('recent-rooms-list');
-      let joinedRooms = JSON.parse(localStorage.getItem('gigsync_recent_rooms_v2') || '[]');
+    // ══════════ HIZLI SAHNE (SETLISTSİZ REPERTUAR YAYINI) ══════════
+    window.openQuickStage = () => {
+      updateUsernameDisplay();
+      updateQuickStageCount();
+      syncLiveUI();
+      renderQuickStageView();
+      showScreen('quick-stage');
+      setTimeout(() => {
+        const input = document.getElementById('qs-search-input');
+        if (input) input.focus();
+      }, 60);
+    };
 
-      if (joinedRooms.length === 0) {
-        container.style.display = 'none';
+    window.goBackFromQuickStage = () => {
+      showScreen('home');
+      renderSetlistCards();
+      syncLiveUI();
+    };
+
+    window.clearQuickStageSearch = () => {
+      const input = document.getElementById('qs-search-input');
+      if (input) {
+        input.value = '';
+        input.focus();
+      }
+      renderQuickStageView();
+    };
+
+    function updateQuickStageNowBar() {
+      const bar = document.getElementById('qs-now-bar');
+      if (!bar) return;
+      const activeSong = (S.activeRoomCode === 'LIVE' && S.liveMode === 'quick' && S.liveActiveSong)
+        ? S.quickSongs.find(s => s.id === S.liveActiveSong)
+        : null;
+      if (!activeSong) {
+        bar.style.display = 'none';
         return;
       }
-
-      container.style.display = 'block';
-      listEl.innerHTML = '';
-
-      joinedRooms.forEach((room, idx) => {
-        const row = document.createElement('div');
-        row.style.cssText = 'display:flex;align-items:center;gap:8px';
-
-        const bandStr = room.band ? `<span style="font-size:11px;color:var(--text-muted);display:block;margin-bottom:2px">${esc(room.band)}</span>` : '';
-        const nameStr = `<span style="font-size:14px;font-weight:700;color:var(--text)">${esc(room.name)}</span>`;
-
-        const btn = document.createElement('button');
-        btn.className = 'btn btn-secondary';
-        btn.style.cssText = 'flex:1;justify-content:space-between;padding:12px 16px;border-radius:12px;display:flex;align-items:center;border:1px solid var(--border);background:var(--surface);cursor:pointer;text-align:left;min-width:0';
-        btn.innerHTML = `
-          <div style="display:flex;flex-direction:column;min-width:0;overflow:hidden">
-            ${bandStr}
-            ${nameStr}
-          </div>
-          <span style="font-size:11px;color:var(--accent);display:flex;align-items:center;gap:4px;font-weight:600;white-space:nowrap;margin-left:10px;flex-shrink:0">
-            Katıl
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </span>`;
-        btn.onclick = () => {
-          document.getElementById('join-code-input').value = room.code;
-          joinRoomByCode();
-        };
-
-        const delBtn = document.createElement('button');
-        delBtn.style.cssText = 'width:32px;height:32px;border:none;background:transparent;color:var(--text-dim);cursor:pointer;display:flex;align-items:center;justify-content:center;border-radius:8px;flex-shrink:0;transition:all .15s';
-        delBtn.title = 'Listeden kaldır';
-        delBtn.innerHTML = `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg>`;
-        delBtn.onmouseenter = () => { delBtn.style.background = 'rgba(240,91,91,.15)'; delBtn.style.color = 'var(--red)'; };
-        delBtn.onmouseleave = () => { delBtn.style.background = 'transparent'; delBtn.style.color = 'var(--text-dim)'; };
-        delBtn.onclick = () => {
-          let rooms = JSON.parse(localStorage.getItem('gigsync_recent_rooms_v2') || '[]');
-          rooms.splice(idx, 1);
-          localStorage.setItem('gigsync_recent_rooms_v2', JSON.stringify(rooms));
-          renderRecentRooms();
-        };
-
-        row.appendChild(btn);
-        row.appendChild(delBtn);
-        listEl.appendChild(row);
-      });
+      const titleEl = document.getElementById('qs-now-title');
+      const artistEl = document.getElementById('qs-now-artist');
+      const keyEl = document.getElementById('qs-now-key');
+      if (titleEl) titleEl.textContent = activeSong.title || '—';
+      if (artistEl) artistEl.textContent = activeSong.artist || '';
+      if (keyEl) keyEl.textContent = activeSong.key || '';
+      bar.style.display = 'flex';
     }
 
-    // Şifresiz / Doğrudan Canlı Odaya Katıl
-    window.joinRoomDirect = async () => {
-      if (!S.username) {
-        showNameModal();
+    window.renderQuickStageView = () => {
+      const input = document.getElementById('qs-search-input');
+      const clearBtn = document.getElementById('qs-search-clear');
+      const container = document.getElementById('qs-content');
+      if (!container) return;
+
+      const rawQ = input ? input.value : '';
+      const q = trNormalize(rawQ.trim());
+      if (clearBtn) clearBtn.style.display = rawQ ? 'flex' : 'none';
+
+      updateQuickStageNowBar();
+      const allSongs = getAllRepertoireSongs();
+
+      if (q) {
+        const matches = allSongs.filter(s =>
+          trNormalize(s.title).includes(q) || trNormalize(s.artist || '').includes(q)
+        );
+        _qsSearchResults = matches.slice(0, 60);
+
+        if (!_qsSearchResults.length) {
+          container.innerHTML = `<div style="text-align:center;padding:36px 16px;color:var(--text-muted);font-size:13px">"${esc(rawQ.trim())}" için repertuarda şarkı bulunamadı.</div>`;
+          return;
+        }
+
+        const extraNote = matches.length > 60
+          ? `<span style="font-size:10px;color:var(--text-muted)">İlk 60 gösteriliyor</span>`
+          : '';
+
+        container.innerHTML = `
+          <div class="qs-section-hdr">
+            <div class="qs-section-title">REPERTUARDA ${matches.length} EŞLEŞME</div>
+            ${extraNote}
+          </div>
+          ${_qsSearchResults.map((s, i) => `
+            <div class="qs-row" onclick="playQuickStageResult(${i})">
+              <div class="qs-row-info">
+                <div class="qs-row-title">${esc(s.title)}</div>
+                <div class="qs-row-meta">${esc(s.artist || '—')}</div>
+              </div>
+              <div class="qs-row-key">${esc(s.key || '')}</div>
+              <div style="font-family:var(--font-mono);font-size:11px;color:var(--accent);font-weight:700;flex-shrink:0">▶</div>
+            </div>
+          `).join('')}
+        `;
         return;
       }
-      const code = 'LIVE';
 
+      const isQuickLive = S.activeRoomCode === 'LIVE' && S.liveMode === 'quick';
+      const historyActions = S.quickSongs.length > 0 ? `
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button id="qs-save-setlist-btn" class="qs-mini-btn" onclick="saveQuickStageAsSetlist()">Setlist Olarak Kaydet</button>
+          <button class="qs-mini-btn danger" onclick="clearQuickStageHistory()">Temizle</button>
+        </div>` : '';
+
+      const historyHtml = S.quickSongs.length > 0
+        ? S.quickSongs.map((entry, idx) => {
+            const isActive = isQuickLive && S.liveActiveSong === entry.id;
+            return `
+              <div class="qs-row${isActive ? ' active' : ''}" data-entry-id="${esc(entry.id)}" onclick="selectQuickHistorySong(this.dataset.entryId)">
+                <div style="font-family:var(--font-display);font-size:20px;font-weight:700;color:${isActive ? 'var(--green)' : 'var(--accent)'};min-width:26px;text-align:center;flex-shrink:0">${idx + 1}</div>
+                <div class="qs-row-info">
+                  <div class="qs-row-title">${esc(entry.title)}</div>
+                  <div class="qs-row-meta">${esc(entry.artist || '—')}</div>
+                </div>
+                <div class="qs-row-key">${esc(entry.key || '')}</div>
+                <button class="qs-row-del" data-entry-id="${esc(entry.id)}" onclick="event.stopPropagation();removeQuickHistorySong(this.dataset.entryId)" title="Listeden çıkar">×</button>
+              </div>
+            `;
+          }).join('')
+        : `<div style="text-align:center;padding:22px 14px;border:1px dashed var(--border2);border-radius:12px;color:var(--text-muted);font-size:13px;line-height:1.5;margin-bottom:16px">
+            Yukarıdan arayıp şarkıya dokun — canlı sahne otomatik açılır.
+          </div>`;
+
+      _qsBrowseResults = allSongs.slice(0, 40);
+      const browseHtml = _qsBrowseResults.length > 0 ? `
+        <div class="qs-section-hdr" style="margin-top:16px">
+          <div class="qs-section-title">REPERTUAR (${allSongs.length > 40 ? 'İLK 40 · ARAMA İLE TÜMÜ' : allSongs.length})</div>
+        </div>
+        ${_qsBrowseResults.map((s, i) => `
+          <div class="qs-row" onclick="playQuickStageBrowse(${i})">
+            <div class="qs-row-info">
+              <div class="qs-row-title">${esc(s.title)}</div>
+              <div class="qs-row-meta">${esc(s.artist || '—')}</div>
+            </div>
+            <div class="qs-row-key">${esc(s.key || '')}</div>
+          </div>
+        `).join('')}
+      ` : '';
+
+      container.innerHTML = `
+        <div class="qs-section-hdr">
+          <div class="qs-section-title">BU AKŞAM ÇALINANLAR (${S.quickSongs.length})</div>
+          ${historyActions}
+        </div>
+        ${historyHtml}
+        ${browseHtml}
+      `;
+    };
+
+    window.playQuickStageResult = (idx) => {
+      const song = _qsSearchResults[idx];
+      if (song) playQuickStageSongObj(song);
+    };
+
+    window.playQuickStageBrowse = (idx) => {
+      const song = _qsBrowseResults[idx];
+      if (song) playQuickStageSongObj(song);
+    };
+
+    async function playQuickStageSongObj(song) {
+      if (!song) return;
+      const last = S.quickSongs[S.quickSongs.length - 1];
+      let entry = null;
+
+      if (last && ((song.id && last.libId === song.id) || (!song.id && last.title === song.title && (last.artist || '') === (song.artist || '')))) {
+        entry = last;
+      } else {
+        entry = {
+          id: 'qs_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+          title: song.title || 'Şarkı',
+          artist: song.artist || '',
+          key: song.key || '',
+          bpm: song.bpm || '',
+          notes: song.notes || '',
+          link: song.link || '',
+          libId: song.id || '',
+          order: S.quickSongs.length
+        };
+        S.quickSongs.push(entry);
+      }
+
+      const input = document.getElementById('qs-search-input');
+      if (input) input.value = '';
+      await broadcastQuickStage(entry.id);
+    }
+
+    window.selectQuickHistorySong = async (entryId) => {
+      const entry = S.quickSongs.find(s => s.id === entryId);
+      if (!entry) return;
+      await broadcastQuickStage(entryId);
+    };
+
+    window.removeQuickHistorySong = async (entryId) => {
+      const idx = S.quickSongs.findIndex(s => s.id === entryId);
+      if (idx === -1) return;
+      S.quickSongs.splice(idx, 1);
+      S.quickSongs.forEach((s, i) => { s.order = i; });
+      const removedActive = S.liveMode === 'quick' && S.liveActiveSong === entryId;
+      if (removedActive) S.liveActiveSong = null;
+
+      if (S.activeRoomCode === 'LIVE' && S.liveMode === 'quick') {
+        const songsArr = S.quickSongs.map((s, i) => ({ ...s, order: i }));
+        await ensureLiveRoomOpen({
+          mode: 'quick',
+          setlistId: null,
+          name: 'Hızlı Sahne',
+          band: 'Repertuar',
+          songs: songsArr,
+          activeSongId: S.liveActiveSong,
+          forceUpsert: true
+        });
+      }
+      renderQuickStageView();
+      updateHomeLiveBanner();
+    };
+
+    window.clearQuickStageHistory = async () => {
+      if (!S.quickSongs.length) return;
+      S.quickSongs = [];
+      if (S.activeRoomCode === 'LIVE' && S.liveMode === 'quick') {
+        S.liveActiveSong = null;
+        await ensureLiveRoomOpen({
+          mode: 'quick',
+          setlistId: null,
+          name: 'Hızlı Sahne',
+          band: 'Repertuar',
+          songs: [],
+          activeSongId: null,
+          forceUpsert: true
+        });
+      }
+      renderQuickStageView();
+      updateHomeLiveBanner();
+      showToast('Akşam listesi temizlendi');
+    };
+
+    window.saveQuickStageAsSetlist = () => {
+      if (!S.quickSongs.length) { showToast('Henüz çalınan şarkı yok'); return; }
+      _saveQuickStagePending = true;
+      document.getElementById('new-setlist-name').value = 'Sahne ' + new Date().toLocaleDateString('tr-TR');
+      document.getElementById('new-setlist-band').value = '';
+      document.getElementById('create-setlist-modal').classList.remove('hidden');
+    };
+
+    async function broadcastQuickStage(activeEntryId) {
+      const activeSong = S.quickSongs.find(s => s.id === activeEntryId);
+      if (!activeSong) return;
+
+      const prevActive = S.liveActiveSong;
+      const wasQuickLive = S.activeRoomCode === 'LIVE' && S.liveMode === 'quick' && leaderWs && leaderWs.readyState === WebSocket.OPEN;
+
+      S.liveActiveSong = activeEntryId;
+      const songsArr = S.quickSongs.map((s, i) => ({ ...s, order: i }));
+
+      if (wasQuickLive) {
+        try {
+          leaderWs.send(JSON.stringify({ type: 'UPDATE_SETLIST', songs: songsArr }));
+          leaderWs.send(JSON.stringify({ type: 'SELECT_SONG', songId: activeEntryId }));
+        } catch (e) {}
+      }
+
+      const ok = await ensureLiveRoomOpen({
+        mode: 'quick',
+        setlistId: null,
+        name: 'Hızlı Sahne',
+        band: 'Repertuar',
+        songs: songsArr,
+        activeSongId: activeEntryId,
+        forceUpsert: true
+      });
+      if (!ok) {
+        S.liveActiveSong = prevActive;
+        renderQuickStageView();
+        updateHomeLiveBanner();
+        return;
+      }
+
+      renderQuickStageView();
+      renderSetlistCards();
+      updateHomeLiveBanner();
+      showToast(`🔴 CANLI: ${activeSong.title}`);
+    }
+
+    // ══════════ CREW: SIFIR TIK CANLI SAHNE ══════════
+    // Şifresiz / Doğrudan Canlı Odaya Katıl
+    window.joinRoomDirect = async (silent = false) => {
+      const code = 'LIVE';
       let room = { code: 'LIVE', name: 'Canlı Sahne', band: '', songs: [], active_song: null };
       try {
         const res = await fetch(`${getWorkerUrl()}/api/room/${code}`);
@@ -4308,87 +5256,11 @@
       // Member ekranını ayarla
       document.getElementById('mem-room-name').textContent = room.name || 'Canlı Sahne';
       document.getElementById('mem-room-band').textContent = room.band || '';
+      updateUsernameDisplay();
 
       showScreen('member');
       startMemberRealtime(code, room);
-      showToast('Canlı sahneye katıldın! 🎸');
-    };
-
-    window.showJoinRoomModal = () => {
-      if (!S.username) { showNameModal(); return; }
-      document.getElementById('join-code-input').value = '';
-
-      // Migrate legacy rooms
-      let joinedRooms = JSON.parse(localStorage.getItem('gigsync_recent_rooms_v2') || '[]');
-      if (joinedRooms.length === 0) {
-        const oldRooms = JSON.parse(localStorage.getItem('gigsync_recent_rooms') || '[]');
-        if (oldRooms.length > 0) {
-          joinedRooms = oldRooms.map(code => ({ code, name: code, band: 'Kayıtlı Oda' }));
-          localStorage.setItem('gigsync_recent_rooms_v2', JSON.stringify(joinedRooms));
-        }
-      }
-
-      renderRecentRooms();
-      document.getElementById('join-room-modal').classList.remove('hidden');
-      setTimeout(() => document.getElementById('join-code-input').focus(), 100);
-    };
-    
-    window.closeJoinRoomModal = () => document.getElementById('join-room-modal').classList.add('hidden');
-
-    window.joinRoomByCode = async () => {
-      let code = document.getElementById('join-code-input').value.trim().toUpperCase();
-      
-      // Türkçe karakterleri standart harflere çevir ve geçersiz sembolleri temizle
-      code = code
-        .replace(/Ğ/g, 'G').replace(/Ü/g, 'U').replace(/Ş/g, 'S')
-        .replace(/İ/g, 'I').replace(/Ö/g, 'O').replace(/Ç/g, 'C')
-        .replace(/[^A-Z0-9-]/g, '');
-
-      if (!code || code.length < 3 || code.length > 12) {
-        showToast('Oda kodu en az 3, en fazla 12 karakter olmalıdır!');
-        return;
-      }
-
-      // Cloudflare Worker üzerinden oda verisini al
-      let room = null;
-      try {
-        const res = await fetch(`${getWorkerUrl()}/api/room/${code}`);
-        if (!res.ok) throw new Error('Oda bulunamadı');
-        const json = await res.json();
-        room = json.room || json;
-      } catch (e) {
-        showToast('Oda bulunamadı veya şu an aktif değil!');
-        return;
-      }
-
-      if (!room || !room.code) {
-        showToast('Oda bulunamadı veya şu an aktif değil!');
-        return;
-      }
-
-      // Son odalar listesine kaydet
-      let joinedRooms = JSON.parse(localStorage.getItem('gigsync_recent_rooms_v2') || '[]');
-      joinedRooms = joinedRooms.filter(r => r.code !== code);
-      joinedRooms.unshift({
-        code: code,
-        name: room.name || '—',
-        band: room.band || ''
-      });
-      if (joinedRooms.length > 20) joinedRooms.pop();
-      localStorage.setItem('gigsync_recent_rooms_v2', JSON.stringify(joinedRooms));
-
-      S.activeRoomCode = code;
-      S.role = 'member';
-
-      // Member ekranını ayarla
-      document.getElementById('mem-room-name').textContent = room.name || '—';
-      document.getElementById('mem-room-band').textContent = room.band || '—';
-
-      closeJoinRoomModal();
-      showScreen('member');
-      
-      startMemberRealtime(code, room);
-      showToast(`${room.name} — katıldın`);
+      if (!silent) showToast('Canlı sahneye bağlanıldı! 🎸');
     };
 
     let currentDetailSong = null;
@@ -4472,15 +5344,22 @@
         if (!S.activeRoomCode) return;
         try {
           const res = await fetch(`${getWorkerUrl()}/api/room/${S.activeRoomCode}`);
+          if (res.status === 404) {
+            activeSongId = null;
+            songs = {};
+            document.getElementById('mem-room-name').textContent = 'Canlı Sahne';
+            document.getElementById('mem-room-band').textContent = '';
+            updateNowDisplay();
+            return;
+          }
           if (res.ok) {
             const data = await res.json();
             const r = data.room || data;
             if (r) {
+              document.getElementById('mem-room-name').textContent = r.name || 'Canlı Sahne';
+              document.getElementById('mem-room-band').textContent = r.band || '';
               activeSongId = r.active_song;
-              if (r.songs) {
-                const newSongsObj = transformSongs(r.songs);
-                if (Object.keys(newSongsObj).length > 0) songs = newSongsObj;
-              }
+              songs = r.songs ? transformSongs(r.songs) : {};
               updateNowDisplay();
             }
           }
@@ -4492,7 +5371,7 @@
       // WebSocket Canlı Senkronizasyon Bağlantısı
       const connectWs = () => {
         if (!S.activeRoomCode || S.activeRoomCode !== code) return;
-        const wsUrl = getWsUrl(`/ws?room=${code}&name=${encodeURIComponent(S.username)}&role=member`);
+        const wsUrl = getWsUrl(`/ws?room=${code}&name=${encodeURIComponent(S.username || 'Müzisyen')}&role=member`);
         const ws = new WebSocket(wsUrl);
         memberWs = ws;
         S.activeWs = ws;
@@ -4510,8 +5389,19 @@
         ws.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
-            if (data.type === 'SONG_CHANGED') {
+            if (data.type === 'ROOM_UPDATED') {
+              if (data.room) {
+                document.getElementById('mem-room-name').textContent = data.room.name || 'Canlı Sahne';
+                document.getElementById('mem-room-band').textContent = data.room.band || '';
+                songs = transformSongs(data.room.songs || []);
+                activeSongId = data.room.active_song || null;
+                updateNowDisplay();
+              }
+            } else if (data.type === 'SONG_CHANGED') {
               activeSongId = data.songId;
+              if (activeSongId && !songs[activeSongId]) {
+                fetchCurrentState();
+              }
               updateNowDisplay();
             } else if (data.type === 'SETLIST_UPDATED') {
               if (data.songs) {
@@ -4520,15 +5410,25 @@
               }
             } else if (data.type === 'INIT') {
               if (data.room) {
+                document.getElementById('mem-room-name').textContent = data.room.name || 'Canlı Sahne';
+                document.getElementById('mem-room-band').textContent = data.room.band || '';
                 activeSongId = data.room.active_song;
-                if (data.room.songs) {
-                  songs = transformSongs(data.room.songs);
-                }
+                songs = data.room.songs ? transformSongs(data.room.songs) : {};
+                updateNowDisplay();
+              } else {
+                document.getElementById('mem-room-name').textContent = 'Canlı Sahne';
+                document.getElementById('mem-room-band').textContent = '';
+                activeSongId = null;
+                songs = {};
                 updateNowDisplay();
               }
             } else if (data.type === 'ROOM_CLOSED') {
-              showToast('Oda lider tarafından kapatıldı');
-              leaveRoom();
+              activeSongId = null;
+              songs = {};
+              document.getElementById('mem-room-name').textContent = 'Canlı Sahne';
+              document.getElementById('mem-room-band').textContent = '';
+              updateNowDisplay();
+              showToast('Sahne kapatıldı — lider bekleniyor');
             }
           } catch (err) {
             console.error('[GigSync Member] WebSocket parse error:', err);
@@ -4611,14 +5511,21 @@
       }
 
       if (S.listeners.memberWatch) { S.listeners.memberWatch(); delete S.listeners.memberWatch; }
-        
+
       S.activeRoomCode = null;
-      document.getElementById('leader-code').textContent = '—';
-      document.getElementById('leader-open-btn').style.display = 'flex';
-      document.getElementById('leader-live-btn').style.display = 'none';
-      const dot = document.getElementById('member-count-dot');
-      if (dot) dot.style.display = 'none';
-      showToast('Oda kapatıldı');
+      S.liveMode = null;
+      S.liveSetlistId = null;
+      S.liveRoomName = '';
+      S.liveActiveSong = null;
+      S.currentMembers = [];
+
+      const codeEl = document.getElementById('leader-code');
+      if (codeEl) codeEl.textContent = '—';
+      if (S.activeSetlistId) renderLeaderSongList();
+      renderQuickStageView();
+      renderSetlistCards();
+      syncLiveUI();
+      showToast('Canlı sahne kapatıldı');
     };
 
 
@@ -4715,12 +5622,12 @@
       return parts.map((p, i) => `${i > 0 ? '<span class="medley-connector"> ▸ </span>' : ''}<span class="medley-part">${esc(p)}</span>`).join('');
     }
 
-    window.goBackFromLeader = async () => {
-      if (S.activeRoomCode) await closeRoomFromLeader();
+    window.goBackFromLeader = () => {
       S.activeSetlistId = null;
       S.liveSongs = [];
       showScreen('home');
       renderSetlistCards();
+      syncLiveUI();
     };
 
     // Modals
@@ -4736,6 +5643,9 @@
       LS.set('gs_username', v);
       updateUsernameDisplay();
       closeNameModal();
+      if (S.userRole === 'crew' && S.activeRoomCode === 'LIVE') {
+        joinRoomDirect(true);
+      }
     };
 
     window.showSettingsModal = () => {
@@ -5333,7 +6243,11 @@
           }
 
           renderSetlistCards();
+          updateQuickStageCount();
           if (S.userRole === 'host') renderLibrary();
+          if (document.getElementById('quick-stage')?.classList.contains('active')) {
+            renderQuickStageView();
+          }
           showToast("Yedek başarıyla yüklendi!");
           closeSettingsModal();
         } catch (err) {
@@ -5363,15 +6277,21 @@
       }
     };
 
-    window.autoSyncToCloud = () => {
+    window.autoSyncToCloud = (immediate = false) => {
+      if (S.userRole !== 'host') return;
+      if (S.isDefaultLibraryOnly || isOnlyDefaultLibrary(S.libraries, S.setlists)) return;
+
       clearTimeout(cloudSyncTimeout);
+      const now = Date.now();
+      LS.set('gs_last_updated_at', now);
       updateCloudSyncBadge(false, '☁️ KAYDEDİLİYOR...');
-      cloudSyncTimeout = setTimeout(async () => {
+
+      const syncFn = async () => {
         if (isCloudSyncing) return;
+        if (S.isDefaultLibraryOnly || isOnlyDefaultLibrary(S.libraries, S.setlists)) return;
         isCloudSyncing = true;
         try {
-          const updatedAt = Date.now();
-          LS.set('gs_last_updated_at', updatedAt);
+          const updatedAt = parseInt(LS.get('gs_last_updated_at') || '0', 10) || Date.now();
           const backupData = {
             username: S.username || 'Umut',
             libraries: S.libraries,
@@ -5393,10 +6313,17 @@
         } finally {
           isCloudSyncing = false;
         }
-      }, 1000);
+      };
+
+      if (immediate) {
+        syncFn();
+      } else {
+        cloudSyncTimeout = setTimeout(syncFn, 800);
+      }
     };
 
     window.autoSyncFromCloud = async (silent = true) => {
+      if (isCloudSyncing) return;
       try {
         const res = await fetch(`${getWorkerUrl()}/api/backup?user=master`);
         if (!res.ok) return;
@@ -5404,19 +6331,28 @@
         const data = json.data;
         if (!data || (!data.libraries && !data.setlists)) return;
 
+        const localIsDefaultOnly = S.isDefaultLibraryOnly || isOnlyDefaultLibrary(S.libraries, S.setlists);
+        const cloudIsDefaultOnly = isOnlyDefaultLibrary(data.libraries, data.setlists);
+        if (cloudIsDefaultOnly && !localIsDefaultOnly) {
+          healTurkishData();
+          updateCloudSyncBadge(true);
+          return;
+        }
+
         const localUpdatedAt = parseInt(LS.get('gs_last_updated_at') || '0', 10);
         const cloudUpdatedAt = parseInt(data.updatedAt || '0', 10);
 
-        // Bulutta daha yeni veri varsa veya telefonda/cihazda henüz setlist yoksa
-        const hasLocalSetlists = Object.keys(S.setlists || {}).length > 0;
-        const shouldUpdate = cloudUpdatedAt > localUpdatedAt || !hasLocalSetlists;
+        const localRaw = JSON.stringify(S.libraries || {});
+        const localHasMangled = localRaw.includes('\uFFFD') || localRaw.includes('\\uFFFD') || !S.libraries?.default?.songs?.length;
+        const isFreshInstall = localUpdatedAt === 0 && !LS.get('gs_last_updated_at');
+        const shouldUpdate = isFreshInstall || localHasMangled || (localIsDefaultOnly && !cloudIsDefaultOnly) || (cloudUpdatedAt > localUpdatedAt);
 
         if (shouldUpdate) {
           if (data.libraries) {
             S.libraries = data.libraries;
             LS.set('gs_libraries', S.libraries);
           }
-          if (data.setlists) {
+          if (data.setlists && Object.keys(data.setlists).length > 0) {
             S.setlists = data.setlists;
             LS.set('gs_setlists', S.setlists);
           }
@@ -5428,31 +6364,48 @@
             S.groupKey = data.groupKey;
             LS.set('gs_group_key', S.groupKey);
           }
-          LS.set('gs_last_updated_at', cloudUpdatedAt || Date.now());
+          S.isDefaultLibraryOnly = isOnlyDefaultLibrary(S.libraries, S.setlists);
+          LS.set('gs_last_updated_at', Math.max(cloudUpdatedAt, Date.now()));
 
+          healTurkishData();
+          updateQuickStageCount();
           renderSetlistCards();
+          if (S.activeSetlistId) renderLeaderSongList();
           if (S.userRole === 'host') renderLibrary();
+          if (document.getElementById('quick-stage')?.classList.contains('active')) {
+            renderQuickStageView();
+          }
           updateCloudSyncBadge(true);
           if (!silent) {
             const slCount = Object.keys(S.setlists || {}).length;
             showToast(`Buluttan eşitlendi! (${slCount} setlist) ☁️`);
           }
         } else {
+          healTurkishData();
           updateCloudSyncBadge(true);
         }
       } catch (err) {
         console.warn('Buluttan çekme hatası:', err);
+        healTurkishData();
       }
     };
 
     window.triggerManualCloudSync = async () => {
       updateCloudSyncBadge(false, '☁️ EŞİTLENİYOR...');
       await autoSyncFromCloud(false);
-      autoSyncToCloud();
+      if (S.userRole === 'host' && !S.isDefaultLibraryOnly && !isOnlyDefaultLibrary(S.libraries, S.setlists)) {
+        autoSyncToCloud();
+      } else {
+        updateCloudSyncBadge(true);
+      }
     };
 
     window.saveBackupToCloud = async () => {
-      autoSyncToCloud();
+      if (S.userRole !== 'host' || S.isDefaultLibraryOnly || isOnlyDefaultLibrary(S.libraries, S.setlists)) {
+        showToast("Boş/varsayılan liste buluttaki repertuarı ezmemek için gönderilmedi.");
+        return;
+      }
+      autoSyncToCloud(true);
       showToast("Tüm şarkılar ve setlistler Cloudflare bulutuna eşitleniyor! ☁️");
     };
 
@@ -5463,23 +6416,33 @@
 
     // Tab odaklandığında veya ekran açıldığında otomatik kontrol et
     window.addEventListener('focus', () => {
-      autoSyncFromCloud(true);
+      if (S.userRole === 'host') autoSyncFromCloud(true);
     });
 
     // Initialization
-    window.onload = () => {
+    function initApp() {
       loadAll();
       loadTheme();
-      autoSyncFromCloud(true);
-      if (!S.userRole || !sessionStorage.getItem('gs_role_selected')) {
+      if (!S.userRole) {
         showScreen('splash');
+      } else if (S.userRole === 'crew') {
+        applyRole();
+        joinRoomDirect(true);
       } else {
         applyRole();
         showScreen('home');
         renderSetlistCards();
-        if (S.userRole === 'host') renderLibrary();
+        renderLibrary();
+        updateQuickStageCount();
+        syncLiveUI();
+        autoSyncFromCloud(true);
       }
-    };
+    }
+    if (document.readyState !== 'loading') {
+      initApp();
+    } else {
+      document.addEventListener('DOMContentLoaded', initApp);
+    }
 
   </script>
 </body>
