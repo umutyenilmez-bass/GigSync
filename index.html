@@ -3659,7 +3659,7 @@
         </button>
       </div>
     </div>
-    <div class="now-area" id="now-area" style="cursor:pointer" onclick="currentDetailSong && showSongDetail(currentDetailSong)">
+    <div class="now-area" id="now-area" style="cursor:pointer;-webkit-user-select:none;user-select:none" onclick="memberTap()" onpointerdown="memberPressStart()" onpointerup="memberPressEnd()" onpointerleave="memberPressEnd()" onpointercancel="memberPressEnd()" oncontextmenu="return false">
       <div class="wait-state" id="wait-state">
         <div class="wait-txt">Yönetici bekleniyor...</div>
       </div>
@@ -3677,9 +3677,6 @@
       <div id="mashup-display" class="mashup-display" style="display:none">
         <div id="mem-mashup-list" class="mashup-flow"></div>
       </div>
-    </div>
-    <div class="member-footer">
-      <button class="member-hdr-btn" onclick="joinRoomDirect(false)" title="Bağlantıyı yenile">↻ Yenile</button>
     </div>
   </div>
 
@@ -5646,12 +5643,17 @@
       const sourceSongs = addListActiveLibId === 'all'
         ? Object.values(S.libraries).flatMap(lib => lib.songs)
         : (S.libraries[addListActiveLibId]?.songs || []);
-      const filtered = sortRepertoireSongs(
+      const filteredAZ = sortRepertoireSongs(
         sourceSongs.filter(s =>
           !currentIds.has(s.id) &&
           matchesSongQuery(s, q)
         )
       );
+      // Mashuplar en üstte (en yeni önce), ardından şarkılar A-Z
+      const filtered = [
+        ...filteredAZ.filter(isMashupSong).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)),
+        ...filteredAZ.filter(s => !isMashupSong(s))
+      ];
 
       if (!filtered.length) {
         list.innerHTML = '<div style="text-align:center;color:var(--text-dim);font-family:var(--font-mono);font-size:12px;padding:32px 0">Eklenecek şarkı kalmadı</div>';
@@ -7390,6 +7392,23 @@
 
     // ══════════ CREW: SIFIR TIK CANLI SAHNE ══════════
     // Şifresiz / Doğrudan Canlı Odaya Katıl
+    // Grup ekranı: dokun = yenile, basılı tut (0.6 sn) = şarkı ayrıntısı
+    let _memPressTimer = null;
+    let _memLongPressed = false;
+    window.memberPressStart = () => {
+      _memLongPressed = false;
+      clearTimeout(_memPressTimer);
+      _memPressTimer = setTimeout(() => {
+        _memLongPressed = true;
+        if (currentDetailSong) showSongDetail(currentDetailSong);
+      }, 600);
+    };
+    window.memberPressEnd = () => clearTimeout(_memPressTimer);
+    window.memberTap = () => {
+      if (_memLongPressed) { _memLongPressed = false; return; }
+      joinRoomDirect(true);
+    };
+
     window.joinRoomDirect = async (silent = false) => {
       const code = 'LIVE';
       let room = { code: 'LIVE', name: 'Canlı Sahne', band: '', songs: [], active_song: null };
@@ -7420,6 +7439,7 @@
     let memberWs = null;
     let memberPingTimer = null;
     let memberReconnectTimer = null;
+    let memberPollTimer = null;
 
     function startMemberRealtime(code, initialRoom) {
       if (memberWs) {
@@ -7429,7 +7449,12 @@
       if (memberPingTimer) { clearInterval(memberPingTimer); memberPingTimer = null; }
       if (memberReconnectTimer) { clearTimeout(memberReconnectTimer); memberReconnectTimer = null; }
 
+      if (memberPollTimer) { clearInterval(memberPollTimer); memberPollTimer = null; }
+
       let songs = {};
+      let lastServerMsgAt = Date.now();   // son sunucu mesajı (PONG dahil)
+      let lastWsChangeAt = 0;             // WebSocket'ten gelen son durum değişikliği
+      let lastPollSig = '';
       let activeSongId = initialRoom ? initialRoom.active_song : null;
       let activeStep = (initialRoom && Number.isInteger(initialRoom.active_step) && initialRoom.active_step >= 0) ? initialRoom.active_step : 0;
       let lastRenderedSongId = null;
@@ -7536,7 +7561,9 @@
       const fetchCurrentState = async () => {
         if (!S.activeRoomCode) return;
         try {
+          const startedAt = Date.now();
           const res = await fetch(`${getWorkerUrl()}/api/room/${S.activeRoomCode}`);
+          if (startedAt < lastWsChangeAt) return;
           if (res.status === 404) {
             activeSongId = null;
             activeStep = 0;
@@ -7550,6 +7577,9 @@
             const data = await res.json();
             const r = data.room || data;
             if (r) {
+              const sig = JSON.stringify([r.active_song, r.active_step, r.songs, r.name, r.band]);
+              if (sig === lastPollSig) return;
+              lastPollSig = sig;
               document.getElementById('mem-room-name').textContent = r.name || 'Canlı Sahne';
               document.getElementById('mem-room-band').textContent = r.band || '';
               activeSongId = r.active_song;
@@ -7574,17 +7604,21 @@
 
         ws.onopen = () => {
           console.log('[GigSync Member] Cloudflare WebSocket bağlandı');
+          lastServerMsgAt = Date.now();
+          fetchCurrentState();
           if (memberPingTimer) clearInterval(memberPingTimer);
           memberPingTimer = setInterval(() => {
             if (ws.readyState === WebSocket.OPEN) {
               ws.send(JSON.stringify({ type: 'PING' }));
             }
-          }, 20000);
+          }, 10000);
         };
 
         ws.onmessage = (event) => {
           try {
             const data = JSON.parse(event.data);
+            lastServerMsgAt = Date.now();
+            if (data.type !== 'PONG') lastWsChangeAt = Date.now();
             if (data.type === 'ROOM_UPDATED') {
               if (data.room) {
                 document.getElementById('mem-room-name').textContent = data.room.name || 'Canlı Sahne';
@@ -7667,6 +7701,20 @@
 
       connectWs();
 
+      // Tam otomatik senkron: görünürken 4 sn'de bir durumu çek; sessiz kalan (yarı açık) bağlantıyı yenile
+      memberPollTimer = setInterval(() => {
+        if (!S.activeRoomCode || S.activeRoomCode !== code) return;
+        if (document.visibilityState !== 'visible') return;
+        if (memberWs && memberWs.readyState === WebSocket.OPEN && Date.now() - lastServerMsgAt > 25000) {
+          if (memberReconnectTimer) { clearTimeout(memberReconnectTimer); memberReconnectTimer = null; }
+          memberWs._suppressReconnect = true;
+          try { memberWs.close(4000, 'stale'); } catch (e) {}
+          memberWs = null;
+          connectWs();
+        }
+        fetchCurrentState();
+      }, 4000);
+
       // Ekran kilidi açılınca / sekmeye dönünce ultra hızlı yeniden bağlanma ve anında sync
       const onVisibilityChange = async () => {
         if (document.visibilityState === 'visible' && S.activeRoomCode) {
@@ -7690,6 +7738,7 @@
 
       S.listeners.memberWatch = () => {
         if (memberPingTimer) clearInterval(memberPingTimer);
+        if (memberPollTimer) { clearInterval(memberPollTimer); memberPollTimer = null; }
         if (memberReconnectTimer) clearTimeout(memberReconnectTimer);
         document.removeEventListener('visibilitychange', onVisibilityChange);
         window.removeEventListener('online', onOnline);
