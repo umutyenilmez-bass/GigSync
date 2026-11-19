@@ -17,6 +17,45 @@ const corsHeaders = {
 const STALE_MS = 75000;
 const SWEEP_MS = 30000;
 
+/**
+ * Silinen setlistlerin geri gelmemesi için yedekleri birleştirir.
+ * Silme kayıtları (deletedSetlists: { id: silinmeZamanı }) hiçbir cihazın yedeğiyle kaybolmaz;
+ * eski bir cihaz silinmiş setlisti içeren yedeğini gönderse bile o setlist yedeğe yazılmaz.
+ * Bilerek geri yüklenen (restoredAt silinme zamanından yeni olan) setlistler korunur.
+ */
+function mergeSetlistDeletions(existing, incoming) {
+  const tombs = {};
+  for (const src of [existing && existing.deletedSetlists, incoming && incoming.deletedSetlists]) {
+    if (!src || typeof src !== "object") continue;
+    for (const [id, t] of Object.entries(src)) {
+      const ts = Number(t) || 0;
+      if (ts > (tombs[id] || 0)) tombs[id] = ts;
+    }
+  }
+
+  if (!incoming || incoming.setlists == null) {
+    return { ...(incoming || {}), deletedSetlists: tombs };
+  }
+
+  let incomingSetlists = incoming.setlists;
+  if (Array.isArray(incomingSetlists)) {
+    incomingSetlists = Object.fromEntries(incomingSetlists.filter((s) => s && s.id).map((s) => [s.id, s]));
+  }
+
+  const setlists = {};
+  for (const [id, sl] of Object.entries(incomingSetlists || {})) {
+    const tomb = tombs[id];
+    if (tomb) {
+      const restoredAt = Number(sl && sl.restoredAt) || 0;
+      if (restoredAt <= tomb) continue; // silinmiş: geri getirme
+      delete tombs[id]; // bilerek geri yüklenmiş
+    }
+    setlists[id] = sl;
+  }
+
+  return { ...incoming, setlists, deletedSetlists: tombs };
+}
+
 function jsonResponse(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
     status,
@@ -176,8 +215,10 @@ export class SyncRoom extends DurableObject {
   }
 
   async saveBackup(data) {
-    await this.ctx.storage.put("user_backup", data);
-    return { success: true, timestamp: Date.now() };
+    const existing = await this.ctx.storage.get("user_backup");
+    const merged = mergeSetlistDeletions(existing, data);
+    await this.ctx.storage.put("user_backup", merged);
+    return { success: true, timestamp: Date.now(), deletedSetlists: merged.deletedSetlists };
   }
 
   async getBackup() {
@@ -514,8 +555,9 @@ export default {
             const res = await stub.saveBackup(body);
             return jsonResponse(res);
           } else {
-            memoryRooms.set("BACKUP_" + userKey, body);
-            return jsonResponse({ success: true, timestamp: Date.now() });
+            const merged = mergeSetlistDeletions(memoryRooms.get("BACKUP_" + userKey), body);
+            memoryRooms.set("BACKUP_" + userKey, merged);
+            return jsonResponse({ success: true, timestamp: Date.now(), deletedSetlists: merged.deletedSetlists });
           }
         } catch (err) {
           return jsonResponse({ error: "Yedek kaydedilemedi: " + err.message }, 400);

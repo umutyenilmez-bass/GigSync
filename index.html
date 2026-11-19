@@ -3662,6 +3662,29 @@
       if (window.autoSyncToCloud) window.autoSyncToCloud();
     };
 
+    // Silinen setlist kayıtları ({ id: silinmeZamanı }). Başka bir cihazın eski kopyası
+    // buluta yazılsa bile silinen setlistler geri gelmez. Bir şey kaldırıldıysa true döner.
+    function applySetlistDeletions(deletions) {
+      if (!S.deletedSetlists || typeof S.deletedSetlists !== 'object') S.deletedSetlists = {};
+      let removed = false;
+      for (const [id, t] of Object.entries(deletions || {})) {
+        const ts = Number(t) || 0;
+        if (ts > (S.deletedSetlists[id] || 0)) S.deletedSetlists[id] = ts;
+        const sl = S.setlists[id];
+        if (!sl) continue;
+        if ((Number(sl.restoredAt) || 0) > S.deletedSetlists[id]) {
+          // Silindikten sonra bilerek geri yüklenmiş: silme kaydını unut
+          delete S.deletedSetlists[id];
+          continue;
+        }
+        delete S.setlists[id];
+        removed = true;
+      }
+      LS.set('gs_deleted_setlists', S.deletedSetlists);
+      if (removed) LS.set('gs_setlists', S.setlists);
+      return removed;
+    }
+
     // ══ HELPERS ══
     const esc = (t) => {
       if (!t) return '';
@@ -3808,6 +3831,8 @@
         LS.set('gs_setlists', loadedSetlists);
       }
       S.setlists = loadedSetlists;
+      const savedDeletions = LS.get('gs_deleted_setlists');
+      S.deletedSetlists = (savedDeletions && typeof savedDeletions === 'object' && !Array.isArray(savedDeletions)) ? savedDeletions : {};
 
       // Load libraries; never push empty/default starter data to cloud on fresh install
       const savedLibs = LS.get('gs_libraries');
@@ -4598,6 +4623,7 @@
       if (!sl) return;
       if (!confirm(`"${sl.name}" silinecek. Emin misin?`)) return;
       delete S.setlists[slId];
+      applySetlistDeletions({ [slId]: Date.now() });
       LS.set('gs_last_updated_at', Date.now());
       saveSetlists();
       modal.classList.add('hidden');
@@ -6681,7 +6707,18 @@
             saveLibraries();
           }
           if (data.setlists) {
-            S.setlists = data.setlists;
+            // Dosyadan bilerek geri yüklenen setlistler, daha önce silinmiş olsalar bile geri gelsin
+            const restoredAt = Date.now();
+            const imported = Array.isArray(data.setlists)
+              ? Object.fromEntries(data.setlists.filter(sl => sl && sl.id).map(sl => [sl.id, sl]))
+              : data.setlists;
+            if (!S.deletedSetlists) S.deletedSetlists = {};
+            Object.entries(imported).forEach(([id, sl]) => {
+              if (sl && typeof sl === 'object') sl.restoredAt = restoredAt;
+              delete S.deletedSetlists[id];
+            });
+            LS.set('gs_deleted_setlists', S.deletedSetlists);
+            S.setlists = imported;
             LS.set("gs_setlists", S.setlists);
           }
           if (data.groupKeys) {
@@ -6749,6 +6786,7 @@
             setlists: S.setlists,
             groupKey: S.groupKey,
             groupKeys: S.groupKeys,
+            deletedSetlists: S.deletedSetlists || {},
             updatedAt: updatedAt
           };
           const res = await fetch(`${getWorkerUrl()}/api/backup?user=master`, {
@@ -6758,6 +6796,12 @@
           });
           if (res.ok) {
             updateCloudSyncBadge(true);
+            // Sunucu başka cihazlarda silinen setlistleri bildirirse burada da kaldır
+            const result = await res.json().catch(() => null);
+            if (result && result.deletedSetlists && applySetlistDeletions(result.deletedSetlists)) {
+              S.isDefaultLibraryOnly = isOnlyDefaultLibrary(S.libraries, S.setlists);
+              renderSetlistCards();
+            }
           }
         } catch (e) {
           console.warn('Otomatik bulut senkron hatası:', e);
@@ -6781,6 +6825,14 @@
         const json = await res.json();
         const data = json.data;
         if (!data || (!data.libraries && !data.setlists)) return;
+
+        // Başka cihazlarda silinen setlistleri burada da kaldır; buluta henüz ulaşmamış
+        // yerel silmeler varsa çekmeden sonra buluta gönder
+        const cloudDeletions = (data.deletedSetlists && typeof data.deletedSetlists === 'object') ? data.deletedSetlists : {};
+        let removedByCloud = applySetlistDeletions(cloudDeletions);
+        if (applySetlistDeletions(S.deletedSetlists)) removedByCloud = true;
+        const hasUnsyncedDeletions = Object.keys(S.deletedSetlists || {}).some(id => !cloudDeletions[id]);
+        if (removedByCloud) renderSetlistCards();
 
         const localIsDefaultOnly = S.isDefaultLibraryOnly || isOnlyDefaultLibrary(S.libraries, S.setlists);
         const cloudIsDefaultOnly = isOnlyDefaultLibrary(data.libraries, data.setlists);
@@ -6807,6 +6859,8 @@
             S.setlists = data.setlists;
             LS.set('gs_setlists', S.setlists);
           }
+          // Buluttan gelen kopyada, bu cihazda silinmiş setlist kalmasın
+          applySetlistDeletions(S.deletedSetlists);
           if (data.groupKeys) {
             S.groupKeys = data.groupKeys;
             LS.set('gs_group_keys', S.groupKeys);
@@ -6834,6 +6888,10 @@
         } else {
           healTurkishData();
           updateCloudSyncBadge(true);
+        }
+
+        if (hasUnsyncedDeletions && S.userRole === 'host') {
+          autoSyncToCloud();
         }
       } catch (err) {
         console.warn('Buluttan çekme hatası:', err);
