@@ -1,4 +1,4 @@
-const CACHE = 'gigsync-v25-clean-rep-qs-parity';
+const CACHE = 'gigsync-v26-clean-member-stage';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/Gig_Sync_Logo.png'];
 
 self.addEventListener('install', e => {

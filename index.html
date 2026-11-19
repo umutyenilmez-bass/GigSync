@@ -3202,33 +3202,20 @@
         </button>
       </div>
     </div>
-    <div class="now-area" id="now-area">
+    <div class="now-area" id="now-area" style="cursor:pointer" onclick="currentDetailSong && showSongDetail(currentDetailSong)">
       <div class="wait-state" id="wait-state">
         <div class="wait-txt">Yönetici bekleniyor...</div>
       </div>
       <div id="now-display"
-        style="display:none;flex-direction:column;align-items:center;gap:8px;width:100%;padding:0 8px;cursor:pointer"
-        onclick="currentDetailSong && showSongDetail(currentDetailSong)">
-        <div class="now-label">ŞU AN ÇALINIYOR</div>
+        style="display:none;flex-direction:column;align-items:center;gap:12px;width:100%;padding:0 8px">
         <div class="now-title" id="mem-now-title">—</div>
-        <div style="display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap">
+        <div style="display:flex;align-items:center;gap:14px;justify-content:center;flex-wrap:wrap">
           <div class="now-key" id="mem-now-key"></div>
           <div id="mem-now-bpm"
             style="font-family:var(--font-mono);font-size:16px;font-weight:600;color:var(--text);background:var(--surface2);border:1px solid var(--border);padding:4px 10px;border-radius:8px;letter-spacing:1px;display:none">
           </div>
         </div>
-        <div class="now-artist" id="mem-now-artist"></div>
-        <div
-          style="font-family:var(--font-mono);font-size:10px;color:var(--text-dim);letter-spacing:2px;margin-top:8px">
-          DETAY İÇİN DOKUN</div>
-      </div>
-    </div>
-    <div class="next-bar" id="next-bar" style="display:none">
-      <div class="next-lbl">Sıradaki</div>
-      <div class="next-title" id="mem-next-title">—</div>
-      <div style="display:flex;align-items:baseline;gap:10px;justify-content:center">
-        <div class="next-key" id="mem-next-key"></div>
-        <div class="next-key" id="mem-next-bpm" style="color:var(--text-muted);font-size:14px"></div>
+        <div class="now-artist" id="mem-now-artist" style="display:none"></div>
       </div>
     </div>
     <div class="member-footer">
@@ -6253,7 +6240,7 @@
         if (!activeSongId || !songs[activeSongId]) {
           waitState.style.display = '';
           nowDisplay.style.display = 'none';
-          nextBar.style.display = 'none';
+          if (nextBar) nextBar.style.display = 'none';
           currentDetailSong = null;
           return;
         }
@@ -6264,33 +6251,26 @@
         nowDisplay.style.display = 'flex';
 
         const titleEl = document.getElementById('mem-now-title');
-        titleEl.textContent = s.title || '—';
-        titleEl.classList.remove('flash');
-        void titleEl.offsetWidth;
-        titleEl.classList.add('flash');
-
-        document.getElementById('mem-now-key').textContent = s.key || '';
-        document.getElementById('mem-now-artist').textContent = s.artist || '';
-        const bpmEl = document.getElementById('mem-now-bpm');
-        if (s.bpm) { bpmEl.textContent = `${s.bpm} BPM`; bpmEl.style.display = ''; }
-        else bpmEl.style.display = 'none';
-
-        // Sıradaki şarkı hesapla
-        const sortedSongs = Object.values(songs).sort((a, b) => (a.order || 0) - (b.order || 0));
-        const idx = sortedSongs.findIndex(x => x.id === activeSongId);
-        const next = sortedSongs[idx + 1];
-        if (next) {
-          nextBar.style.display = '';
-          document.getElementById('mem-next-title').textContent = next.title || '';
-          document.getElementById('mem-next-key').textContent = next.key || '';
-          const nextBpmEl = document.getElementById('mem-next-bpm');
-          if (nextBpmEl) {
-            nextBpmEl.textContent = next.bpm ? `${next.bpm} BPM` : '';
-            nextBpmEl.style.display = next.bpm ? '' : 'none';
-          }
-        } else {
-          nextBar.style.display = 'none';
+        if (titleEl) {
+          titleEl.textContent = s.title || '—';
+          titleEl.classList.remove('flash');
+          void titleEl.offsetWidth;
+          titleEl.classList.add('flash');
         }
+
+        const keyEl = document.getElementById('mem-now-key');
+        if (keyEl) keyEl.textContent = s.key || '';
+
+        const artistEl = document.getElementById('mem-now-artist');
+        if (artistEl) artistEl.textContent = s.artist || '';
+
+        const bpmEl = document.getElementById('mem-now-bpm');
+        if (bpmEl) {
+          if (s.bpm) { bpmEl.textContent = `${s.bpm} BPM`; bpmEl.style.display = ''; }
+          else bpmEl.style.display = 'none';
+        }
+
+        if (nextBar) nextBar.style.display = 'none';
       }
 
       // Initial render
