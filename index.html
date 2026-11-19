@@ -3530,6 +3530,41 @@
       border-color: rgba(167, 139, 250, 0.35);
     }
 
+    /* ══ ANA EKRAN BANT RENKLERİ ══
+       Her temada dört bant aynı parlaklık ve doygunlukta, tema vurgusunun tonundan türetilmiş uyumlu renkler:
+       Setlist = vurgu tonu · Mashup = +48° · Repertuar = −48° · Hızlı Sahne = +165° (karşıt vurgu).
+       Bantlar renkle yalnızca çok hafif tonlanır. */
+    :root { --c-set: #90b8fb; --c-mash: #caa5eb; --c-rep: #5ac9de; --c-quick: #e6a96d; }
+    body.theme-light { --c-set: #446396; --c-mash: #72558b; --c-rep: #09707f; --c-quick: #865725; }
+    body.theme-grey { --c-set: #a5b9d5; --c-mash: #beb1cf; --c-rep: #97c0c7; --c-quick: #cdb29b; }
+    body.theme-amber { --c-set: #e3ab6a; --c-mash: #b1c172; --c-rep: #f39c99; --c-quick: #6fc2f1; }
+    body.theme-violet { --c-set: #c6a7ee; --c-mash: #ec9bbe; --c-rep: #8abafa; --c-quick: #bdbd6b; }
+    body.theme-green { --c-set: #86ca93; --c-mash: #56cccf; --c-rep: #c5ba67; --c-quick: #d0a3e6; }
+    #repertoire-toggle, #repertoire-body { --sec: var(--c-rep); }
+    #quick-toggle, #quick-body { --sec: var(--c-quick); }
+    #setlists-toggle, #setlists-list { --sec: var(--c-set); }
+    #mashups-toggle, #mashups-body { --sec: var(--c-mash); }
+    .setlists-section-hdr .home-sec-toggle,
+    .home-sec-toggle {
+      color: color-mix(in srgb, var(--sec) 55%, var(--text));
+      background: color-mix(in srgb, var(--sec) 7%, var(--surface));
+      border-color: color-mix(in srgb, var(--sec) 24%, var(--border));
+    }
+    .setlists-section-hdr .home-sec-toggle.open {
+      background: color-mix(in srgb, var(--sec) 11%, var(--surface));
+      border-color: color-mix(in srgb, var(--sec) 34%, var(--border));
+    }
+    .home-sec-toggle .home-sec-chev { color: var(--sec); }
+    #setlists-list, #mashups-body, #repertoire-body, #quick-body {
+      border-left-color: color-mix(in srgb, var(--sec) 38%, transparent);
+    }
+    .mashup-badge,
+    .mashup-home-list .mashup-badge {
+      color: var(--c-mash);
+      background: color-mix(in srgb, var(--c-mash) 13%, transparent);
+      border-color: color-mix(in srgb, var(--c-mash) 32%, transparent);
+    }
+
     /* ══ MOBİL UYUMLULUK ══ */
     .home-header {
       grid-template-columns: minmax(0, 1fr) auto;
