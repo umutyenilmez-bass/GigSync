@@ -2563,6 +2563,36 @@
       border-radius: 1px
     }
 
+    /* Katman ayrımı: üstte seçilenler, çizginin altında daha koyu seçim listesi */
+    .layer-divider {
+      height: 1px;
+      background: var(--border2);
+      margin: 14px 0;
+    }
+    .picker-panel {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-bottom: 14px;
+    }
+    .picker-search {
+      width: 100%;
+      height: 42px;
+      padding: 0 12px;
+      border: none;
+      border-bottom: 1px solid var(--border);
+      background: transparent;
+      color: var(--text);
+      font-size: 14px;
+      outline: none;
+    }
+    .picker-panel .me-picker-list {
+      margin-top: 0;
+      border: none;
+      border-radius: 0;
+      background: transparent;
+    }
     .divider {
       height: 1px;
       background: var(--border);
@@ -3726,10 +3756,12 @@
         <input id="new-setlist-name" class="form-input" type="text" placeholder="ör. Rixos Bodrum" maxlength="60" />
       </div>
       <input id="new-setlist-band" type="hidden" value="" />
-      <div class="form-group" id="cs-picker-group">
-        <div class="form-label">Şarkı ve Mashup Seç <span id="cs-pick-count" style="color:var(--accent)">(0)</span></div>
-        <input id="cs-search" class="form-input" type="search" placeholder="Şarkı veya sanatçı ara..." oninput="renderCreateSetlistPicker()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
-        <div id="cs-picker" class="me-picker-list" style="max-height:34dvh"></div>
+      <div id="cs-picker-group">
+        <div class="layer-divider"></div>
+        <div class="picker-panel">
+          <input id="cs-search" class="picker-search" type="search" placeholder="Şarkı veya sanatçı ara..." oninput="renderCreateSetlistPicker()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+          <div id="cs-picker" class="me-picker-list" style="max-height:34dvh"></div>
+        </div>
       </div>
       <div style="display:flex;gap:10px;margin-top:8px">
         <button class="btn btn-ghost" style="flex:1" onclick="closeCreateSetlistModal()">İptal</button>
@@ -4078,9 +4110,9 @@
         <div class="form-label" id="me-parts-count" style="display:none"></div>
         <div id="me-parts-list"></div>
       </div>
-      <div class="form-group">
-        <div class="form-label">Repertuardan Parça Ekle</div>
-        <input id="me-song-search" class="form-input" type="search" placeholder="Şarkı veya sanatçı ara..." oninput="renderMashupSongPicker()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+      <div class="layer-divider"></div>
+      <div class="picker-panel">
+        <input id="me-song-search" class="picker-search" type="search" placeholder="Şarkı veya sanatçı ara..." oninput="renderMashupSongPicker()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
         <div id="me-song-results" class="me-picker-list"></div>
       </div>
       <div class="form-group">
