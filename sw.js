@@ -1,4 +1,4 @@
-const CACHE = 'gigsync-v26-clean-member-stage';
+const CACHE = 'gigsync-v27-mashup-stage-flow';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/Gig_Sync_Logo.png'];
 
 self.addEventListener('install', e => {

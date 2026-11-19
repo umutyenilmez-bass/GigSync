@@ -488,6 +488,21 @@
     body.theme-stage .now-artist {
       font-size: 24px !important;
     }
+    body.theme-stage .mashup-density-lg .mashup-step-title,
+    body.theme-stage .mashup-density-lg .mashup-step-key {
+      font-size: clamp(32px, 8vw, 60px) !important;
+    }
+    body.theme-stage .mashup-density-md .mashup-step-title,
+    body.theme-stage .mashup-density-md .mashup-step-key {
+      font-size: clamp(24px, 5.6vw, 42px) !important;
+    }
+    body.theme-stage .mashup-density-sm .mashup-step-title,
+    body.theme-stage .mashup-density-sm .mashup-step-key {
+      font-size: clamp(19px, 4.2vw, 30px) !important;
+    }
+    body.theme-stage .mashup-step-bpm {
+      font-size: 16px !important;
+    }
     body.theme-stage .next-title {
       font-size: 44px !important;
     }
@@ -2727,14 +2742,14 @@
     }
     .rep-edit-chip {
       flex-shrink: 0;
-      height: 44px;
-      padding: 0 12px;
+      height: 40px;
+      padding: 0 11px;
       border-radius: 10px;
       border: 1px solid var(--border);
       background: var(--surface2);
       color: var(--text-muted);
       font-family: var(--font-mono);
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
       cursor: pointer;
     }
@@ -2745,11 +2760,18 @@
     }
     .rep-edit-search-bar {
       display: flex;
+      flex-wrap: wrap;
+      align-items: center;
       gap: 8px;
       padding: 12px 14px;
       border-bottom: 1px solid var(--border);
       background: var(--bg);
       flex-shrink: 0;
+    }
+    .rep-edit-search-wrap {
+      position: relative;
+      flex: 1 1 200px;
+      min-width: 0;
     }
     .rep-edit-list {
       flex: 1;
@@ -2814,6 +2836,304 @@
       font-weight: 700;
       cursor: pointer;
     }
+
+    /* ══ MASHUP (KESİNTİSİZ AKIŞ) ══ */
+    .mashup-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--accent);
+      background: var(--accent-glow);
+      border: 1px solid rgba(79, 142, 247, 0.35);
+      padding: 2px 7px;
+      border-radius: 999px;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+    .mashup-display {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      max-width: 780px;
+      max-height: 100%;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      padding: 12px 14px 20px;
+    }
+    .mashup-hdr-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 2.5px;
+      color: var(--text-muted);
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      text-align: center;
+      flex-shrink: 0;
+    }
+    .mashup-flow {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .mashup-step-row {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      border-radius: 14px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      transition: opacity .2s, border-color .2s, background .2s;
+    }
+    .mashup-step-row.is-current {
+      border-color: var(--accent);
+      border-left: 4px solid var(--accent);
+      background: rgba(79, 142, 247, 0.13);
+      box-shadow: 0 0 0 1px rgba(79, 142, 247, 0.2);
+    }
+    .mashup-step-row.is-upcoming { opacity: 1; }
+    .mashup-step-row.is-done { opacity: 0.32; }
+    .mashup-step-num {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      font-weight: 700;
+      min-width: 24px;
+      text-align: center;
+      color: var(--text-muted);
+      flex-shrink: 0;
+    }
+    .mashup-step-row.is-current .mashup-step-num {
+      color: var(--accent);
+    }
+    .mashup-step-main {
+      flex: 1;
+      min-width: 0;
+    }
+    .mashup-step-title {
+      color: var(--text);
+      line-height: 1.18;
+      word-break: break-word;
+    }
+    .mashup-step-cue {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 3px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .mashup-step-tags {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+    .mashup-step-key {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--accent);
+      font-weight: 600;
+      line-height: 1;
+    }
+    .mashup-step-bpm {
+      font-family: var(--font-mono);
+      font-size: 13px;
+      padding: 3px 8px;
+      border-radius: 7px;
+      background: var(--surface3);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-weight: 600;
+      white-space: nowrap;
+    }
+    .mashup-arrow {
+      font-family: var(--font-mono);
+      font-size: 14px;
+      line-height: 1;
+      color: var(--text-dim);
+      padding: 4px 0;
+      user-select: none;
+    }
+    .mashup-arrow.is-done { opacity: 0.32; }
+    .mashup-density-lg .mashup-step-row { padding: 16px 18px; }
+    .mashup-density-lg .mashup-step-title { font-size: clamp(24px, 6vw, 48px); font-weight: 500; }
+    .mashup-density-lg .mashup-step-key { font-size: clamp(22px, 5.2vw, 42px); }
+    .mashup-density-md .mashup-step-row { padding: 12px 16px; }
+    .mashup-density-md .mashup-step-title { font-size: clamp(19px, 4.4vw, 34px); font-weight: 500; }
+    .mashup-density-md .mashup-step-key { font-size: clamp(19px, 4.2vw, 30px); }
+    .mashup-density-sm .mashup-step-row { padding: 9px 14px; border-radius: 11px; }
+    .mashup-density-sm .mashup-step-title { font-size: clamp(16px, 3.6vw, 24px); font-weight: 500; }
+    .mashup-density-sm .mashup-step-key { font-size: clamp(16px, 3.4vw, 22px); }
+    .mashup-density-sm .mashup-arrow { font-size: 11px; padding: 2px 0; }
+
+    /* Leader Mashup Control Strip */
+    .leader-mashup-ctrl {
+      display: none;
+      flex-direction: column;
+      gap: 8px;
+      padding: 10px 14px;
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    #leader .leader-mashup-ctrl {
+      border-bottom: none;
+      border-top: 1px solid var(--border);
+    }
+    .lmc-pills {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding-bottom: 2px;
+    }
+    .lmc-pills::-webkit-scrollbar { display: none; }
+    .lmc-pill {
+      flex-shrink: 0;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: var(--surface3);
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    .lmc-pill.active {
+      background: var(--accent);
+      border-color: var(--accent);
+      color: var(--accent-text, #fff);
+    }
+    .lmc-nav {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .lmc-prev {
+      width: 54px;
+      height: 42px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: var(--surface3);
+      color: var(--text);
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .lmc-prev:disabled { opacity: 0.35; cursor: default; }
+    .lmc-info {
+      flex: 1;
+      min-width: 0;
+      font-family: var(--font-mono);
+      font-size: 11px;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .lmc-next {
+      height: 42px;
+      padding: 0 14px;
+      border-radius: 10px;
+      border: none;
+      background: var(--accent);
+      color: var(--accent-text, #fff);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+      letter-spacing: .5px;
+    }
+    .lmc-next:disabled { opacity: 0.4; cursor: default; }
+
+    /* Mashup Editor Modal */
+    .me-part-card {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+    }
+    .me-part-hdr {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+    .me-part-num {
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--accent);
+      min-width: 20px;
+    }
+    .me-part-title {
+      flex: 1;
+      min-width: 0;
+      font-size: 14px;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .me-part-btns {
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+    }
+    .me-icon-btn {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      border: 1px solid var(--border);
+      background: var(--surface3);
+      color: var(--text);
+      font-size: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .me-icon-btn.del { color: var(--red); }
+    .me-part-fields {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .me-part-fields .form-input {
+      height: 34px;
+      font-size: 13px;
+      padding: 0 8px;
+    }
+    .me-picker-list {
+      max-height: 185px;
+      overflow-y: auto;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      background: var(--surface2);
+      margin-top: 6px;
+    }
+    .me-picker-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 12px;
+      border-bottom: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .me-picker-row:last-child { border-bottom: none; }
+    .me-picker-row:active { background: var(--surface3); }
 
     /* ══ MOBİL UYUMLULUK ══ */
     .home-header {
@@ -3079,6 +3399,8 @@
       <div id="leader-song-list"></div>
     </div>
 
+    <div id="leader-mashup-ctrl" class="leader-mashup-ctrl" style="display:none"></div>
+
     <div class="leader-bottom">
       <button class="btn btn-secondary btn-sm" style="flex:1" onclick="showAddToSetlistSheet('add')">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
@@ -3145,6 +3467,8 @@
       </div>
     </div>
 
+    <div id="qs-mashup-ctrl" class="leader-mashup-ctrl" style="display:none"></div>
+
     <div class="qs-search-wrap">
       <input id="qs-search-input" class="qs-search-input" type="search"
         placeholder="Şarkı veya sanatçı ara..." oninput="renderQuickStageView()"
@@ -3155,7 +3479,7 @@
     <div class="qs-list" id="qs-content"></div>
   </div>
 
-  <!-- ══ REPERTUAR DÜZENLE (TAM EKRAN · SADECE MEVCUT ŞARKI DÜZENLEME) ══ -->
+  <!-- ══ REPERTUAR DÜZENLE (TAM EKRAN · MEVCUT ŞARKI DÜZENLEME + MASHUP) ══ -->
   <div id="rep-edit" class="screen">
     <div class="leader-header">
       <div>
@@ -3163,6 +3487,7 @@
         <div class="leader-sub"><span id="rep-edit-count" style="color:var(--accent)">0 şarkı</span> · <span style="color:var(--text-muted)">Düzenlemek için şarkıya dokun</span></div>
       </div>
       <div class="hdr-actions" style="align-items:center">
+        <button class="btn btn-primary btn-sm" onclick="openMashupEditor()" style="height:34px;padding:0 12px;font-size:12px;font-family:var(--font-mono);letter-spacing:.5px">+ Mashup</button>
         <button class="btn btn-icon btn-ghost" onclick="goBackFromRepEdit()" title="Geri">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
             <path d="M19 12H5M12 5l-7 7 7 7" />
@@ -3172,13 +3497,14 @@
     </div>
 
     <div class="rep-edit-search-bar">
-      <div style="position:relative;flex:1;min-width:0">
+      <div class="rep-edit-search-wrap">
         <input id="rep-edit-search" class="qs-search-input" type="search"
           placeholder="Şarkı veya sanatçı ara..." oninput="renderRepEditList(true)"
           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
         <button id="rep-edit-search-clear" class="qs-search-clear" style="right:10px;display:none" onclick="clearRepEditSearch()" title="Temizle">×</button>
       </div>
       <button id="rep-edit-missing-btn" class="rep-edit-chip" onclick="toggleRepEditMissing()" title="Tonu veya BPM'i eksik olanlar">Eksik</button>
+      <button id="rep-edit-mashup-btn" class="rep-edit-chip" onclick="toggleRepEditMashup()" title="Sadece Mashup kayıtları">🔗 Mashup</button>
     </div>
 
     <div id="rep-edit-list" class="rep-edit-list"></div>
@@ -3216,6 +3542,10 @@
           </div>
         </div>
         <div class="now-artist" id="mem-now-artist" style="display:none"></div>
+      </div>
+      <div id="mashup-display" class="mashup-display" style="display:none">
+        <div class="mashup-hdr-title" id="mem-mashup-title"></div>
+        <div id="mem-mashup-list" class="mashup-flow"></div>
       </div>
     </div>
     <div class="member-footer">
@@ -3724,6 +4054,36 @@
     </div>
   </div>
 
+  <!-- MASHUP OLUŞTUR / DÜZENLE MODALI -->
+  <div class="overlay hidden" id="mashup-editor-modal" onclick="if(event.target===this)closeMashupEditor()" style="z-index: 238;">
+    <div class="sheet" style="max-height:92dvh;overflow-y:auto">
+      <div class="sheet-handle"></div>
+      <div class="sheet-title" id="me-modal-title">YENİ MASHUP</div>
+      <div class="form-group">
+        <div class="form-label">Mashup Adı</div>
+        <input id="me-title" class="form-input" type="text" maxlength="80" placeholder="ör. Roman Potpuri / 90'lar Pop" autocomplete="off" />
+      </div>
+      <div class="form-group">
+        <div class="form-label" id="me-parts-count">Sıralı Parçalar (0) — Ton ve BPM sadece bu mashup için değişir</div>
+        <div id="me-parts-list"></div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Repertuardan Parça Ekle</div>
+        <input id="me-song-search" class="form-input" type="search" placeholder="Şarkı veya sanatçı ara..." oninput="renderMashupSongPicker()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        <div id="me-song-results" class="me-picker-list"></div>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Genel Not (İsteğe Bağlı)</div>
+        <textarea id="me-notes" class="form-input" rows="2" maxlength="300" placeholder="Tüm potpuri için sahne notu..." style="height:auto;padding-top:8px;padding-bottom:8px;resize:vertical"></textarea>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:14px">
+        <button id="me-delete-btn" class="btn btn-danger" style="display:none;flex:0 0 auto;padding:0 14px" onclick="deleteMashupFromEditor()">Sil</button>
+        <button class="btn btn-ghost" style="flex:1" onclick="closeMashupEditor()">İptal</button>
+        <button class="btn btn-primary" style="flex:2" onclick="saveMashupFromEditor()">Kaydet</button>
+      </div>
+    </div>
+  </div>
+
   <!-- TOAST -->
   <div id="toast" class="toast">Mesaj</div>
 
@@ -3810,6 +4170,7 @@
       activeRoom: null,
       liveSongs: [],
       liveActiveSong: null,
+      liveActiveStep: 0,
       activeRoomCode: null,
       liveMode: null, // 'setlist' | 'quick' | null
       liveSetlistId: null,
@@ -3861,6 +4222,78 @@
       return out;
     }
 
+    function isMashupSong(s) {
+      return Boolean(s && (s.type === 'mashup' || Array.isArray(s.parts)));
+    }
+
+    function cloneMashupParts(parts) {
+      if (!Array.isArray(parts)) return [];
+      return parts
+        .filter(p => p && String(p.title || '').trim())
+        .map(p => {
+          const bpmNum = parseInt(p.bpm, 10);
+          return {
+            libId: String(p.libId || '').trim(),
+            title: String(p.title || '').trim(),
+            artist: String(p.artist || '').trim(),
+            key: normalizeKeyName(p.key || ''),
+            bpm: (Number.isFinite(bpmNum) && bpmNum > 0) ? String(bpmNum) : '',
+            cue: String(p.cue || '').trim()
+          };
+        });
+    }
+
+    function computeMashupSummary(parts) {
+      const list = Array.isArray(parts) ? parts : [];
+      const keys = list.map(p => String(p.key || '').trim()).filter(Boolean);
+      const bpms = list.map(p => parseInt(p.bpm, 10)).filter(n => Number.isFinite(n) && n > 0);
+      let key = '';
+      if (keys.length === 1) key = keys[0];
+      else if (keys.length === 2) key = `${keys[0]}→${keys[1]}`;
+      else if (keys.length > 2) key = `${keys[0]}→…→${keys[keys.length - 1]}`;
+      let bpm = '';
+      if (bpms.length) {
+        const minBpm = Math.min(...bpms);
+        const maxBpm = Math.max(...bpms);
+        bpm = minBpm === maxBpm ? String(minBpm) : `${minBpm}-${maxBpm}`;
+      }
+      const artist = list.map(p => p.title).filter(Boolean).join(' → ');
+      return { key, bpm, artist };
+    }
+
+    function matchesSongQuery(s, normQ) {
+      if (!normQ) return true;
+      if (!s) return false;
+      if (trNormalize(s.title).includes(normQ) || trNormalize(s.artist || '').includes(normQ)) return true;
+      if (isMashupSong(s) && Array.isArray(s.parts)) {
+        return s.parts.some(p =>
+          p && (
+            trNormalize(p.title).includes(normQ) ||
+            trNormalize(p.artist || '').includes(normQ) ||
+            trNormalize(p.cue || '').includes(normQ)
+          )
+        );
+      }
+      return false;
+    }
+
+    function buildMashupRecord({ id, title, parts, notes, link, createdAt } = {}) {
+      const cleanParts = cloneMashupParts(parts);
+      const summary = computeMashupSummary(cleanParts);
+      return {
+        id: id || ('msh_' + Date.now() + '_' + Math.random().toString(36).slice(2, 5)),
+        type: 'mashup',
+        title: String(title || '').trim(),
+        artist: summary.artist,
+        key: summary.key,
+        bpm: summary.bpm,
+        parts: cleanParts,
+        notes: String(notes || '').trim(),
+        link: String(link || '').trim(),
+        createdAt: createdAt || Date.now()
+      };
+    }
+
     function sortRepertoireSongs(list) {
       return [...(list || [])].sort((a, b) =>
         String((a && a.title) || '').localeCompare(String((b && b.title) || ''), 'tr')
@@ -3868,15 +4301,18 @@
     }
 
     function updateQuickStageCount() {
-      const count = getAllRepertoireSongs().length;
+      const all = getAllRepertoireSongs();
+      const mashupCount = all.filter(isMashupSong).length;
+      const songCount = all.length - mashupCount;
+      const countLabel = mashupCount > 0 ? `${songCount} şarkı · ${mashupCount} mashup` : `${songCount} şarkı`;
       const cardSub = document.getElementById('qs-card-count');
       if (cardSub) {
-        cardSub.textContent = count > 0
-          ? `${count} şarkı · Setlistsiz doğrudan ara ve çal`
+        cardSub.textContent = all.length > 0
+          ? `${countLabel} · Setlistsiz doğrudan ara ve çal`
           : 'Setlistsiz doğrudan repertuardan çal';
       }
       const qsCount = document.getElementById('qs-lib-count');
-      if (qsCount) qsCount.textContent = `${count} şarkı`;
+      if (qsCount) qsCount.textContent = countLabel;
     }
 
     const currentLib = () => (S.libraries[S.activeLibId] || S.libraries['default']).songs;
@@ -3957,58 +4393,54 @@
       }
 
       libSongs.forEach(s => {
+        if (!s) return;
         if (s.id) idMap.set(s.id, s);
-        const sk = skeleton(s.title);
-        if (sk && !skelMap.has(sk)) skelMap.set(sk, s);
+        if (!isMashupSong(s)) {
+          const sk = skeleton(s.title);
+          if (sk && !skelMap.has(sk)) skelMap.set(sk, s);
+        }
       });
 
       let changed = false;
+      const healSongItem = (s) => {
+        if (!s) return;
+        if (isMashupSong(s)) {
+          const match = s.libId && idMap.get(s.libId);
+          if (match && isMashupSong(match)) {
+            if (s.title !== match.title) { s.title = match.title; changed = true; }
+            if (match.artist && s.artist !== match.artist) { s.artist = match.artist; changed = true; }
+          }
+          return;
+        }
+        const match = (s.libId && idMap.get(s.libId)) || skelMap.get(skeleton(s.title));
+        if (match && !isMashupSong(match)) {
+          if (s.title !== match.title) {
+            s.title = match.title;
+            changed = true;
+          }
+          if (match.artist && (s.artist !== match.artist || s.subtitle !== match.artist)) {
+            s.artist = match.artist;
+            if (s.subtitle !== undefined) s.subtitle = match.artist;
+            changed = true;
+          }
+          if (match.key && !s.key) {
+            s.key = match.key;
+            changed = true;
+          }
+        }
+      };
 
       // 1. Heal all setlists
       if (S.setlists) {
         Object.values(S.setlists).forEach(sl => {
           if (!sl || !sl.songs || !Array.isArray(sl.songs)) return;
-          sl.songs.forEach(s => {
-            const match = (s.libId && idMap.get(s.libId)) || skelMap.get(skeleton(s.title));
-            if (match) {
-              if (s.title !== match.title) {
-                s.title = match.title;
-                changed = true;
-              }
-              if (match.artist && (s.artist !== match.artist || s.subtitle !== match.artist)) {
-                s.artist = match.artist;
-                if (s.subtitle !== undefined) s.subtitle = match.artist;
-                changed = true;
-              }
-              if (match.key && !s.key) {
-                s.key = match.key;
-                changed = true;
-              }
-            }
-          });
+          sl.songs.forEach(healSongItem);
         });
       }
 
       // 2. Heal active liveSongs
       if (S.liveSongs && Array.isArray(S.liveSongs)) {
-        S.liveSongs.forEach(s => {
-          const match = (s.libId && idMap.get(s.libId)) || skelMap.get(skeleton(s.title));
-          if (match) {
-            if (s.title !== match.title) {
-              s.title = match.title;
-              changed = true;
-            }
-            if (match.artist && (s.artist !== match.artist || s.subtitle !== match.artist)) {
-              s.artist = match.artist;
-              if (s.subtitle !== undefined) s.subtitle = match.artist;
-              changed = true;
-            }
-            if (match.key && !s.key) {
-              s.key = match.key;
-              changed = true;
-            }
-          }
-        });
+        S.liveSongs.forEach(healSongItem);
       }
 
       if (changed) {
@@ -4106,6 +4538,7 @@
         S.liveSetlistId = null;
         S.liveRoomName = '';
         S.liveActiveSong = null;
+        S.liveActiveStep = 0;
       }
 
       S.userRole = role;
@@ -4129,6 +4562,7 @@
       S.activeRoomCode = null;
       S.memberId = null;
       S.role = null;
+      S.liveActiveStep = 0;
       currentDetailSong = null;
       showScreen('splash');
     };
@@ -4161,13 +4595,20 @@
     window.showRepertuarModal = () => window.openRepEdit();
     window.closeRepertuarModal = () => window.goBackFromRepEdit();
 
-    // ══════════ REPERTUAR DÜZENLE (TAM EKRAN · SADECE MEVCUT ŞARKILAR) ══════════
+    // ══════════ REPERTUAR DÜZENLE (TAM EKRAN · MEVCUT ŞARKILAR + MASHUP) ══════════
     const REP_EDIT_PAGE = 250;
     let repEditLimit = REP_EDIT_PAGE;
     let repEditMissingOnly = false;
+    let repEditMashupOnly = false;
     let repEditSongId = null;
 
-    const isRepSongMissing = (s) => !String(s.key || '').trim() || !String(s.bpm || '').trim();
+    const isRepSongMissing = (s) => {
+      if (isMashupSong(s)) {
+        return !(Array.isArray(s.parts) && s.parts.length) ||
+          s.parts.some(p => !String(p.key || '').trim() || !String(p.bpm || '').trim());
+      }
+      return !String(s.key || '').trim() || !String(s.bpm || '').trim();
+    };
 
     function findRepSong(id) {
       for (const lib of Object.values(S.libraries || {})) {
@@ -4181,6 +4622,7 @@
       const searchEl = document.getElementById('rep-edit-search');
       if (searchEl) searchEl.value = '';
       repEditMissingOnly = false;
+      repEditMashupOnly = false;
       repEditLimit = REP_EDIT_PAGE;
       renderRepEditList(true);
       showScreen('rep-edit');
@@ -4212,6 +4654,11 @@
       renderRepEditList(true);
     };
 
+    window.toggleRepEditMashup = () => {
+      repEditMashupOnly = !repEditMashupOnly;
+      renderRepEditList(true);
+    };
+
     window.renderRepEditList = (resetLimit = false) => {
       const list = document.getElementById('rep-edit-list');
       if (!list) return;
@@ -4225,31 +4672,57 @@
 
       const all = getAllRepertoireSongs().filter(s => s && s.id);
       const missingCount = all.filter(isRepSongMissing).length;
+      const mashupCount = all.filter(isMashupSong).length;
 
       const filtered = sortRepertoireSongs(
         all
-          .filter(s => !q || trNormalize(s.title).includes(q) || trNormalize(s.artist || '').includes(q))
+          .filter(s => matchesSongQuery(s, q))
           .filter(s => !repEditMissingOnly || isRepSongMissing(s))
+          .filter(s => !repEditMashupOnly || isMashupSong(s))
       );
 
       const countEl = document.getElementById('rep-edit-count');
-      if (countEl) countEl.textContent = `${filtered.length} şarkı`;
+      if (countEl) countEl.textContent = `${filtered.length} ${repEditMashupOnly ? 'mashup' : 'şarkı'}`;
       const missingBtn = document.getElementById('rep-edit-missing-btn');
       if (missingBtn) {
         missingBtn.textContent = `Eksik (${missingCount})`;
         missingBtn.classList.toggle('active', repEditMissingOnly);
       }
+      const mashupBtn = document.getElementById('rep-edit-mashup-btn');
+      if (mashupBtn) {
+        mashupBtn.textContent = `🔗 Mashup (${mashupCount})`;
+        mashupBtn.classList.toggle('active', repEditMashupOnly);
+      }
 
       if (!filtered.length) {
-        list.innerHTML = `<div class="rep-edit-note">${repEditMissingOnly ? 'Eksik bilgili şarkı yok 🎉' : 'Şarkı bulunamadı'}</div>`;
+        const emptyMsg = repEditMashupOnly
+          ? (q ? 'Eşleşen mashup bulunamadı' : 'Henüz mashup yok — sağ üstteki "+ Mashup" ile ekle')
+          : (repEditMissingOnly ? 'Eksik bilgili şarkı yok 🎉' : 'Şarkı bulunamadı');
+        list.innerHTML = `<div class="rep-edit-note">${emptyMsg}</div>`;
         return;
       }
 
       const shown = filtered.slice(0, repEditLimit);
       const rows = shown.map(s => {
+        const hasNotes = Boolean(String(s.notes || '').trim());
+        if (isMashupSong(s)) {
+          const parts = Array.isArray(s.parts) ? s.parts : [];
+          const flowPreview = parts.map(p => `${p.title}${p.key ? ' (' + p.key + ')' : ''}`).join(' → ');
+          const missPill = isRepSongMissing(s) ? '<span class="rep-tag miss">Eksik</span>' : '';
+          return `
+            <div class="rep-edit-row" data-id="${esc(s.id)}" onclick="openMashupEditor(this.dataset.id)">
+              <div class="rep-edit-row-main">
+                <div class="rep-edit-row-title">${esc(s.title || '—')}</div>
+                <div class="rep-edit-row-meta">${esc(flowPreview || '—')}${hasNotes ? ' · 📝 Not' : ''}</div>
+              </div>
+              <div class="rep-edit-tags">
+                ${missPill}
+                <span class="mashup-badge">🔗 ${parts.length} parça</span>
+              </div>
+            </div>`;
+        }
         const key = String(s.key || '').trim();
         const bpm = String(s.bpm || '').trim();
-        const hasNotes = Boolean(String(s.notes || '').trim());
         return `
           <div class="rep-edit-row" data-id="${esc(s.id)}" onclick="openRepSongEdit(this.dataset.id)">
             <div class="rep-edit-row-main">
@@ -4272,6 +4745,7 @@
     window.openRepSongEdit = (id) => {
       const s = findRepSong(id);
       if (!s) return showToast('Şarkı bulunamadı');
+      if (isMashupSong(s)) return openMashupEditor(id);
       repEditSongId = id;
       document.getElementById('rse-title').value = s.title || '';
       document.getElementById('rse-artist').value = s.artist || '';
@@ -4309,25 +4783,26 @@
       showToast(`"${title}" güncellendi`);
     };
 
-    // Bir repertuar şarkısını günceller; setlistler, liveSongs ve Hızlı Sahne kopyalarını da 1:1 eşitler.
+    // Bir tekil repertuar şarkısını günceller; setlistler, liveSongs ve Hızlı Sahne kopyalarını da 1:1 eşitler.
+    // Mashup kayıtlarına ve mashup içi özel ton/BPM ezmelerine ASLA dokunmaz.
     function patchRepSong(id, patch) {
       const orig = findRepSong(id);
-      if (!orig) return { found: false, setlistsChanged: false, quickChanged: false };
+      if (!orig || isMashupSong(orig)) return { found: false, setlistsChanged: false, quickChanged: false };
       const origTitle = String(orig.title || '').trim();
       const origArtist = String(orig.artist || '').trim();
-      const sameSong = (s) => s && String(s.title || '').trim() === origTitle && String(s.artist || '').trim() === origArtist;
+      const sameSong = (s) => s && !isMashupSong(s) && String(s.title || '').trim() === origTitle && String(s.artist || '').trim() === origArtist;
 
       const libIds = new Set();
       Object.values(S.libraries || {}).forEach(lib => {
         if (!lib || !Array.isArray(lib.songs)) return;
         lib.songs = lib.songs.map(s => {
-          if (!s || !(s.id === id || sameSong(s))) return s;
+          if (!s || isMashupSong(s) || !(s.id === id || sameSong(s))) return s;
           libIds.add(s.id);
           return { ...s, ...patch };
         });
       });
 
-      const inCopy = (s) => s && ((s.libId && libIds.has(s.libId)) || sameSong(s));
+      const inCopy = (s) => s && !isMashupSong(s) && ((s.libId && libIds.has(s.libId)) || sameSong(s));
       let setlistsChanged = false;
       Object.values(S.setlists || {}).forEach(sl => {
         if (!sl || !Array.isArray(sl.songs)) return;
@@ -4351,6 +4826,252 @@
       return { found: true, setlistsChanged, quickChanged };
     }
 
+    // Bir Mashup kaydını günceller; setlistler, liveSongs ve Hızlı Sahne kopyalarını da eşitler.
+    function patchMashupRecord(id, mashupObj) {
+      const applyCopy = (s) => ({
+        ...s,
+        type: 'mashup',
+        title: mashupObj.title,
+        artist: mashupObj.artist,
+        key: mashupObj.key,
+        bpm: mashupObj.bpm,
+        notes: mashupObj.notes || '',
+        link: mashupObj.link || '',
+        parts: cloneMashupParts(mashupObj.parts)
+      });
+
+      let found = false;
+      Object.values(S.libraries || {}).forEach(lib => {
+        if (!lib || !Array.isArray(lib.songs)) return;
+        lib.songs = lib.songs.map(s => {
+          if (!s || s.id !== id) return s;
+          found = true;
+          return applyCopy(s);
+        });
+      });
+
+      const matchesCopy = (s) => s && (s.libId === id || s.id === id) && isMashupSong(s);
+      let setlistsChanged = false;
+      Object.values(S.setlists || {}).forEach(sl => {
+        if (!sl || !Array.isArray(sl.songs)) return;
+        sl.songs = sl.songs.map(s => {
+          if (!matchesCopy(s)) return s;
+          setlistsChanged = true;
+          return applyCopy(s);
+        });
+      });
+      if (Array.isArray(S.liveSongs)) {
+        S.liveSongs = S.liveSongs.map(s => matchesCopy(s) ? applyCopy(s) : s);
+      }
+      let quickChanged = false;
+      if (Array.isArray(S.quickSongs)) {
+        S.quickSongs = S.quickSongs.map(s => {
+          if (!matchesCopy(s)) return s;
+          quickChanged = true;
+          return applyCopy(s);
+        });
+      }
+      if (S.liveActiveSong && mashupObj.parts && mashupObj.parts.length) {
+        const maxStep = mashupObj.parts.length - 1;
+        if ((S.liveActiveStep || 0) > maxStep) S.liveActiveStep = maxStep;
+      }
+      return { found, setlistsChanged, quickChanged };
+    }
+
+    // ══════════ MASHUP OLUŞTURUCU / DÜZENLEYİCİ ══════════
+    let meEditingId = null;
+    let meDraftParts = [];
+
+    window.openMashupEditor = (id = null) => {
+      const repMatch = id ? findRepSong(id) : null;
+      const setlistMatch = !repMatch && id && Array.isArray(S.liveSongs)
+        ? S.liveSongs.find(x => x && (x.id === id || x.libId === id))
+        : null;
+      const existing = repMatch || setlistMatch || null;
+
+      meEditingId = existing ? (repMatch ? repMatch.id : existing.id) : null;
+      meDraftParts = existing && Array.isArray(existing.parts) ? cloneMashupParts(existing.parts) : [];
+
+      document.getElementById('me-modal-title').textContent = existing ? 'MASHUP DÜZENLE' : 'YENİ MASHUP';
+      document.getElementById('me-title').value = existing ? (existing.title || '') : '';
+      document.getElementById('me-notes').value = existing ? (existing.notes || '') : '';
+      const delBtn = document.getElementById('me-delete-btn');
+      if (delBtn) delBtn.style.display = repMatch ? '' : 'none';
+
+      const searchEl = document.getElementById('me-song-search');
+      if (searchEl) searchEl.value = '';
+      renderMashupEditorParts();
+      renderMashupSongPicker();
+      document.getElementById('mashup-editor-modal').classList.remove('hidden');
+      setTimeout(() => {
+        const titleEl = document.getElementById('me-title');
+        if (titleEl && !existing) titleEl.focus();
+      }, 60);
+    };
+
+    window.closeMashupEditor = () => {
+      meEditingId = null;
+      meDraftParts = [];
+      document.getElementById('mashup-editor-modal').classList.add('hidden');
+    };
+
+    window.moveMashupPart = (idx, dir) => {
+      const target = idx + dir;
+      if (target < 0 || target >= meDraftParts.length) return;
+      const [item] = meDraftParts.splice(idx, 1);
+      meDraftParts.splice(target, 0, item);
+      renderMashupEditorParts();
+    };
+
+    window.removeMashupPart = (idx) => {
+      if (idx < 0 || idx >= meDraftParts.length) return;
+      meDraftParts.splice(idx, 1);
+      renderMashupEditorParts();
+    };
+
+    window.updateMashupPartField = (idx, field, val) => {
+      if (!meDraftParts[idx]) return;
+      meDraftParts[idx][field] = String(val || '');
+    };
+
+    window.renderMashupEditorParts = () => {
+      const list = document.getElementById('me-parts-list');
+      const countLbl = document.getElementById('me-parts-count');
+      if (countLbl) {
+        countLbl.textContent = `Sıralı Parçalar (${meDraftParts.length}) — Ton ve BPM sadece bu mashup için değişir`;
+      }
+      if (!list) return;
+      if (!meDraftParts.length) {
+        list.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:12px;padding:14px 8px;border:1px dashed var(--border);border-radius:10px">Aşağıdan sırayla en az 2 şarkı ekle</div>';
+        return;
+      }
+      list.innerHTML = meDraftParts.map((p, i) => `
+        <div class="me-part-card">
+          <div class="me-part-hdr">
+            <span class="me-part-num">${i + 1}.</span>
+            <div class="me-part-title">${esc(p.title)}${p.artist ? ` <span style="font-weight:400;color:var(--text-muted);font-size:12px">· ${esc(p.artist)}</span>` : ''}</div>
+            <div class="me-part-btns">
+              <button type="button" class="me-icon-btn" onclick="moveMashupPart(${i}, -1)" ${i === 0 ? 'disabled style="opacity:.35"' : ''} title="Yukarı">↑</button>
+              <button type="button" class="me-icon-btn" onclick="moveMashupPart(${i}, 1)" ${i === meDraftParts.length - 1 ? 'disabled style="opacity:.35"' : ''} title="Aşağı">↓</button>
+              <button type="button" class="me-icon-btn del" onclick="removeMashupPart(${i})" title="Çıkar">×</button>
+            </div>
+          </div>
+          <div class="me-part-fields">
+            <input class="form-input" style="width:66px;flex-shrink:0" type="text" maxlength="10" placeholder="Ton" value="${esc(p.key || '')}" oninput="updateMashupPartField(${i}, 'key', this.value)" />
+            <input class="form-input" style="width:70px;flex-shrink:0" type="number" inputmode="numeric" min="0" max="400" placeholder="BPM" value="${esc(p.bpm || '')}" oninput="updateMashupPartField(${i}, 'bpm', this.value)" />
+            <input class="form-input" style="flex:1;min-width:0" type="text" maxlength="80" placeholder="Geçiş notu (ör. 4 mezür davul)" value="${esc(p.cue || '')}" oninput="updateMashupPartField(${i}, 'cue', this.value)" />
+          </div>
+        </div>
+      `).join('');
+    };
+
+    window.renderMashupSongPicker = () => {
+      const resultsEl = document.getElementById('me-song-results');
+      if (!resultsEl) return;
+      const q = trNormalize((document.getElementById('me-song-search')?.value || '').trim());
+      const candidates = sortRepertoireSongs(
+        getAllRepertoireSongs().filter(s => s && s.id && !isMashupSong(s) && matchesSongQuery(s, q))
+      ).slice(0, 25);
+
+      if (!candidates.length) {
+        resultsEl.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:12px;padding:14px">Eşleşen şarkı yok</div>';
+        return;
+      }
+
+      resultsEl.innerHTML = candidates.map(s => `
+        <div class="me-picker-row" data-id="${esc(s.id)}" onclick="addSongToMashupDraft(this.dataset.id)">
+          <div style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
+            <span style="font-weight:600">${esc(s.title)}</span>
+            ${s.artist ? `<span style="color:var(--text-muted);font-size:11px"> · ${esc(s.artist)}</span>` : ''}
+          </div>
+          <span style="font-family:var(--font-mono);font-size:11px;color:var(--accent);flex-shrink:0">${esc(s.key || '')}${s.bpm ? ' · ' + esc(s.bpm) : ''}</span>
+          <span style="color:var(--accent);font-weight:700;font-size:16px;line-height:1">+</span>
+        </div>
+      `).join('');
+    };
+
+    window.addSongToMashupDraft = (libId) => {
+      const s = findRepSong(libId);
+      if (!s || isMashupSong(s)) return;
+      meDraftParts.push({
+        libId: s.id,
+        title: s.title || 'Şarkı',
+        artist: s.artist || '',
+        key: s.key || '',
+        bpm: s.bpm || '',
+        cue: ''
+      });
+      const searchEl = document.getElementById('me-song-search');
+      if (searchEl) searchEl.value = '';
+      renderMashupEditorParts();
+      renderMashupSongPicker();
+    };
+
+    window.saveMashupFromEditor = () => {
+      const title = (document.getElementById('me-title')?.value || '').trim();
+      if (!title) return showToast('Mashup adı boş olamaz');
+      const cleanParts = cloneMashupParts(meDraftParts);
+      if (cleanParts.length < 2) return showToast('Mashup için en az 2 şarkı ekle');
+      const notes = (document.getElementById('me-notes')?.value || '').trim();
+
+      const existingRep = meEditingId ? findRepSong(meEditingId) : null;
+      const mashupObj = buildMashupRecord({
+        id: existingRep ? existingRep.id : undefined,
+        title,
+        parts: cleanParts,
+        notes,
+        createdAt: existingRep ? existingRep.createdAt : Date.now()
+      });
+
+      let setlistsChanged = false;
+      let quickChanged = false;
+      if (existingRep) {
+        const res = patchMashupRecord(existingRep.id, mashupObj);
+        setlistsChanged = res.setlistsChanged;
+        quickChanged = res.quickChanged;
+      } else if (meEditingId && Array.isArray(S.liveSongs)) {
+        const slSong = S.liveSongs.find(x => x && x.id === meEditingId);
+        if (slSong) {
+          Object.assign(slSong, {
+            type: 'mashup',
+            title: mashupObj.title,
+            artist: mashupObj.artist,
+            key: mashupObj.key,
+            bpm: mashupObj.bpm,
+            notes: mashupObj.notes,
+            parts: cloneMashupParts(mashupObj.parts)
+          });
+          setlistsChanged = true;
+          saveLeaderSongs();
+        }
+      } else {
+        currentLib().unshift(mashupObj);
+      }
+
+      afterRepertoireChange(setlistsChanged, quickChanged);
+      closeMashupEditor();
+      if (document.getElementById('rep-edit')?.classList.contains('active')) renderRepEditList(false);
+      showToast(existingRep ? `"${title}" güncellendi` : `"${title}" mashup eklendi`);
+    };
+
+    window.deleteMashupFromEditor = () => {
+      if (!meEditingId) return;
+      const existingRep = findRepSong(meEditingId);
+      if (!existingRep) return closeMashupEditor();
+      if (!confirm(`"${existingRep.title}" mashup'ı repertuardan silinsin mi?`)) return;
+
+      Object.values(S.libraries || {}).forEach(lib => {
+        if (lib && Array.isArray(lib.songs)) {
+          lib.songs = lib.songs.filter(s => !s || s.id !== existingRep.id);
+        }
+      });
+
+      afterRepertoireChange(false, false);
+      closeMashupEditor();
+      if (document.getElementById('rep-edit')?.classList.contains('active')) renderRepEditList(false);
+      showToast(`"${existingRep.title}" silindi`);
+    };
+
     // Repertuar değiştikten sonra: kaydet, buluta eşitle, canlı setlist/Hızlı Sahne ve ekranları güncelle
     function afterRepertoireChange(setlistsChanged, quickChanged = false, syncOpts = {}) {
       LS.set('gs_last_updated_at', Date.now());
@@ -4369,6 +5090,7 @@
           band: 'Repertuar',
           songs: S.quickSongs.map((s, i) => ({ ...s, order: i })),
           activeSongId: S.liveActiveSong,
+          activeStep: S.liveActiveStep || 0,
           forceUpsert: true
         });
       }
@@ -4679,7 +5401,12 @@
       if (!name) { showToast('Setlist adı gir'); return; }
       const wasQuickSave = _saveQuickStagePending;
       const songs = wasQuickSave
-        ? S.quickSongs.map((s, i) => ({ ...s, id: `live_${Date.now()}_${i}`, order: i }))
+        ? S.quickSongs.map((s, i) => ({
+            ...s,
+            ...(isMashupSong(s) ? { type: 'mashup', parts: cloneMashupParts(s.parts) } : {}),
+            id: `live_${Date.now()}_${i}`,
+            order: i
+          }))
         : [];
       _saveQuickStagePending = false;
       const id = `sl_${Date.now()}`;
@@ -4732,9 +5459,11 @@
       const sourceSongs = addListActiveLibId === 'all'
         ? Object.values(S.libraries).flatMap(lib => lib.songs)
         : (S.libraries[addListActiveLibId]?.songs || []);
-      const filtered = sourceSongs.filter(s =>
-        !currentIds.has(s.id) &&
-        (!q || trNormalize(s.title).includes(q) || trNormalize(s.artist || '').includes(q))
+      const filtered = sortRepertoireSongs(
+        sourceSongs.filter(s =>
+          !currentIds.has(s.id) &&
+          matchesSongQuery(s, q)
+        )
       );
 
       if (!filtered.length) {
@@ -4742,17 +5471,27 @@
         return;
       }
 
-      list.innerHTML = filtered.map(s => `
+      list.innerHTML = filtered.map(s => {
+        const isMsh = isMashupSong(s);
+        const parts = isMsh && Array.isArray(s.parts) ? s.parts : [];
+        const meta = isMsh
+          ? parts.map(p => `${p.title}${p.key ? ' (' + p.key + ')' : ''}`).join(' → ')
+          : (s.artist || '—');
+        const badge = isMsh
+          ? `<span class="mashup-badge">🔗 ${parts.length} parça</span>`
+          : `<div style="font-family:var(--font-mono);font-size:13px;color:var(--accent);flex-shrink:0">${esc(s.key || '')}</div>`;
+        return `
         <div onclick="addOneToSetlist('${s.id}')"
           style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);margin-bottom:8px;active:background:var(--surface3)">
           <div style="flex:1;min-width:0">
             <div style="font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(s.title)}</div>
-            <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);margin-top:2px">${esc(s.artist || '—')}</div>
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(meta)}</div>
           </div>
-          <div style="font-family:var(--font-mono);font-size:13px;color:var(--accent);flex-shrink:0">${esc(s.key || '')}</div>
+          ${badge}
           <div style="color:var(--accent);font-size:20px;flex-shrink:0;line-height:1">+</div>
         </div>
-      `).join('');
+      `;
+      }).join('');
     };
 
     window.addOneToSetlist = (libId) => {
@@ -4761,7 +5500,13 @@
       if (!s) return;
       const slId = S.activeSetlistId;
       if (!slId || !S.setlists[slId]) { showToast('Setlist seçili değil'); return; }
-      const song = { ...s, libId: s.id, id: `live_${Date.now()}`, order: S.liveSongs.length };
+      const song = {
+        ...s,
+        ...(isMashupSong(s) ? { type: 'mashup', parts: cloneMashupParts(s.parts) } : {}),
+        libId: s.id,
+        id: `live_${Date.now()}`,
+        order: S.liveSongs.length
+      };
       S.liveSongs.push(song);
       saveLeaderSongs();
       renderLeaderSongList();
@@ -4778,6 +5523,7 @@
       S.liveSongs.forEach((s, i) => s.order = i);
       if (S.liveMode === 'setlist' && S.liveSetlistId === S.activeSetlistId && S.liveActiveSong === liveId) {
         S.liveActiveSong = null;
+        S.liveActiveStep = 0;
       }
       saveLeaderSongs();
       renderLeaderSongList();
@@ -4790,6 +5536,10 @@
     window.openEditSetlistSong = (liveId) => {
       const song = S.liveSongs.find(s => s.id === liveId);
       if (!song) return;
+      if (isMashupSong(song)) {
+        openMashupEditor(song.libId || song.id);
+        return;
+      }
       _editingSetlistSongId = liveId;
 
       // Modalı düzenleme moduna geçir
@@ -5100,6 +5850,7 @@
       if (!S.liveSongs.length) {
         if (emptyEl) emptyEl.style.display = '';
         if (listEl) listEl.innerHTML = '';
+        if (typeof updateLeaderMashupBar === 'function') updateLeaderMashupBar();
         return;
       }
       if (emptyEl) emptyEl.style.display = 'none';
@@ -5108,15 +5859,23 @@
       listEl.style.padding = '12px 14px';
       listEl.innerHTML = S.liveSongs.map((s, i) => {
         const isRowActive = isLiveThisSetlist && S.liveActiveSong === s.id;
+        const isMsh = isMashupSong(s);
+        const parts = isMsh && Array.isArray(s.parts) ? s.parts : [];
+        const metaText = isMsh
+          ? parts.map(p => `${p.title}${p.key ? ' (' + p.key + ')' : ''}`).join(' → ')
+          : (s.artist || '—');
+        const rightTag = isMsh
+          ? `<span class="mashup-badge">🔗 ${parts.length}</span>`
+          : `<div style="font-family:var(--font-mono);font-size:13px;color:var(--accent);flex-shrink:0;min-width:28px;text-align:right">${esc(s.key || '')}</div>`;
         return `
         <div class="drag-row" data-id="${s.id}"
           style="display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:12px;cursor:grab;border:1px solid ${isRowActive ? 'var(--accent)' : 'var(--border)'};background:${isRowActive ? 'rgba(79,142,247,0.12)' : 'var(--surface2)'};margin-bottom:8px;user-select:none;will-change:transform;touch-action:none">
           <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--accent);min-width:32px;text-align:center;flex-shrink:0">${i + 1}</div>
           <div style="flex:1;min-width:0">
             <div style="font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(s.title)}</div>
-            <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);margin-top:2px">${esc(s.artist || '—')}</div>
+            <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(metaText)}</div>
           </div>
-          <div style="font-family:var(--font-mono);font-size:13px;color:var(--accent);flex-shrink:0;min-width:28px;text-align:right">${esc(s.key || '')}</div>
+          ${rightTag}
           <button class="row-action-btn" onclick="event.stopPropagation();openEditSetlistSong('${s.id}')"
             style="background:transparent;border:none;color:var(--text-muted);padding:8px 6px;cursor:pointer;flex-shrink:0;line-height:1;border-radius:8px;transition:color .15s;touch-action:manipulation" title="Düzenle"
             onmouseenter="this.style.color='var(--accent)'" onmouseleave="this.style.color='var(--text-muted)'">
@@ -5130,6 +5889,7 @@
         </div>
       `;
       }).join('');
+      if (typeof updateLeaderMashupBar === 'function') updateLeaderMashupBar();
 
       // ── Drag & Drop: tüm satır sürüklenebilir (sil/düzenle hariç) ──
       let dragRow = null, startY = 0, currentY = 0, dragHeight = 0;
@@ -5297,9 +6057,15 @@
         }
       }
       if (songEl) {
-        songEl.textContent = activeSong
-          ? `${activeSong.title}${activeSong.key ? ' (' + activeSong.key + ')' : ''}`
-          : 'Henüz şarkı seçilmedi — sahneye dönmek için dokun';
+        if (activeSong && isMashupSong(activeSong) && Array.isArray(activeSong.parts) && activeSong.parts.length) {
+          const step = Math.max(0, Math.min(S.liveActiveStep || 0, activeSong.parts.length - 1));
+          const part = activeSong.parts[step];
+          songEl.textContent = `🔗 ${activeSong.title} (${step + 1}/${activeSong.parts.length}: ${part.title}${part.key ? ' · ' + part.key : ''})`;
+        } else {
+          songEl.textContent = activeSong
+            ? `${activeSong.title}${activeSong.key ? ' (' + activeSong.key + ')' : ''}`
+            : 'Henüz şarkı seçilmedi — sahneye dönmek için dokun';
+        }
       }
       banner.style.display = 'flex';
     }
@@ -5326,6 +6092,8 @@
 
       updateMemberCountDots(isLive ? (S.currentMembers || []).length : 0);
       updateHomeLiveBanner();
+      if (typeof updateLeaderMashupBar === 'function') updateLeaderMashupBar();
+      if (typeof updateQuickStageNowBar === 'function') updateQuickStageNowBar();
     }
 
     window.returnToActiveLiveStage = () => {
@@ -5337,7 +6105,7 @@
       }
     };
 
-    async function ensureLiveRoomOpen({ mode, setlistId = null, name = 'Canlı Sahne', band = '', songs = [], activeSongId = null, forceUpsert = false }) {
+    async function ensureLiveRoomOpen({ mode, setlistId = null, name = 'Canlı Sahne', band = '', songs = [], activeSongId = null, activeStep = 0, forceUpsert = false }) {
       const code = 'LIVE';
       const leader = S.username || 'Yönetici';
       const wasOffline = !S.activeRoomCode;
@@ -5361,6 +6129,7 @@
           band: band || '',
           leader,
           active_song: activeSongId !== undefined ? activeSongId : null,
+          active_step: Number.isInteger(activeStep) && activeStep >= 0 ? activeStep : 0,
           songs: Array.isArray(songs) ? songs : []
         };
 
@@ -5403,7 +6172,10 @@
       if (!S.activeSetlistId || !S.setlists[S.activeSetlistId]) return;
       const sl = S.setlists[S.activeSetlistId];
       const isSameSetlist = S.activeRoomCode === 'LIVE' && S.liveMode === 'setlist' && S.liveSetlistId === S.activeSetlistId;
-      if (!isSameSetlist) S.liveActiveSong = null;
+      if (!isSameSetlist) {
+        S.liveActiveSong = null;
+        S.liveActiveStep = 0;
+      }
 
       await ensureLiveRoomOpen({
         mode: 'setlist',
@@ -5412,6 +6184,7 @@
         band: sl.band || '',
         songs: S.liveSongs.map((s, i) => ({ ...s, order: i })),
         activeSongId: isSameSetlist ? S.liveActiveSong : null,
+        activeStep: isSameSetlist ? (S.liveActiveStep || 0) : 0,
         forceUpsert: true
       });
       renderLeaderSongList();
@@ -5563,12 +6336,14 @@
     };
     window.closeMembersSheet = () => document.getElementById('members-sheet').classList.add('hidden');
 
-    window.selectSongInRoom = async (songId) => {
+    window.selectSongInRoom = async (songId, stepIndex = 0) => {
       if (!S.activeSetlistId || !S.setlists[S.activeSetlistId]) return;
       const sl = S.setlists[S.activeSetlistId];
       const alreadyThisSetlist = S.activeRoomCode === 'LIVE' && S.liveMode === 'setlist' && S.liveSetlistId === S.activeSetlistId;
+      const step = Number.isInteger(stepIndex) && stepIndex >= 0 ? stepIndex : 0;
 
       S.liveActiveSong = songId;
+      S.liveActiveStep = step;
       document.querySelectorAll('#leader-song-list .drag-row').forEach(r => {
         r.style.borderColor = r.dataset.id === songId ? 'var(--accent)' : 'var(--border)';
         r.style.background = r.dataset.id === songId ? 'rgba(79,142,247,0.12)' : 'var(--surface2)';
@@ -5582,21 +6357,24 @@
           band: sl.band || '',
           songs: S.liveSongs.map((s, i) => ({ ...s, order: i })),
           activeSongId: songId,
+          activeStep: step,
           forceUpsert: true
         });
         if (!ok) {
           S.liveActiveSong = null;
+          S.liveActiveStep = 0;
           renderLeaderSongList();
           return;
         }
         renderSetlistCards();
+        updateLeaderMashupBar();
         return;
       }
 
       // 1. WebSocket ile 10 ms içinde ultra hızlı yayın iletimi
       let sentWs = false;
       if (leaderWs && leaderWs.readyState === WebSocket.OPEN) {
-        leaderWs.send(JSON.stringify({ type: 'SELECT_SONG', songId }));
+        leaderWs.send(JSON.stringify({ type: 'SELECT_SONG', songId, stepIndex: step }));
         sentWs = true;
       }
 
@@ -5605,13 +6383,122 @@
         await fetch(`${getWorkerUrl()}/api/room/${S.activeRoomCode}/song`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ songId })
+          body: JSON.stringify({ songId, stepIndex: step })
         });
       } catch (error) {
         if (!sentWs) console.error('Şarkı seçilirken hata oluştu:', error);
       }
+      updateLeaderMashupBar();
       updateHomeLiveBanner();
     };
+
+    function getActiveLeaderLiveSong() {
+      if (S.activeRoomCode !== 'LIVE' || !S.liveActiveSong) return null;
+      if (S.liveMode === 'quick') {
+        return S.quickSongs.find(s => s && s.id === S.liveActiveSong) || null;
+      }
+      if (S.liveMode === 'setlist') {
+        const list = (S.liveSetlistId && S.setlists[S.liveSetlistId] && S.setlists[S.liveSetlistId].songs) || S.liveSongs || [];
+        return list.find(s => s && s.id === S.liveActiveSong) || null;
+      }
+      return null;
+    }
+
+    function renderMashupControlStrip(el, activeSong) {
+      if (!el) return;
+      if (!activeSong || !isMashupSong(activeSong) || !Array.isArray(activeSong.parts) || !activeSong.parts.length) {
+        el.style.display = 'none';
+        el.innerHTML = '';
+        return;
+      }
+      const parts = activeSong.parts;
+      const step = Math.max(0, Math.min(S.liveActiveStep || 0, parts.length - 1));
+      const cur = parts[step];
+      const next = parts[step + 1] || null;
+
+      el.innerHTML = `
+        <div class="lmc-pills">
+          ${parts.map((p, i) => `
+            <button type="button" class="lmc-pill${i === step ? ' active' : ''}" onclick="setLiveMashupStep(${i})">
+              ${i + 1}. ${esc(p.title)}${p.key ? ' (' + esc(p.key) + ')' : ''}
+            </button>
+          `).join('')}
+        </div>
+        <div class="lmc-nav">
+          <button type="button" class="lmc-prev" onclick="stepLiveMashup(-1)" ${step <= 0 ? 'disabled' : ''} title="Önceki parça">◀</button>
+          <div class="lmc-info">${step + 1}/${parts.length} · ${esc(cur.title)}${cur.key ? ' (' + esc(cur.key) + ')' : ''}${cur.bpm ? ' · ' + esc(cur.bpm) + ' BPM' : ''}</div>
+          <button type="button" class="lmc-next" onclick="stepLiveMashup(1)" ${step >= parts.length - 1 ? 'disabled' : ''}>
+            ${next ? `SONRAKİ: ${esc(next.title.slice(0, 14))}${next.key ? ' (' + esc(next.key) + ')' : ''} ➔` : 'SON PARÇA'}
+          </button>
+        </div>
+      `;
+      el.style.display = 'flex';
+      const activePill = el.querySelector('.lmc-pill.active');
+      if (activePill && typeof activePill.scrollIntoView === 'function') {
+        activePill.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      }
+    }
+
+    function updateLeaderMashupBar() {
+      const el = document.getElementById('leader-mashup-ctrl');
+      if (!el) return;
+      const isThisSetlist = S.activeRoomCode === 'LIVE' && S.liveMode === 'setlist' && S.liveSetlistId === S.activeSetlistId;
+      const activeSong = isThisSetlist ? getActiveLeaderLiveSong() : null;
+      renderMashupControlStrip(el, activeSong);
+    }
+
+    window.setLiveMashupStep = async (stepIndex) => {
+      const activeSong = getActiveLeaderLiveSong();
+      if (!activeSong || !isMashupSong(activeSong) || !Array.isArray(activeSong.parts) || !activeSong.parts.length) return;
+      const nextStep = Math.max(0, Math.min(parseInt(stepIndex, 10) || 0, activeSong.parts.length - 1));
+      S.liveActiveStep = nextStep;
+
+      updateLeaderMashupBar();
+      if (typeof updateQuickStageNowBar === 'function') updateQuickStageNowBar();
+      updateHomeLiveBanner();
+
+      const songId = activeSong.id;
+      if (leaderWs && leaderWs.readyState === WebSocket.OPEN) {
+        try {
+          leaderWs.send(JSON.stringify({ type: 'SELECT_SONG', songId, stepIndex: nextStep }));
+        } catch (e) {}
+      }
+      try {
+        await fetch(`${getWorkerUrl()}/api/room/${S.activeRoomCode}/song`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ songId, stepIndex: nextStep })
+        });
+      } catch (e) {
+        console.warn('Mashup adım senkron hatası:', e);
+      }
+    };
+
+    window.stepLiveMashup = (delta) => {
+      const activeSong = getActiveLeaderLiveSong();
+      if (!activeSong || !isMashupSong(activeSong) || !Array.isArray(activeSong.parts)) return;
+      const target = (S.liveActiveStep || 0) + delta;
+      if (target < 0 || target >= activeSong.parts.length) return;
+      window.setLiveMashupStep(target);
+    };
+
+    window.addEventListener('keydown', (e) => {
+      const tag = e.target && e.target.tagName;
+      if (tag === 'INPUT' || tag === 'TEXTAREA' || tag === 'SELECT' || (e.target && e.target.isContentEditable)) return;
+      if (document.querySelector('.overlay:not(.hidden)')) return;
+      const onQuick = document.getElementById('quick-stage')?.classList.contains('active');
+      const onLeader = document.getElementById('leader')?.classList.contains('active');
+      if (!onQuick && !onLeader) return;
+      const activeSong = getActiveLeaderLiveSong();
+      if (!activeSong || !isMashupSong(activeSong)) return;
+      if (e.key === 'ArrowRight' || e.key === 'PageDown') {
+        e.preventDefault();
+        window.stepLiveMashup(1);
+      } else if (e.key === 'ArrowLeft' || e.key === 'PageUp') {
+        e.preventDefault();
+        window.stepLiveMashup(-1);
+      }
+    });
 
     window.pushSetlistToWorker = async () => {
       if (!S.activeRoomCode) return;
@@ -5671,31 +6558,60 @@
 
     function updateQuickStageNowBar() {
       const bar = document.getElementById('qs-now-bar');
+      const ctrlEl = document.getElementById('qs-mashup-ctrl');
       if (!bar) return;
       const activeSong = (S.activeRoomCode === 'LIVE' && S.liveMode === 'quick' && S.liveActiveSong)
         ? S.quickSongs.find(s => s.id === S.liveActiveSong)
         : null;
       if (!activeSong) {
         bar.style.display = 'none';
+        if (ctrlEl) { ctrlEl.style.display = 'none'; ctrlEl.innerHTML = ''; }
         return;
       }
       const titleEl = document.getElementById('qs-now-title');
       const artistEl = document.getElementById('qs-now-artist');
       const keyEl = document.getElementById('qs-now-key');
       const bpmEl = document.getElementById('qs-now-bpm');
-      if (titleEl) titleEl.textContent = activeSong.title || '—';
-      if (artistEl) artistEl.textContent = activeSong.artist || '';
-      if (keyEl) keyEl.textContent = activeSong.key || '';
-      if (bpmEl) {
-        if (activeSong.bpm) {
-          bpmEl.textContent = `${activeSong.bpm} BPM`;
-          bpmEl.style.display = 'inline-block';
-        } else {
-          bpmEl.textContent = '';
-          bpmEl.style.display = 'none';
+      if (isMashupSong(activeSong) && Array.isArray(activeSong.parts) && activeSong.parts.length) {
+        const step = Math.max(0, Math.min(S.liveActiveStep || 0, activeSong.parts.length - 1));
+        const cur = activeSong.parts[step];
+        if (titleEl) titleEl.textContent = `🔗 ${activeSong.title}`;
+        if (artistEl) artistEl.textContent = `${step + 1}/${activeSong.parts.length}: ${cur.title}${cur.cue ? ' · ' + cur.cue : ''}`;
+        if (keyEl) keyEl.textContent = cur.key || '';
+        if (bpmEl) {
+          if (cur.bpm) { bpmEl.textContent = `${cur.bpm} BPM`; bpmEl.style.display = 'inline-block'; }
+          else { bpmEl.textContent = ''; bpmEl.style.display = 'none'; }
+        }
+      } else {
+        if (titleEl) titleEl.textContent = activeSong.title || '—';
+        if (artistEl) artistEl.textContent = activeSong.artist || '';
+        if (keyEl) keyEl.textContent = activeSong.key || '';
+        if (bpmEl) {
+          if (activeSong.bpm) {
+            bpmEl.textContent = `${activeSong.bpm} BPM`;
+            bpmEl.style.display = 'inline-block';
+          } else {
+            bpmEl.textContent = '';
+            bpmEl.style.display = 'none';
+          }
         }
       }
       bar.style.display = 'flex';
+      if (ctrlEl) renderMashupControlStrip(ctrlEl, activeSong);
+    }
+
+    function formatStageRowFields(s) {
+      if (isMashupSong(s)) {
+        const parts = Array.isArray(s.parts) ? s.parts : [];
+        return {
+          meta: parts.map(p => `${p.title}${p.key ? ' (' + p.key + ')' : ''}`).join(' → ') || '—',
+          tagsHtml: `<span class="mashup-badge">🔗 ${parts.length}</span>`
+        };
+      }
+      return {
+        meta: s.artist || '—',
+        tagsHtml: `<div class="qs-row-key">${esc(s.key || '')}</div>${s.bpm ? `<div class="qs-row-bpm">${esc(s.bpm)} BPM</div>` : ''}`
+      };
     }
 
     function isSameQuickSong(entry, song) {
@@ -5723,9 +6639,7 @@
       const allSongs = sortRepertoireSongs(getAllRepertoireSongs());
 
       if (q) {
-        const matches = allSongs.filter(s =>
-          trNormalize(s.title).includes(q) || trNormalize(s.artist || '').includes(q)
-        );
+        const matches = allSongs.filter(s => matchesSongQuery(s, q));
         const unplayedMatches = [];
         const playedMatches = [];
         matches.forEach(s => {
@@ -5750,15 +6664,15 @@
           </div>
           ${_qsSearchResults.map((s, i) => {
             const played = isSongPlayedTonight(s);
+            const rowF = formatStageRowFields(s);
             return `
               <div class="qs-row${played ? ' played' : ''}" onclick="playQuickStageResult(${i})">
                 <div class="qs-row-info">
                   <div class="qs-row-title">${esc(s.title)}</div>
-                  <div class="qs-row-meta">${esc(s.artist || '—')}</div>
+                  <div class="qs-row-meta">${esc(rowF.meta)}</div>
                 </div>
                 <div class="qs-row-tags">
-                  <div class="qs-row-key">${esc(s.key || '')}</div>
-                  ${s.bpm ? `<div class="qs-row-bpm">${esc(s.bpm)} BPM</div>` : ''}
+                  ${rowF.tagsHtml}
                 </div>
                 ${played
                   ? '<span class="qs-played-badge">✓ ÇALINDI</span>'
@@ -5780,6 +6694,7 @@
       const historyHtml = S.quickSongs.length > 0
         ? `<div id="qs-history-list">${S.quickSongs.map((entry, idx) => {
             const isActive = isQuickLive && S.liveActiveSong === entry.id;
+            const rowF = formatStageRowFields(entry);
             return `
               <div class="qs-row qs-drag-row${isActive ? ' active' : ''}" data-entry-id="${esc(entry.id)}">
                 <div class="qs-drag-handle" title="Sırayı değiştirmek için sürükle">
@@ -5788,11 +6703,10 @@
                 </div>
                 <div class="qs-row-info">
                   <div class="qs-row-title">${esc(entry.title)}</div>
-                  <div class="qs-row-meta">${esc(entry.artist || '—')}</div>
+                  <div class="qs-row-meta">${esc(rowF.meta)}</div>
                 </div>
                 <div class="qs-row-tags">
-                  <div class="qs-row-key">${esc(entry.key || '')}</div>
-                  ${entry.bpm ? `<div class="qs-row-bpm">${esc(entry.bpm)} BPM</div>` : ''}
+                  ${rowF.tagsHtml}
                 </div>
                 <button class="qs-row-del" data-entry-id="${esc(entry.id)}" onclick="event.stopPropagation();removeQuickHistorySong(this.dataset.entryId)" title="Listeden çıkar">×</button>
               </div>
@@ -5811,18 +6725,20 @@
         : '';
       const browseHtml = _qsBrowseResults.length > 0 ? `
         ${dividerHtml}
-        ${_qsBrowseResults.map((s, i) => `
+        ${_qsBrowseResults.map((s, i) => {
+          const rowF = formatStageRowFields(s);
+          return `
           <div class="qs-row" onclick="playQuickStageBrowse(${i})">
             <div class="qs-row-info">
               <div class="qs-row-title">${esc(s.title)}</div>
-              <div class="qs-row-meta">${esc(s.artist || '—')}</div>
+              <div class="qs-row-meta">${esc(rowF.meta)}</div>
             </div>
             <div class="qs-row-tags">
-              <div class="qs-row-key">${esc(s.key || '')}</div>
-              ${s.bpm ? `<div class="qs-row-bpm">${esc(s.bpm)} BPM</div>` : ''}
+              ${rowF.tagsHtml}
             </div>
           </div>
-        `).join('')}
+        `;
+        }).join('')}
         ${moreBrowseBtn}
       ` : '';
 
@@ -6025,13 +6941,15 @@
       if (song) playQuickStageSongObj(song);
     };
 
-    async function playQuickStageSongObj(song) {
+    async function playQuickStageSongObj(song, stepIndex = 0) {
       if (!song) return;
       let entry = S.quickSongs.find(item => isSameQuickSong(item, song)) || null;
+      const isMsh = isMashupSong(song);
 
       if (!entry) {
         entry = {
           id: 'qs_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+          ...(isMsh ? { type: 'mashup', parts: cloneMashupParts(song.parts) } : {}),
           title: song.title || 'Şarkı',
           artist: song.artist || '',
           key: song.key || '',
@@ -6050,18 +6968,25 @@
         entry.bpm = song.bpm || '';
         entry.notes = song.notes || '';
         entry.link = song.link || '';
+        if (isMsh) {
+          entry.type = 'mashup';
+          entry.parts = cloneMashupParts(song.parts);
+        } else {
+          delete entry.type;
+          delete entry.parts;
+        }
         if (song.id) entry.libId = song.id;
       }
 
       const input = document.getElementById('qs-search-input');
       if (input) input.value = '';
-      await broadcastQuickStage(entry.id);
+      await broadcastQuickStage(entry.id, stepIndex);
     }
 
     window.selectQuickHistorySong = async (entryId) => {
       const entry = S.quickSongs.find(s => s.id === entryId);
       if (!entry) return;
-      await broadcastQuickStage(entryId);
+      await broadcastQuickStage(entryId, 0);
     };
 
     window.removeQuickHistorySong = async (entryId) => {
@@ -6070,7 +6995,10 @@
       S.quickSongs.splice(idx, 1);
       S.quickSongs.forEach((s, i) => { s.order = i; });
       const removedActive = S.liveMode === 'quick' && S.liveActiveSong === entryId;
-      if (removedActive) S.liveActiveSong = null;
+      if (removedActive) {
+        S.liveActiveSong = null;
+        S.liveActiveStep = 0;
+      }
 
       if (S.activeRoomCode === 'LIVE' && S.liveMode === 'quick') {
         const songsArr = S.quickSongs.map((s, i) => ({ ...s, order: i }));
@@ -6081,6 +7009,7 @@
           band: 'Repertuar',
           songs: songsArr,
           activeSongId: S.liveActiveSong,
+          activeStep: removedActive ? 0 : (S.liveActiveStep || 0),
           forceUpsert: true
         });
       }
@@ -6093,6 +7022,7 @@
       S.quickSongs = [];
       if (S.activeRoomCode === 'LIVE' && S.liveMode === 'quick') {
         S.liveActiveSong = null;
+        S.liveActiveStep = 0;
         await ensureLiveRoomOpen({
           mode: 'quick',
           setlistId: null,
@@ -6100,6 +7030,7 @@
           band: 'Repertuar',
           songs: [],
           activeSongId: null,
+          activeStep: 0,
           forceUpsert: true
         });
       }
@@ -6116,20 +7047,23 @@
       document.getElementById('create-setlist-modal').classList.remove('hidden');
     };
 
-    async function broadcastQuickStage(activeEntryId) {
+    async function broadcastQuickStage(activeEntryId, stepIndex = 0) {
       const activeSong = S.quickSongs.find(s => s.id === activeEntryId);
       if (!activeSong) return;
 
       const prevActive = S.liveActiveSong;
+      const prevStep = S.liveActiveStep || 0;
+      const step = Number.isInteger(stepIndex) && stepIndex >= 0 ? stepIndex : 0;
       const wasQuickLive = S.activeRoomCode === 'LIVE' && S.liveMode === 'quick' && leaderWs && leaderWs.readyState === WebSocket.OPEN;
 
       S.liveActiveSong = activeEntryId;
+      S.liveActiveStep = step;
       const songsArr = S.quickSongs.map((s, i) => ({ ...s, order: i }));
 
       if (wasQuickLive) {
         try {
           leaderWs.send(JSON.stringify({ type: 'UPDATE_SETLIST', songs: songsArr }));
-          leaderWs.send(JSON.stringify({ type: 'SELECT_SONG', songId: activeEntryId }));
+          leaderWs.send(JSON.stringify({ type: 'SELECT_SONG', songId: activeEntryId, stepIndex: step }));
         } catch (e) {}
       }
 
@@ -6140,10 +7074,12 @@
         band: 'Repertuar',
         songs: songsArr,
         activeSongId: activeEntryId,
+        activeStep: step,
         forceUpsert: true
       });
       if (!ok) {
         S.liveActiveSong = prevActive;
+        S.liveActiveStep = prevStep;
         renderQuickStageView();
         updateHomeLiveBanner();
         return;
@@ -6217,6 +7153,8 @@
 
       let songs = {};
       let activeSongId = initialRoom ? initialRoom.active_song : null;
+      let activeStep = (initialRoom && Number.isInteger(initialRoom.active_step) && initialRoom.active_step >= 0) ? initialRoom.active_step : 0;
+      let lastRenderedSongId = null;
 
       const transformSongs = (songsList) => {
         const obj = {};
@@ -6234,29 +7172,86 @@
 
       const waitState = document.getElementById('wait-state');
       const nowDisplay = document.getElementById('now-display');
+      const mashupDisplay = document.getElementById('mashup-display');
       const nextBar = document.getElementById('next-bar');
 
       function updateNowDisplay() {
         if (!activeSongId || !songs[activeSongId]) {
           waitState.style.display = '';
           nowDisplay.style.display = 'none';
+          if (mashupDisplay) mashupDisplay.style.display = 'none';
           if (nextBar) nextBar.style.display = 'none';
           currentDetailSong = null;
+          lastRenderedSongId = null;
           return;
         }
 
         const s = songs[activeSongId];
         currentDetailSong = s;
         waitState.style.display = 'none';
+
+        if (mashupDisplay && isMashupSong(s) && Array.isArray(s.parts) && s.parts.length > 0) {
+          nowDisplay.style.display = 'none';
+          const parts = s.parts;
+          const step = Math.max(0, Math.min(activeStep || 0, parts.length - 1));
+          const densityCls = parts.length <= 3 ? 'mashup-density-lg' : (parts.length <= 5 ? 'mashup-density-md' : 'mashup-density-sm');
+          mashupDisplay.className = `mashup-display ${densityCls}`;
+
+          const hdrEl = document.getElementById('mem-mashup-title');
+          if (hdrEl) hdrEl.textContent = s.title || 'MASHUP';
+
+          const listEl = document.getElementById('mem-mashup-list');
+          if (listEl) {
+            listEl.innerHTML = parts.map((p, i) => {
+              const cls = i < step ? 'is-done' : (i === step ? 'is-current' : 'is-upcoming');
+              const numTxt = i === step ? '●' : `${i + 1}.`;
+              const cueTxt = String(p.cue || '').trim();
+              const arrow = i < parts.length - 1
+                ? `<div class="mashup-arrow${i < step ? ' is-done' : ''}">↓</div>`
+                : '';
+              return `
+                <div class="mashup-step-row ${cls}">
+                  <div class="mashup-step-num">${numTxt}</div>
+                  <div class="mashup-step-main">
+                    <div class="mashup-step-title">${esc(p.title || '—')}</div>
+                    ${cueTxt ? `<div class="mashup-step-cue">${esc(cueTxt)}</div>` : ''}
+                  </div>
+                  <div class="mashup-step-tags">
+                    ${p.key ? `<div class="mashup-step-key">${esc(p.key)}</div>` : ''}
+                    ${p.bpm ? `<div class="mashup-step-bpm">${esc(p.bpm)} BPM</div>` : ''}
+                  </div>
+                </div>
+                ${arrow}
+              `;
+            }).join('');
+          }
+
+          mashupDisplay.style.display = 'flex';
+          const smoothScroll = lastRenderedSongId === activeSongId;
+          requestAnimationFrame(() => {
+            const curRow = mashupDisplay.querySelector('.mashup-step-row.is-current');
+            if (curRow && typeof curRow.scrollIntoView === 'function') {
+              curRow.scrollIntoView({ behavior: smoothScroll ? 'smooth' : 'auto', block: 'center' });
+            }
+          });
+          lastRenderedSongId = activeSongId;
+          if (nextBar) nextBar.style.display = 'none';
+          return;
+        }
+
+        if (mashupDisplay) mashupDisplay.style.display = 'none';
         nowDisplay.style.display = 'flex';
 
         const titleEl = document.getElementById('mem-now-title');
         if (titleEl) {
           titleEl.textContent = s.title || '—';
-          titleEl.classList.remove('flash');
-          void titleEl.offsetWidth;
-          titleEl.classList.add('flash');
+          if (lastRenderedSongId !== activeSongId) {
+            titleEl.classList.remove('flash');
+            void titleEl.offsetWidth;
+            titleEl.classList.add('flash');
+          }
         }
+        lastRenderedSongId = activeSongId;
 
         const keyEl = document.getElementById('mem-now-key');
         if (keyEl) keyEl.textContent = s.key || '';
@@ -6283,6 +7278,7 @@
           const res = await fetch(`${getWorkerUrl()}/api/room/${S.activeRoomCode}`);
           if (res.status === 404) {
             activeSongId = null;
+            activeStep = 0;
             songs = {};
             document.getElementById('mem-room-name').textContent = 'Canlı Sahne';
             document.getElementById('mem-room-band').textContent = '';
@@ -6296,6 +7292,7 @@
               document.getElementById('mem-room-name').textContent = r.name || 'Canlı Sahne';
               document.getElementById('mem-room-band').textContent = r.band || '';
               activeSongId = r.active_song;
+              activeStep = (Number.isInteger(r.active_step) && r.active_step >= 0) ? r.active_step : 0;
               songs = r.songs ? transformSongs(r.songs) : {};
               updateNowDisplay();
             }
@@ -6333,10 +7330,12 @@
                 document.getElementById('mem-room-band').textContent = data.room.band || '';
                 songs = transformSongs(data.room.songs || []);
                 activeSongId = data.room.active_song || null;
+                activeStep = (Number.isInteger(data.room.active_step) && data.room.active_step >= 0) ? data.room.active_step : 0;
                 updateNowDisplay();
               }
             } else if (data.type === 'SONG_CHANGED') {
               activeSongId = data.songId;
+              activeStep = (Number.isInteger(data.stepIndex) && data.stepIndex >= 0) ? data.stepIndex : 0;
               if (activeSongId && !songs[activeSongId]) {
                 fetchCurrentState();
               }
@@ -6351,17 +7350,20 @@
                 document.getElementById('mem-room-name').textContent = data.room.name || 'Canlı Sahne';
                 document.getElementById('mem-room-band').textContent = data.room.band || '';
                 activeSongId = data.room.active_song;
+                activeStep = (Number.isInteger(data.room.active_step) && data.room.active_step >= 0) ? data.room.active_step : 0;
                 songs = data.room.songs ? transformSongs(data.room.songs) : {};
                 updateNowDisplay();
               } else {
                 document.getElementById('mem-room-name').textContent = 'Canlı Sahne';
                 document.getElementById('mem-room-band').textContent = '';
                 activeSongId = null;
+                activeStep = 0;
                 songs = {};
                 updateNowDisplay();
               }
             } else if (data.type === 'ROOM_CLOSED') {
               activeSongId = null;
+              activeStep = 0;
               songs = {};
               document.getElementById('mem-room-name').textContent = 'Canlı Sahne';
               document.getElementById('mem-room-band').textContent = '';
@@ -6372,6 +7374,7 @@
               if (memberPingTimer) { clearInterval(memberPingTimer); memberPingTimer = null; }
               try { ws.close(1000, data.type); } catch (e) {}
               activeSongId = null;
+              activeStep = 0;
               songs = {};
               updateNowDisplay();
               showToast('Yönetici tarafından listeden çıkarıldın');
@@ -6443,6 +7446,7 @@
       S.activeRoomCode = null;
       S.memberId = null;
       S.role = null;
+      S.liveActiveStep = 0;
       currentDetailSong = null;
       showScreen('home');
     };
@@ -6472,6 +7476,7 @@
       S.liveSetlistId = null;
       S.liveRoomName = '';
       S.liveActiveSong = null;
+      S.liveActiveStep = 0;
       S.currentMembers = [];
 
       const codeEl = document.getElementById('leader-code');
@@ -6516,25 +7521,52 @@
         modal.style.zIndex = '230';
         modal.onclick = (e) => { if (e.target === modal) modal.classList.add('hidden'); };
         modal.innerHTML = `
-          <div class="sheet">
+          <div class="sheet" style="max-height:88dvh;overflow-y:auto">
             <div class="sheet-handle"></div>
-            <div class="sheet-title">ŞARKI BİLGİSİ</div>
+            <div class="sheet-title" id="sd-sheet-title">ŞARKI BİLGİSİ</div>
             <div id="sd-content"></div>
             <button class="btn btn-secondary" style="width:100%;margin-top:14px" onclick="document.getElementById('song-detail-modal').classList.add('hidden')">Kapat</button>
           </div>`;
         document.body.appendChild(modal);
       }
+      const titleHdr = modal.querySelector('#sd-sheet-title');
+      if (titleHdr) titleHdr.textContent = isMashupSong(s) ? 'MASHUP BİLGİSİ' : 'ŞARKI BİLGİSİ';
+
       const contentEl = modal.querySelector('#sd-content');
-      contentEl.innerHTML = `
-        <div style="font-size:24px;font-weight:600;margin-bottom:6px">${esc(s.title || '—')}</div>
-        <div style="font-family:var(--font-mono);font-size:13px;color:var(--text-muted);margin-bottom:16px">${esc(s.artist || '')}</div>
-        <div style="display:flex;gap:12px;margin-bottom:14px">
-          ${s.key ? `<div style="background:var(--surface2);padding:8px 14px;border-radius:8px;border:1px solid var(--border)"><div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:1px">TON</div><div style="font-family:var(--font-mono);font-size:18px;color:var(--accent)">${esc(s.key)}</div></div>` : ''}
-          ${s.bpm ? `<div style="background:var(--surface2);padding:8px 14px;border-radius:8px;border:1px solid var(--border)"><div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:1px">BPM</div><div style="font-family:var(--font-mono);font-size:18px">${esc(s.bpm)}</div></div>` : ''}
-        </div>
-        ${s.notes ? `<div style="background:var(--surface2);padding:12px;border-radius:10px;border:1px solid var(--border);margin-bottom:10px"><div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:1px;margin-bottom:6px">NOTLAR</div><div style="font-size:14px;white-space:pre-wrap">${esc(s.notes)}</div></div>` : ''}
-        ${s.link ? `<a href="${esc(s.link)}" target="_blank" class="btn btn-primary" style="width:100%;text-decoration:none">Linki Aç</a>` : ''}
-      `;
+      if (isMashupSong(s) && Array.isArray(s.parts)) {
+        const partsHtml = s.parts.map((p, i) => `
+          <div style="background:var(--surface2);padding:10px 12px;border-radius:10px;border:1px solid var(--border);margin-bottom:8px;display:flex;align-items:center;gap:10px">
+            <div style="font-family:var(--font-mono);font-size:13px;font-weight:700;color:var(--accent);min-width:22px">${i + 1}.</div>
+            <div style="flex:1;min-width:0">
+              <div style="font-size:15px;font-weight:600">${esc(p.title || '—')}</div>
+              ${p.artist ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);margin-top:2px">${esc(p.artist)}</div>` : ''}
+              ${p.cue ? `<div style="font-family:var(--font-mono);font-size:11px;color:var(--accent);margin-top:3px">↳ ${esc(p.cue)}</div>` : ''}
+            </div>
+            <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px;flex-shrink:0">
+              ${p.key ? `<span style="font-family:var(--font-mono);font-size:14px;font-weight:700;color:var(--accent)">${esc(p.key)}</span>` : ''}
+              ${p.bpm ? `<span style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted)">${esc(p.bpm)} BPM</span>` : ''}
+            </div>
+          </div>
+        `).join('');
+        contentEl.innerHTML = `
+          <div style="font-size:22px;font-weight:600;margin-bottom:4px">${esc(s.title || '—')}</div>
+          <div style="font-family:var(--font-mono);font-size:11px;color:var(--accent);letter-spacing:1.2px;margin-bottom:14px">🔗 ${s.parts.length} PARÇA · KESİNTİSİZ AKIŞ</div>
+          ${partsHtml}
+          ${s.notes ? `<div style="background:var(--surface2);padding:12px;border-radius:10px;border:1px solid var(--border);margin-top:6px;margin-bottom:10px"><div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:1px;margin-bottom:6px">GENEL NOT</div><div style="font-size:14px;white-space:pre-wrap">${esc(s.notes)}</div></div>` : ''}
+          ${s.link ? `<a href="${esc(s.link)}" target="_blank" class="btn btn-primary" style="width:100%;text-decoration:none">Linki Aç</a>` : ''}
+        `;
+      } else {
+        contentEl.innerHTML = `
+          <div style="font-size:24px;font-weight:600;margin-bottom:6px">${esc(s.title || '—')}</div>
+          <div style="font-family:var(--font-mono);font-size:13px;color:var(--text-muted);margin-bottom:16px">${esc(s.artist || '')}</div>
+          <div style="display:flex;gap:12px;margin-bottom:14px">
+            ${s.key ? `<div style="background:var(--surface2);padding:8px 14px;border-radius:8px;border:1px solid var(--border)"><div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:1px">TON</div><div style="font-family:var(--font-mono);font-size:18px;color:var(--accent)">${esc(s.key)}</div></div>` : ''}
+            ${s.bpm ? `<div style="background:var(--surface2);padding:8px 14px;border-radius:8px;border:1px solid var(--border)"><div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:1px">BPM</div><div style="font-family:var(--font-mono);font-size:18px">${esc(s.bpm)}</div></div>` : ''}
+          </div>
+          ${s.notes ? `<div style="background:var(--surface2);padding:12px;border-radius:10px;border:1px solid var(--border);margin-bottom:10px"><div style="font-family:var(--font-mono);font-size:9px;color:var(--text-dim);letter-spacing:1px;margin-bottom:6px">NOTLAR</div><div style="font-size:14px;white-space:pre-wrap">${esc(s.notes)}</div></div>` : ''}
+          ${s.link ? `<a href="${esc(s.link)}" target="_blank" class="btn btn-primary" style="width:100%;text-decoration:none">Linki Aç</a>` : ''}
+        `;
+      }
       modal.classList.remove('hidden');
     };
 
@@ -6707,14 +7739,30 @@
           if (s && s.id && !seenIds.has(s.id)) {
             seenIds.add(s.id);
             aiSongIds.push(s.id);
-            allSongs.push({
-              t: s.title || '',
-              a: s.artist || '',
-              k: s.key || '',
-              b: s.bpm || '',
-              n: s.notes || '',
-              u: s.link || ''
-            });
+            if (isMashupSong(s)) {
+              allSongs.push({
+                type: 'mashup',
+                t: s.title || '',
+                n: s.notes || '',
+                u: s.link || '',
+                parts: (Array.isArray(s.parts) ? s.parts : []).map(p => ({
+                  t: p.title || '',
+                  a: p.artist || '',
+                  k: p.key || '',
+                  b: p.bpm || '',
+                  c: p.cue || ''
+                }))
+              });
+            } else {
+              allSongs.push({
+                t: s.title || '',
+                a: s.artist || '',
+                k: s.key || '',
+                b: s.bpm || '',
+                n: s.notes || '',
+                u: s.link || ''
+              });
+            }
           }
         });
       });
@@ -6723,15 +7771,24 @@
         id: sl.id,
         name: sl.name || 'Setlist',
         band: sl.band || '',
-        songs: (sl.songs || []).map(s => s.title + (s.artist ? ' - ' + s.artist : ''))
+        songs: (sl.songs || []).map(s => (isMashupSong(s) ? '[MASHUP] ' : '') + s.title + (!isMashupSong(s) && s.artist ? ' - ' + s.artist : ''))
       }));
 
       let activeSongTitle = '';
       if (S.activeRoomCode === 'LIVE' && S.liveActiveSong) {
+        let activeObj = null;
         if (S.liveMode === 'quick') {
-          activeSongTitle = (S.quickSongs.find(s => s.id === S.liveActiveSong) || {}).title || '';
+          activeObj = S.quickSongs.find(s => s.id === S.liveActiveSong) || null;
         } else if (S.liveSetlistId && S.setlists[S.liveSetlistId]) {
-          activeSongTitle = ((S.setlists[S.liveSetlistId].songs || []).find(s => s.id === S.liveActiveSong) || {}).title || '';
+          activeObj = (S.setlists[S.liveSetlistId].songs || []).find(s => s.id === S.liveActiveSong) || null;
+        }
+        if (activeObj) {
+          if (isMashupSong(activeObj) && Array.isArray(activeObj.parts) && activeObj.parts.length) {
+            const st = Math.max(0, Math.min(S.liveActiveStep || 0, activeObj.parts.length - 1));
+            activeSongTitle = `[MASHUP] ${activeObj.title} (${st + 1}/${activeObj.parts.length}: ${activeObj.parts[st].title})`;
+          } else {
+            activeSongTitle = activeObj.title || '';
+          }
         }
       }
 
@@ -6883,6 +7940,7 @@
     async function executeInstantStageAction(action) {
       if (action.action === 'STAGE_SELECT_SONG') {
         const repMatch = resolveSongByAiRef(action, action.no, action.title);
+        const stepIndex = Number.isInteger(action.stepIndex) && action.stepIndex >= 0 ? action.stepIndex : 0;
         if (S.activeRoomCode === 'LIVE' && S.liveMode === 'setlist' && S.liveSetlistId && S.setlists[S.liveSetlistId]) {
           const sl = S.setlists[S.liveSetlistId];
           const nq = trNormalize(String((repMatch && repMatch.title) || action.title || '').trim());
@@ -6892,7 +7950,7 @@
           );
           if (slMatch) {
             if (S.activeSetlistId !== sl.id) openLeader(sl.id);
-            await selectSongInRoom(slMatch.id);
+            await selectSongInRoom(slMatch.id, stepIndex);
             return {
               ok: true,
               label: `⚡ Canlı sahnede: ${slMatch.title}${slMatch.key ? ' (' + slMatch.key + ')' : ''}${slMatch.bpm ? ' · ' + slMatch.bpm + ' BPM' : ''}`
@@ -6902,7 +7960,7 @@
         if (!repMatch) {
           return { ok: false, label: `⚠️ Repertuarda şarkı bulunamadı: ${action.title || action.no || '—'}` };
         }
-        await playQuickStageSongObj(repMatch);
+        await playQuickStageSongObj(repMatch, stepIndex);
         return {
           ok: true,
           label: `⚡ Canlı sahnede: ${repMatch.title}${repMatch.key ? ' (' + repMatch.key + ')' : ''}${repMatch.bpm ? ' · ' + repMatch.bpm + ' BPM' : ''}`
@@ -6926,7 +7984,8 @@
           name: 'Hızlı Sahne',
           band: 'Repertuar',
           songs: S.quickSongs.map((s, i) => ({ ...s, order: i })),
-          activeSongId: S.liveActiveSong
+          activeSongId: S.liveActiveSong,
+          activeStep: S.liveActiveStep || 0
         });
         return ok
           ? { ok: true, label: '🔴 Hızlı Sahne canlı yayına açıldı' }
@@ -6934,6 +7993,31 @@
       }
 
       return { ok: false, label: 'Bilinmeyen sahne komutu' };
+    }
+
+    function resolveAiMashupParts(action, rawParts) {
+      if (!Array.isArray(rawParts)) return [];
+      const out = [];
+      rawParts.forEach(p => {
+        if (!p || typeof p !== 'object') return;
+        const rawMatch = resolveSongByAiRef(action, p.no, p.title);
+        const matched = (rawMatch && !isMashupSong(rawMatch)) ? rawMatch : null;
+        const title = String(p.title || (matched && matched.title) || '').trim();
+        if (!title) return;
+        const artist = String(p.artist !== undefined ? p.artist : (matched && matched.artist) || '').trim();
+        const keyRaw = String(p.key !== undefined ? p.key : (matched && matched.key) || '').trim();
+        const bpmRaw = p.bpm !== undefined && String(p.bpm).trim() !== '' ? p.bpm : ((matched && matched.bpm) || '');
+        const bpmNum = parseInt(bpmRaw, 10);
+        out.push({
+          libId: matched && matched.id ? matched.id : '',
+          title,
+          artist,
+          key: normalizeKeyName(keyRaw),
+          bpm: (Number.isFinite(bpmNum) && bpmNum > 0) ? String(bpmNum) : '',
+          cue: String(p.cue || '').trim()
+        });
+      });
+      return out;
     }
 
     // ══════════ AI REPERTUAR DÜZELTMESİ (UPDATE_REPERTOIRE / DELETE_FROM_REPERTOIRE) ══════════
@@ -6950,7 +8034,7 @@
       (Array.isArray(action.changes) ? action.changes : []).forEach(c => {
         const id = c ? byNo(c.no) : null;
         const song = id ? findRepSong(id) : null;
-        if (!song) { skipped++; return; }
+        if (!song || isMashupSong(song)) { skipped++; return; }
         const patch = {};
         ['title', 'artist', 'key', 'bpm', 'notes', 'link'].forEach(f => {
           if (c[f] !== undefined && c[f] !== null) patch[f] = String(c[f]).trim();
@@ -6995,6 +8079,7 @@
       const applied = r.changes.length + r.removes.length;
       if (applied) {
         afterRepertoireChange(setlistsChanged, quickChanged, r.removes.length ? { force: true } : {});
+        if (document.getElementById('rep-edit')?.classList.contains('active')) renderRepEditList(false);
         showToast(`Repertuar güncellendi: ${applied} değişiklik`);
       }
       return { applied };
@@ -7068,8 +8153,79 @@
               });
             });
             afterRepertoireChange(false, false);
+            if (document.getElementById('rep-edit')?.classList.contains('active')) renderRepEditList(false);
             showToast(`${songs.length} şarkı Repertuara eklendi`);
             return `Eklendi ✓ (${songs.length})`;
+          }
+        };
+      }
+
+      if (type === 'CREATE_MASHUP') {
+        const title = String(action.title || '').trim();
+        const parts = resolveAiMashupParts(action, action.parts);
+        if (!title) return { valid: false, error: 'Mashup adı belirtilmedi.' };
+        if (parts.length < 2) return { valid: false, error: 'Mashup için en az 2 geçerli parça gereklidir.' };
+        const notes = String(action.notes || '').trim();
+        const fmtPart = (p, i) => `${i + 1}. ${p.title}${p.key ? ' (' + p.key + ')' : ''}${p.bpm ? ' [' + p.bpm + ' BPM]' : ''}${p.cue ? ' · ' + p.cue : ''}`;
+        return {
+          valid: true,
+          title: `🔗 Mashup Oluştur: ${title} (${parts.length} parça)`,
+          lines: [
+            ...parts.map(fmtPart),
+            ...(notes ? [`📝 Not: ${notes}`] : [])
+          ],
+          btnLabel: 'Onayla ve Mashup Oluştur',
+          apply: async () => {
+            const mashupObj = buildMashupRecord({ title, parts, notes });
+            currentLib().unshift(mashupObj);
+            afterRepertoireChange(false, false);
+            if (document.getElementById('rep-edit')?.classList.contains('active')) renderRepEditList(false);
+            showToast(`"${title}" mashup eklendi`);
+            return 'Oluşturuldu ✓';
+          }
+        };
+      }
+
+      if (type === 'UPDATE_MASHUP') {
+        const rawRef = resolveSongByAiRef(action, action.no, action.mashupTitle || action.title);
+        const existing = (rawRef && isMashupSong(rawRef))
+          ? rawRef
+          : getAllRepertoireSongs().find(s =>
+              isMashupSong(s) && trNormalize(s.title).includes(trNormalize(String(action.mashupTitle || action.title || '').trim()))
+            ) || null;
+        if (!existing) {
+          return { valid: false, error: `Güncellenecek Mashup bulunamadı: ${action.mashupTitle || action.title || action.no || '—'}` };
+        }
+        const nextTitle = action.title && String(action.title).trim() ? String(action.title).trim() : existing.title;
+        const nextNotes = action.notes !== undefined ? String(action.notes || '').trim() : (existing.notes || '');
+        const nextParts = Array.isArray(action.parts) && action.parts.length
+          ? resolveAiMashupParts(action, action.parts)
+          : cloneMashupParts(existing.parts);
+        if (nextParts.length < 2) return { valid: false, error: 'Mashup en az 2 parça içermelidir.' };
+        const fmtPart = (p, i) => `${i + 1}. ${p.title}${p.key ? ' (' + p.key + ')' : ''}${p.bpm ? ' [' + p.bpm + ' BPM]' : ''}${p.cue ? ' · ' + p.cue : ''}`;
+        return {
+          valid: true,
+          title: `✏️ Mashup Güncelle: ${existing.title}`,
+          lines: [
+            ...(nextTitle !== existing.title ? [`Yeni Ad: ${nextTitle}`] : []),
+            ...nextParts.map(fmtPart),
+            ...(nextNotes ? [`📝 Not: ${nextNotes}`] : [])
+          ],
+          btnLabel: 'Onayla ve Güncelle',
+          apply: async () => {
+            const updated = buildMashupRecord({
+              id: existing.id,
+              title: nextTitle,
+              parts: nextParts,
+              notes: nextNotes,
+              link: existing.link || '',
+              createdAt: existing.createdAt
+            });
+            const res = patchMashupRecord(existing.id, updated);
+            afterRepertoireChange(res.setlistsChanged, res.quickChanged);
+            if (document.getElementById('rep-edit')?.classList.contains('active')) renderRepEditList(false);
+            showToast(`"${nextTitle}" güncellendi`);
+            return 'Güncellendi ✓';
           }
         };
       }
@@ -7114,8 +8270,10 @@
         const resolvedSongs = rawSongs.map((s, idx) => {
           const matched = resolveSongByAiRef(action, s && s.no, s && s.title);
           const base = matched || s || {};
+          const isMsh = isMashupSong(matched);
           return {
             id: 's_' + Date.now() + '_' + idx,
+            ...(isMsh ? { type: 'mashup', parts: cloneMashupParts(matched.parts) } : {}),
             libId: matched && matched.id ? matched.id : '',
             title: String((s && s.title) || base.title || 'Şarkı').trim(),
             artist: String((s && s.artist) !== undefined ? s.artist : (base.artist || '')).trim(),
@@ -7129,7 +8287,7 @@
         return {
           valid: true,
           title: `🎵 Setlist Oluştur: ${name} (${resolvedSongs.length} şarkı)`,
-          lines: resolvedSongs.map((s, i) => `${i + 1}. ${fmtSong(s.title, s.artist)}${s.key ? ' (' + s.key + ')' : ''}${s.bpm ? ' [' + s.bpm + ' BPM]' : ''}`),
+          lines: resolvedSongs.map((s, i) => `${i + 1}. ${isMashupSong(s) ? '🔗 ' : ''}${fmtSong(s.title, s.artist)}${s.key ? ' (' + s.key + ')' : ''}${s.bpm ? ' [' + s.bpm + ' BPM]' : ''}`),
           btnLabel: 'Onayla ve Setlisti Oluştur',
           apply: async () => {
             const newId = 'sl_' + Date.now();
@@ -7137,7 +8295,12 @@
               id: newId,
               name,
               band: String(action.band || '').trim(),
-              songs: resolvedSongs.map((s, i) => ({ ...s, id: 's_' + Date.now() + '_' + i, order: i })),
+              songs: resolvedSongs.map((s, i) => ({
+                ...s,
+                ...(isMashupSong(s) ? { type: 'mashup', parts: cloneMashupParts(s.parts) } : {}),
+                id: 's_' + Date.now() + '_' + i,
+                order: i
+              })),
               createdAt: Date.now()
             };
             saveSetlists();
@@ -7157,7 +8320,7 @@
         const adds = (Array.isArray(action.addNos) ? action.addNos : [])
           .map(no => resolveSongByAiRef(action, no, ''))
           .filter(Boolean);
-        if (adds.length) lines.push(`Eklenecek (${adds.length}): ${adds.map(s => s.title).join(', ')}`);
+        if (adds.length) lines.push(`Eklenecek (${adds.length}): ${adds.map(s => (isMashupSong(s) ? '🔗 ' : '') + s.title).join(', ')}`);
         const removeSet = new Set((Array.isArray(action.removeTitles) ? action.removeTitles : []).map(t => trNormalize(String(t || '').trim())).filter(Boolean));
         if (removeSet.size) lines.push(`Çıkarılacak: ${[...removeSet].length} eşleşme`);
         const reorder = Array.isArray(action.reorderTitles) ? action.reorderTitles.map(t => trNormalize(String(t || '').trim())).filter(Boolean) : [];
@@ -7176,7 +8339,13 @@
               list = list.filter(s => !removeSet.has(trNormalize(s.title)));
             }
             adds.forEach((rep, idx) => {
-              list.push({ ...rep, libId: rep.id, id: `live_${Date.now()}_${idx}`, order: list.length });
+              list.push({
+                ...rep,
+                ...(isMashupSong(rep) ? { type: 'mashup', parts: cloneMashupParts(rep.parts) } : {}),
+                libId: rep.id,
+                id: `live_${Date.now()}_${idx}`,
+                order: list.length
+              });
             });
             if (reorder.length) {
               const rank = new Map();

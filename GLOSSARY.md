@@ -12,6 +12,10 @@ _Avoid_: Master yedek, ana klasör
 Yöneticinin sahnede kullandığı ve düzenlediği aktif şarkı havuzu.
 _Avoid_: Kütüphane, REP, library
 
+**Mashup**:
+Repertuar içinden seçilen 2 veya daha fazla şarkının sahnede hiç durmadan peş peşe çalınmak üzere sıralandığı, kendine özel ton/BPM ezmesi ve isteğe bağlı geçiş notu içerebilen kesintisiz şarkı bloğu.
+_Avoid_: Karma, karışık
+
 **Setlist**:
 Belirli bir konser veya sahne akışı için Repertuar'dan seçilip sıralanmış çalma listesi.
 _Avoid_: Liste, akış

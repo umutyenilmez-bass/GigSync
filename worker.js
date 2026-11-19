@@ -26,6 +26,8 @@ const ALLOWED_AI_ACTIONS = new Set([
   "UPDATE_REPERTOIRE",
   "ADD_TO_REPERTOIRE",
   "DELETE_FROM_REPERTOIRE",
+  "CREATE_MASHUP",
+  "UPDATE_MASHUP",
   "RESTORE_MASTER_VAULT",
   "SEAL_MASTER_VAULT",
   "CREATE_SETLIST",
@@ -111,7 +113,7 @@ export class SyncRoom extends DurableObject {
     super(ctx, env);
     this.ctx = ctx;
     this.env = env;
-    this.room = null; // { code, name, band, leader, active_song, songs, createdAt, updatedAt }
+    this.room = null; // { code, name, band, leader, active_song, active_step, songs, createdAt, updatedAt }
     this.sessions = new Map(); // ws -> { id, name, role, isLeader, joinedAt }
 
     // Restore state from persistent storage when woken up from hibernation
@@ -141,13 +143,18 @@ export class SyncRoom extends DurableObject {
     const code = (data.code || "").toUpperCase();
     const now = Date.now();
     const existing = this.room || {};
+    const nextActiveSong = data.active_song !== undefined ? data.active_song : (existing.active_song || null);
+    const nextActiveStep = Number.isInteger(data.active_step) && data.active_step >= 0
+      ? data.active_step
+      : (nextActiveSong !== existing.active_song ? 0 : (Number.isInteger(existing.active_step) ? existing.active_step : 0));
 
     this.room = {
       code,
       name: data.name || existing.name || "Setlist",
       band: data.band || existing.band || "",
       leader: data.leader || existing.leader || "Leader",
-      active_song: data.active_song !== undefined ? data.active_song : (existing.active_song || null),
+      active_song: nextActiveSong,
+      active_step: nextActiveStep,
       songs: Array.isArray(data.songs) ? data.songs : (existing.songs || []),
       createdAt: existing.createdAt || now,
       updatedAt: now,
@@ -171,7 +178,8 @@ export class SyncRoom extends DurableObject {
     };
   }
 
-  async selectSong(songId) {
+  async selectSong(songId, stepIndex = 0) {
+    const nextStep = Number.isInteger(stepIndex) && stepIndex >= 0 ? stepIndex : 0;
     if (!this.room) {
       this.room = {
         code: "",
@@ -179,12 +187,14 @@ export class SyncRoom extends DurableObject {
         band: "",
         leader: "",
         active_song: songId,
+        active_step: nextStep,
         songs: [],
         createdAt: Date.now(),
         updatedAt: Date.now(),
       };
     } else {
       this.room.active_song = songId;
+      this.room.active_step = nextStep;
       this.room.updatedAt = Date.now();
     }
 
@@ -194,10 +204,11 @@ export class SyncRoom extends DurableObject {
     this.broadcast({
       type: "SONG_CHANGED",
       songId: songId,
+      stepIndex: nextStep,
       timestamp: Date.now(),
     });
 
-    return { success: true, active_song: songId };
+    return { success: true, active_song: songId, active_step: nextStep };
   }
 
   async updateSetlist(songs) {
@@ -562,7 +573,15 @@ export class SyncRoom extends DurableObject {
       switch (data.type) {
         case "SELECT_SONG": {
           if (data.songId !== undefined) {
-            await this.selectSong(data.songId);
+            await this.selectSong(data.songId, data.stepIndex);
+          }
+          break;
+        }
+
+        case "SELECT_STEP": {
+          const targetSongId = data.songId !== undefined ? data.songId : (this.room && this.room.active_song);
+          if (targetSongId) {
+            await this.selectSong(targetSongId, data.stepIndex);
           }
           break;
         }
@@ -796,12 +815,23 @@ export default {
         // Eksiksiz ve kompakt Repertuar listesi
         const formattedRepertoire = rawSongs.map((s, i) => {
           const title = s.t || s.title || "İsimsiz";
-          const artist = s.a || s.artist ? ` - ${s.a || s.artist}` : "";
-          const key = s.k || s.key ? ` (${s.k || s.key})` : "";
-          const bpm = s.b || s.bpm ? ` [${s.b || s.bpm} BPM]` : "";
           const noteText = (s.n || s.notes || "").replace(/\s+/g, " ").trim();
           const notes = noteText ? ` {Not: ${noteText.slice(0, 60)}}` : "";
           const hasLink = (s.u || s.link) ? " [Link]" : "";
+          if (s.type === "mashup" || Array.isArray(s.parts)) {
+            const parts = Array.isArray(s.parts) ? s.parts : [];
+            const partsText = parts.map((p, pi) => {
+              const pt = p.t || p.title || "İsimsiz";
+              const pk = p.k || p.key ? ` [${p.k || p.key}]` : "";
+              const pb = p.b || p.bpm ? ` ${p.b || p.bpm}BPM` : "";
+              const pc = (p.c || p.cue || "").trim() ? ` {${String(p.c || p.cue).trim()}}` : "";
+              return `${pi + 1}) ${pt}${pk}${pb}${pc}`;
+            }).join(" -> ");
+            return `${i + 1}. [MASHUP] ${title} (${parts.length} parça: ${partsText})${notes}${hasLink}`;
+          }
+          const artist = s.a || s.artist ? ` - ${s.a || s.artist}` : "";
+          const key = s.k || s.key ? ` (${s.k || s.key})` : "";
+          const bpm = s.b || s.bpm ? ` [${s.b || s.bpm} BPM]` : "";
           return `${i + 1}. ${title}${artist}${key}${bpm}${notes}${hasLink}`;
         }).join("\n");
 
@@ -857,64 +887,72 @@ KATI KURALLAR (ASLA İHLAL ETME):
 - Sistemde olmayan bir özelliği, şarkıyı, setlisti veya üyeyi ASLA uydurma; yukarıdaki gerçek listelerde yoksa "bulunamadı" de.
 - Kullanıcının "orijinal tonunu yaz / BPM ekle / YouTube linki bul" açık talebi olmadıkça yeni key, bpm, link, notes UYDURMA; boş ("") bırak.
 - Repertuar, setlist, Ana Kasa veya ayar değiştiren işlemlerde uygula butonunu kullanıcı onaylar; sadece sahnede şarkı seçme ve sahneyi açma komutları anında uygulanır. Yanıtlarında "butona dokun" gibi gereksiz açıklamalar yazma, kısa ve net ol.
-3. YALNIZCA BU 13 RESMİ AKSİYONU KULLAN (yanıtının EN SONUNA tek bir \`\`\`gigsync_action ... \`\`\` bloğu ekle):
+3. YALNIZCA BU 15 RESMİ AKSİYONU KULLAN (yanıtının EN SONUNA tek bir \`\`\`gigsync_action ... \`\`\` bloğu ekle):
 
-(A) REPERTUAR:
-1) UPDATE_REPERTOIRE (mevcut şarkının title/artist/key/bpm/notes/link alanlarını düzelt; sıra no listeden aynen alınır; tek yanıtta en fazla 120 kayıt):
+(A) REPERTUAR VE MASHUP:
+1) UPDATE_REPERTOIRE (mevcut tekil şarkının title/artist/key/bpm/notes/link alanlarını düzelt; sıra no listeden aynen alınır; tek yanıtta en fazla 120 kayıt):
 \`\`\`gigsync_action
 { "action": "UPDATE_REPERTOIRE", "changes": [{ "no": 12, "key": "Dm", "bpm": "120", "notes": "...", "link": "..." }] }
 \`\`\`
-2) ADD_TO_REPERTOIRE (yeni şarkı ekle):
+2) ADD_TO_REPERTOIRE (yeni tekil şarkı ekle):
 \`\`\`gigsync_action
 { "action": "ADD_TO_REPERTOIRE", "songs": [{ "title": "Şarkı Adı", "artist": "Sanatçı", "key": "", "bpm": "", "notes": "", "link": "" }] }
 \`\`\`
-3) DELETE_FROM_REPERTOIRE (YALNIZCA kullanıcı açıkça şarkı silmek isterse):
+3) DELETE_FROM_REPERTOIRE (YALNIZCA kullanıcı açıkça şarkı/mashup silmek isterse):
 \`\`\`gigsync_action
 { "action": "DELETE_FROM_REPERTOIRE", "remove": [57] }
 \`\`\`
-4) RESTORE_MASTER_VAULT (Ana Kasa'yı Repertuar'a geri yükle; target: "current" | "origin" | 0..4):
+4) CREATE_MASHUP (en az 2 repertuar şarkısından kesintisiz bağlantılı mashup/potpuri oluştur; "no" veya "title" ile eşle; "key"/"bpm" sadece bu mashup'a özel ezme gerekirse yazılır, tekil şarkıyı bozmaz; "cue" kısa geçiş notudur):
+\`\`\`gigsync_action
+{ "action": "CREATE_MASHUP", "title": "Mashup Adı", "notes": "", "parts": [{ "no": 12, "title": "Şarkı 1", "key": "Am", "bpm": "120", "cue": "" }, { "no": 45, "title": "Şarkı 2", "key": "Gm", "bpm": "124", "cue": "4 mezür davul" }] }
+\`\`\`
+5) UPDATE_MASHUP (mevcut mashup'ı "no" veya "mashupTitle" ile bulup ad/not/parçaları güncelle):
+\`\`\`gigsync_action
+{ "action": "UPDATE_MASHUP", "no": 941, "mashupTitle": "Mevcut Ad", "title": "Yeni Ad", "notes": "", "parts": [{ "no": 12, "title": "Şarkı 1", "key": "Am", "bpm": "120", "cue": "" }] }
+\`\`\`
+6) RESTORE_MASTER_VAULT (Ana Kasa'yı Repertuar'a geri yükle; target: "current" | "origin" | 0..4):
 \`\`\`gigsync_action
 { "action": "RESTORE_MASTER_VAULT", "target": "origin" }
 \`\`\`
-5) SEAL_MASTER_VAULT (mevcut Repertuar'ı yeni Ana Kasa sürümü olarak kilitle):
+7) SEAL_MASTER_VAULT (mevcut Repertuar'ı yeni Ana Kasa sürümü olarak kilitle):
 \`\`\`gigsync_action
 { "action": "SEAL_MASTER_VAULT", "label": "Güncel Ana Kasa" }
 \`\`\`
 
 (B) SETLİSTLER:
-6) CREATE_SETLIST:
+8) CREATE_SETLIST:
 \`\`\`gigsync_action
 { "action": "CREATE_SETLIST", "name": "Setlist Adı", "band": "", "songs": [{ "no": 12, "title": "Şarkı Adı", "artist": "Sanatçı", "key": "", "bpm": "", "notes": "", "link": "" }] }
 \`\`\`
-7) UPDATE_SETLIST (setlistId veya setlistName ile eşle; newName, band, addNos, removeTitles, reorderTitles isteğe bağlı):
+9) UPDATE_SETLIST (setlistId veya setlistName ile eşle; newName, band, addNos, removeTitles, reorderTitles isteğe bağlı):
 \`\`\`gigsync_action
 { "action": "UPDATE_SETLIST", "setlistId": "...", "setlistName": "...", "newName": "...", "band": "...", "addNos": [1, 2], "removeTitles": ["..."], "reorderTitles": ["..."] }
 \`\`\`
-8) DELETE_SETLIST:
+10) DELETE_SETLIST:
 \`\`\`gigsync_action
 { "action": "DELETE_SETLIST", "setlistId": "...", "setlistName": "..." }
 \`\`\`
 
 (C) CANLI SAHNE:
-9) STAGE_SELECT_SONG (repertuardaki "no" ve/veya "title" ile sahnede şarkıyı hemen aç):
+11) STAGE_SELECT_SONG (repertuardaki "no" ve/veya "title" ile sahnede tekil şarkıyı veya [MASHUP] kaydını hemen aç; mashup'ta isteğe bağlı 0-tabanlı "stepIndex" verilebilir):
 \`\`\`gigsync_action
-{ "action": "STAGE_SELECT_SONG", "no": 12, "title": "Şarkı Adı" }
+{ "action": "STAGE_SELECT_SONG", "no": 12, "title": "Şarkı Adı", "stepIndex": 0 }
 \`\`\`
-10) STAGE_OPEN ("quick" veya "setlist" modunda canlı sahneyi aç):
+12) STAGE_OPEN ("quick" veya "setlist" modunda canlı sahneyi aç):
 \`\`\`gigsync_action
 { "action": "STAGE_OPEN", "mode": "quick", "setlistId": "...", "setlistName": "..." }
 \`\`\`
-11) STAGE_CLOSE (canlı sahneyi kapat):
+13) STAGE_CLOSE (canlı sahneyi kapat):
 \`\`\`gigsync_action
 { "action": "STAGE_CLOSE" }
 \`\`\`
-12) STAGE_KICK_MEMBER (bağlı üyeyi çıkar):
+14) STAGE_KICK_MEMBER (bağlı üyeyi çıkar):
 \`\`\`gigsync_action
 { "action": "STAGE_KICK_MEMBER", "memberId": "...", "memberName": "..." }
 \`\`\`
 
 (D) AYARLAR:
-13) UPDATE_SETTINGS (username, geçerli listeden theme, groupKey):
+15) UPDATE_SETTINGS (username, geçerli listeden theme, groupKey):
 \`\`\`gigsync_action
 { "action": "UPDATE_SETTINGS", "username": "...", "theme": "dark", "groupKey": "..." }
 \`\`\``;
@@ -1078,16 +1116,16 @@ KATI KURALLAR (ASLA İHLAL ETME):
           }
         }
 
-        // POST /api/room/:code/song -> Select active song
+        // POST /api/room/:code/song -> Select active song (and optional mashup stepIndex)
         if (request.method === "POST" && action === "song") {
-          const { songId } = await request.json();
+          const { songId, stepIndex } = await request.json();
           if (env.ROOMS) {
             const id = env.ROOMS.idFromName(code);
             const stub = env.ROOMS.get(id);
-            const res = await stub.selectSong(songId);
+            const res = await stub.selectSong(songId, stepIndex);
             return jsonResponse(res);
           } else {
-            return jsonResponse(fallbackSelectSong(code, songId));
+            return jsonResponse(fallbackSelectSong(code, songId, stepIndex));
           }
         }
 
@@ -1168,6 +1206,7 @@ function fallbackUpsertRoom(body) {
     band: body.band || "",
     leader: body.leader || "Leader",
     active_song: body.active_song !== undefined ? body.active_song : null,
+    active_step: Number.isInteger(body.active_step) && body.active_step >= 0 ? body.active_step : 0,
     songs: body.songs || [],
     createdAt: Date.now(),
     updatedAt: Date.now(),
@@ -1181,14 +1220,16 @@ function fallbackGetRoom(code) {
   return memoryRooms.get(code.toUpperCase()) || null;
 }
 
-function fallbackSelectSong(code, songId) {
+function fallbackSelectSong(code, songId, stepIndex = 0) {
   const room = memoryRooms.get(code.toUpperCase());
+  const nextStep = Number.isInteger(stepIndex) && stepIndex >= 0 ? stepIndex : 0;
   if (room) {
     room.active_song = songId;
+    room.active_step = nextStep;
     room.updatedAt = Date.now();
-    fallbackBroadcast(code, { type: "SONG_CHANGED", songId, timestamp: Date.now() });
+    fallbackBroadcast(code, { type: "SONG_CHANGED", songId, stepIndex: nextStep, timestamp: Date.now() });
   }
-  return { success: true, active_song: songId };
+  return { success: true, active_song: songId, active_step: nextStep };
 }
 
 function fallbackUpdateSetlist(code, songs) {
@@ -1247,7 +1288,11 @@ function handleStatelessWebSocket(request, roomCode, url) {
     try {
       const data = JSON.parse(evt.data);
       if (data.type === "SELECT_SONG") {
-        fallbackSelectSong(roomCode, data.songId);
+        fallbackSelectSong(roomCode, data.songId, data.stepIndex);
+      } else if (data.type === "SELECT_STEP") {
+        const currRoom = memoryRooms.get(roomCode.toUpperCase());
+        const targetSongId = data.songId !== undefined ? data.songId : (currRoom && currRoom.active_song);
+        if (targetSongId) fallbackSelectSong(roomCode, targetSongId, data.stepIndex);
       } else if (data.type === "UPDATE_SETLIST") {
         fallbackUpdateSetlist(roomCode, data.songs);
       } else if (data.type === "CLOSE_ROOM") {
