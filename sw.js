@@ -1,4 +1,4 @@
-const CACHE = 'gigsync-v30-qs-mashups-first';
+const CACHE = 'gigsync-v31-member-mashup-cards';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/Gig_Sync_Logo.png'];
 
 self.addEventListener('install', e => {

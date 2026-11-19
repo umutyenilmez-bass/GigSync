@@ -2908,6 +2908,64 @@
       vertical-align: middle;
       flex-shrink: 0;
     }
+    #now-area.mashup-mode { padding: 8px 10px; }
+    #mashup-display.mashup-full {
+      flex: 1;
+      width: 100%;
+      max-width: none;
+      max-height: none;
+      min-height: 0;
+      padding: 0;
+      overflow: hidden;
+    }
+    #mashup-display.mashup-full .mashup-flow {
+      flex: 1;
+      min-height: 0;
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 10px;
+      overflow-y: auto;
+    }
+    #mashup-display .mashup-card {
+      flex: 1 1 0;
+      min-height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 6px clamp(14px, 4vw, 36px);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      transition: opacity .2s, background .2s, border-color .2s;
+    }
+    #mashup-display .mashup-card.is-current {
+      border: 2px solid var(--accent);
+      background: rgba(79, 142, 247, 0.15);
+    }
+    #mashup-display .mashup-card.is-done { opacity: .35; }
+    #mashup-display .mashup-card-title {
+      flex: 1;
+      min-width: 0;
+      font-size: var(--mashup-fs, 32px);
+      font-weight: 600;
+      line-height: 1.1;
+      color: var(--text);
+      overflow-wrap: anywhere;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+    #mashup-display .mashup-card-key {
+      flex-shrink: 0;
+      font-size: var(--mashup-fs, 32px);
+      font-weight: 800;
+      line-height: 1;
+      color: var(--accent);
+    }
     .mashup-display {
       display: none;
       flex-direction: column;
@@ -3617,7 +3675,6 @@
         <div class="now-artist" id="mem-now-artist" style="display:none"></div>
       </div>
       <div id="mashup-display" class="mashup-display" style="display:none">
-        <div class="mashup-hdr-title" id="mem-mashup-title"></div>
         <div id="mem-mashup-list" class="mashup-flow"></div>
       </div>
     </div>
@@ -7401,6 +7458,7 @@
           waitState.style.display = '';
           nowDisplay.style.display = 'none';
           if (mashupDisplay) mashupDisplay.style.display = 'none';
+          document.getElementById('now-area')?.classList.remove('mashup-mode');
           if (nextBar) nextBar.style.display = 'none';
           currentDetailSong = null;
           lastRenderedSongId = null;
@@ -7415,38 +7473,25 @@
           nowDisplay.style.display = 'none';
           const parts = s.parts;
           const step = Math.max(0, Math.min(activeStep || 0, parts.length - 1));
-          const densityCls = parts.length <= 3 ? 'mashup-density-lg' : (parts.length <= 5 ? 'mashup-density-md' : 'mashup-density-sm');
-          mashupDisplay.className = `mashup-display ${densityCls}`;
-
-          const hdrEl = document.getElementById('mem-mashup-title');
-          if (hdrEl) hdrEl.textContent = s.title || 'MASHUP';
+          // Tüm ekranı kullan: kart sayısına göre yazı boyu (telefonda genişlik sınırlar)
+          mashupDisplay.className = 'mashup-display mashup-full';
+          mashupDisplay.style.setProperty('--mashup-fs', `clamp(20px, min(9vw, ${Math.max(4, Math.round(40 / parts.length))}dvh), 96px)`);
+          document.getElementById('now-area')?.classList.add('mashup-mode');
 
           const listEl = document.getElementById('mem-mashup-list');
           if (listEl) {
             listEl.innerHTML = parts.map((p, i) => {
-              const cls = i < step ? 'is-done' : (i === step ? 'is-current' : 'is-upcoming');
-              const numTxt = i === step ? '●' : `${i + 1}.`;
-              return `
-                <div class="mashup-step-row ${cls}">
-                  <div class="mashup-step-num">${numTxt}</div>
-                  <div class="mashup-step-main">
-                    <div class="mashup-step-title">${esc(p.title || '—')}</div>
-                  </div>
-                  <div class="mashup-step-tags">
-                    <div class="mashup-step-key">${p.key ? 'Ton ' + esc(p.key) : 'Ton —'}</div>
-                    <div class="mashup-step-bpm">${p.bpm ? esc(p.bpm) + ' BPM' : '— BPM'}</div>
-                  </div>
-                </div>
-              `;
+              const cls = i < step ? ' is-done' : (i === step ? ' is-current' : '');
+              return `<div class="mashup-card${cls}"><div class="mashup-card-title">${esc(p.title || '—')}</div><div class="mashup-card-key">${esc(p.key || '—')}</div></div>`;
             }).join('');
           }
 
           mashupDisplay.style.display = 'flex';
           const smoothScroll = lastRenderedSongId === activeSongId;
           requestAnimationFrame(() => {
-            const curRow = mashupDisplay.querySelector('.mashup-step-row.is-current');
+            const curRow = mashupDisplay.querySelector('.mashup-card.is-current');
             if (curRow && typeof curRow.scrollIntoView === 'function') {
-              curRow.scrollIntoView({ behavior: smoothScroll ? 'smooth' : 'auto', block: 'center' });
+              curRow.scrollIntoView({ behavior: smoothScroll ? 'smooth' : 'auto', block: 'nearest' });
             }
           });
           lastRenderedSongId = activeSongId;
@@ -7455,6 +7500,7 @@
         }
 
         if (mashupDisplay) mashupDisplay.style.display = 'none';
+          document.getElementById('now-area')?.classList.remove('mashup-mode');
         nowDisplay.style.display = 'flex';
 
         const titleEl = document.getElementById('mem-now-title');
