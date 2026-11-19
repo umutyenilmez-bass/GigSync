@@ -1079,12 +1079,29 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .qs-now-tags {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
     .qs-now-key {
       font-family: var(--font-mono);
       font-size: 16px;
       font-weight: 700;
       color: var(--accent);
       flex-shrink: 0;
+    }
+    .qs-now-bpm {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: rgba(255, 255, 255, 0.06);
+      padding: 3px 7px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      display: none;
     }
     .qs-search-wrap {
       padding: 12px 14px;
@@ -1298,11 +1315,27 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .qs-row-tags {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-shrink: 0;
+    }
     .qs-row-key {
       font-family: var(--font-mono);
       font-size: 13px;
       font-weight: 600;
       color: var(--accent);
+      flex-shrink: 0;
+    }
+    .qs-row-bpm {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--surface3);
+      padding: 2px 6px;
+      border-radius: 6px;
       flex-shrink: 0;
     }
     .qs-row-del {
@@ -2710,17 +2743,26 @@
       color: var(--accent);
       background: var(--accent-glow);
     }
+    .rep-edit-search-bar {
+      display: flex;
+      gap: 8px;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+      flex-shrink: 0;
+    }
     .rep-edit-list {
       flex: 1;
       min-height: 0;
       overflow-y: auto;
+      padding: 6px 14px 28px;
       -webkit-overflow-scrolling: touch;
     }
     .rep-edit-row {
       display: flex;
       align-items: center;
       gap: 10px;
-      padding: 11px 4px;
+      padding: 12px 6px;
       border-bottom: 1px solid var(--border);
       cursor: pointer;
     }
@@ -2757,53 +2799,20 @@
       text-align: center;
       font-size: 12px;
       color: var(--text-muted);
-      padding: 14px 0;
+      padding: 16px 0;
     }
-    .rep-clean-bar {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      padding: 8px 10px 8px 12px;
-      margin-bottom: 8px;
+    .rep-edit-more-btn {
+      width: 100%;
+      margin: 12px 0 8px;
+      height: 40px;
       border-radius: 10px;
-      border: 1px dashed var(--accent);
-      background: var(--accent-glow);
-      font-size: 12px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
       color: var(--text);
-      flex-shrink: 0;
-    }
-    .rep-clean-btn {
-      flex-shrink: 0;
-      height: 32px;
-      padding: 0 14px;
-      border-radius: 8px;
-      border: none;
-      background: var(--accent);
-      color: var(--accent-text, #fff);
       font-family: var(--font-mono);
       font-size: 12px;
       font-weight: 700;
       cursor: pointer;
-    }
-    .rep-clean-item {
-      padding: 10px 0;
-      border-bottom: 1px solid var(--border);
-      font-size: 14px;
-      color: var(--text);
-    }
-    .rep-clean-ex {
-      font-size: 12px;
-      color: var(--text-muted);
-      margin-top: 3px;
-      word-break: break-word;
-    }
-    .rep-clean-total {
-      padding: 12px 0 2px;
-      font-family: var(--font-mono);
-      font-size: 13px;
-      font-weight: 700;
-      color: var(--accent);
-      text-align: center;
     }
 
     /* ══ MOBİL UYUMLULUK ══ */
@@ -2975,7 +2984,7 @@
           </div>
           <div style="flex:1;min-width:0">
             <div class="rep-edit-card-title">REPERTUAR DÜZENLE</div>
-            <div class="rep-edit-card-sub">Ton, BPM ve şarkı bilgilerini düzelt</div>
+            <div class="rep-edit-card-sub">Ton, BPM, not ve şarkı bilgilerini düzenle</div>
           </div>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
             <path d="M9 18l6-6-6-6"/>
@@ -2991,7 +3000,7 @@
         </div>
         <div id="setlists-list"></div>
 
-        <!-- CREW JOIN AREA (FALLBACK) -->
+        <!-- GRUP CANLI BAĞLANTI -->
         <div id="crew-join-area" style="display:none; text-align:center; padding:40px 20px; flex-direction:column; align-items:center; gap:24px; justify-content:center; min-height:50dvh">
           <div style="background:var(--surface2); width:80px; height:80px; border-radius:50%; display:flex; align-items:center; justify-content:center; border:1px solid var(--border); box-shadow:0 8px 32px rgba(0,0,0,0.2)">
             <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -3003,7 +3012,7 @@
           </div>
           <div style="display:flex; flex-direction:column; gap:8px">
             <div style="font-size:18px; font-weight:700; color:var(--text); font-family: var(--font-sans)">Canlı Sahne Takibi</div>
-            <div style="font-size:13px; color:var(--text-muted); max-width:260px; margin:0 auto; line-height:1.6">Liderin seçtiği şarkıları canlı takip etmek için tek dokunuşla bağlanın.</div>
+            <div style="font-size:13px; color:var(--text-muted); max-width:260px; margin:0 auto; line-height:1.6">Yöneticinin seçtiği şarkıları canlı takip etmek için tek dokunuşla bağlanın.</div>
           </div>
           <button class="btn btn-primary" onclick="joinRoomDirect()" style="width:100%; max-width:260px; box-shadow:0 0 24px var(--accent-glow); font-weight: 700; height: 48px; border-radius: 12px; font-family: var(--font-mono); letter-spacing: 2px;">
             CANLI SAHNEYE BAĞLAN
@@ -3130,7 +3139,10 @@
         <div class="qs-now-title" id="qs-now-title">—</div>
         <div class="qs-now-meta" id="qs-now-artist"></div>
       </div>
-      <div class="qs-now-key" id="qs-now-key"></div>
+      <div class="qs-now-tags">
+        <div class="qs-now-key" id="qs-now-key"></div>
+        <div class="qs-now-bpm" id="qs-now-bpm"></div>
+      </div>
     </div>
 
     <div class="qs-search-wrap">
@@ -3143,7 +3155,36 @@
     <div class="qs-list" id="qs-content"></div>
   </div>
 
-  <!-- ══ MEMBER ══ -->
+  <!-- ══ REPERTUAR DÜZENLE (TAM EKRAN · SADECE MEVCUT ŞARKI DÜZENLEME) ══ -->
+  <div id="rep-edit" class="screen">
+    <div class="leader-header">
+      <div>
+        <div class="leader-title">REPERTUAR DÜZENLE</div>
+        <div class="leader-sub"><span id="rep-edit-count" style="color:var(--accent)">0 şarkı</span> · <span style="color:var(--text-muted)">Düzenlemek için şarkıya dokun</span></div>
+      </div>
+      <div class="hdr-actions" style="align-items:center">
+        <button class="btn btn-icon btn-ghost" onclick="goBackFromRepEdit()" title="Geri">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+            <path d="M19 12H5M12 5l-7 7 7 7" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <div class="rep-edit-search-bar">
+      <div style="position:relative;flex:1;min-width:0">
+        <input id="rep-edit-search" class="qs-search-input" type="search"
+          placeholder="Şarkı veya sanatçı ara..." oninput="renderRepEditList(true)"
+          autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        <button id="rep-edit-search-clear" class="qs-search-clear" style="right:10px;display:none" onclick="clearRepEditSearch()" title="Temizle">×</button>
+      </div>
+      <button id="rep-edit-missing-btn" class="rep-edit-chip" onclick="toggleRepEditMissing()" title="Tonu veya BPM'i eksik olanlar">Eksik</button>
+    </div>
+
+    <div id="rep-edit-list" class="rep-edit-list"></div>
+  </div>
+
+  <!-- ══ MEMBER (GRUP) ══ -->
   <div id="member" class="screen">
     <div class="member-hdr">
       <div class="member-hdr-info">
@@ -3163,17 +3204,17 @@
     </div>
     <div class="now-area" id="now-area">
       <div class="wait-state" id="wait-state">
-        <div class="wait-txt">Lider bekleniyor...</div>
+        <div class="wait-txt">Yönetici bekleniyor...</div>
       </div>
       <div id="now-display"
         style="display:none;flex-direction:column;align-items:center;gap:8px;width:100%;padding:0 8px;cursor:pointer"
         onclick="currentDetailSong && showSongDetail(currentDetailSong)">
         <div class="now-label">ŞU AN ÇALINIYOR</div>
         <div class="now-title" id="mem-now-title">—</div>
-        <div style="display:flex;align-items:baseline;gap:16px;justify-content:center">
+        <div style="display:flex;align-items:center;gap:12px;justify-content:center;flex-wrap:wrap">
           <div class="now-key" id="mem-now-key"></div>
           <div id="mem-now-bpm"
-            style="font-family:var(--font-mono);font-size:18px;color:var(--text-muted);letter-spacing:1px;display:none">
+            style="font-family:var(--font-mono);font-size:16px;font-weight:600;color:var(--text);background:var(--surface2);border:1px solid var(--border);padding:4px 10px;border-radius:8px;letter-spacing:1px;display:none">
           </div>
         </div>
         <div class="now-artist" id="mem-now-artist"></div>
@@ -3185,7 +3226,10 @@
     <div class="next-bar" id="next-bar" style="display:none">
       <div class="next-lbl">Sıradaki</div>
       <div class="next-title" id="mem-next-title">—</div>
-      <div class="next-key" id="mem-next-key"></div>
+      <div style="display:flex;align-items:baseline;gap:10px;justify-content:center">
+        <div class="next-key" id="mem-next-key"></div>
+        <div class="next-key" id="mem-next-bpm" style="color:var(--text-muted);font-size:14px"></div>
+      </div>
     </div>
     <div class="member-footer">
       <span onclick="showNameModal()" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px" title="Adını düzenle">
@@ -3212,50 +3256,6 @@
   </div>
 
   <!-- ══ MODALS ══ -->
-
-  <!-- REPERTUAR MODAL -->
-  <div class="overlay hidden" id="repertuar-modal" onclick="if(event.target===this)closeRepertuarModal()"
-    style="z-index: 210;">
-    <div class="sheet" style="height:90dvh">
-      <div class="sheet-handle"></div>
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px">
-        <div class="sheet-title" style="margin-bottom:0">REPERTUAR</div>
-        <div id="lib-count-badge"
-          style="background:var(--accent);color:var(--accent-text,#fff);font-family:var(--font-mono);font-size:12px;font-weight:700;padding:2px 8px;border-radius:999px">
-          0</div>
-        <div style="margin-left:auto; display:flex; gap:8px; flex-wrap:wrap; justify-content:flex-end">
-          <button id="lib-bulk-send-btn" class="btn btn-xs" onclick="showSendToLibSheet([...selectedLibIds])"
-            style="display:none; font-size:10px; padding:0 8px; height:24px; background:var(--accent); color:var(--accent-text,#fff); border-color:var(--accent)">GÖNDER (<span
-              id="lib-sel-send-count">0</span>)</button>
-          <button id="lib-bulk-del-btn" class="btn btn-danger btn-xs" onclick="deleteSelectedFromLibrary()"
-            style="display:none; font-size:10px; padding:0 8px; height:24px">SİL (<span
-              id="lib-sel-count">0</span>)</button>
-          <button class="btn btn-ghost btn-xs" id="lib-select-all-btn" onclick="toggleSelectAllLibrary()"
-            style="font-size:10px; padding:0 8px; height:24px; border-color:var(--border2)">HEPSİNİ SEÇ</button>
-          <button class="btn btn-danger btn-xs" onclick="clearLibrary()"
-            style="font-size:10px; padding:0 8px; height:24px">TÜMÜNÜ SİL</button>
-        </div>
-      </div>
-      <div id="lib-tabs-bar" style="display:flex;gap:8px;overflow-x:auto;margin-bottom:12px;padding-bottom:4px;scrollbar-width:none"></div>
-      <div class="lib-search-bar" style="border:none; padding:0 0 12px 0; gap:10px">
-        <input class="lib-search" type="text" placeholder="Repertuarda ara..." id="lib-search-input"
-          oninput="renderLibrary()" style="flex:1" />
-        <button class="btn btn-secondary btn-xs" onclick="showPasteImportModal()"
-          style="height:36px; padding:0 12px; font-family:var(--font-mono); font-size:10px; letter-spacing:1px; border-radius:10px; white-space:nowrap">TOPLU
-          EKLE</button>
-        <button class="btn btn-icon btn-ghost" onclick="showAddSongModal()" title="Yeni şarkı"
-          style="width:36px; height:36px; border-radius:10px; flex-shrink:0">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-            stroke-linecap="round">
-            <path d="M12 5v14M5 12h14" />
-          </svg>
-        </button>
-      </div>
-      <div class="lib-list" id="lib-list" style="padding:0"></div>
-      <button class="btn btn-secondary" style="width:100%;margin-top:14px"
-        onclick="closeRepertuarModal()">Kapat</button>
-    </div>
-  </div>
 
   <!-- NAME MODAL -->
   <div class="overlay hidden" id="name-modal" onclick="if(event.target===this)closeNameModal()" style="z-index: 220;">
@@ -3473,6 +3473,45 @@
         </div>
       </div>
 
+      <!-- ANA KASA (KİLİTLİ KÖK YEDEK) -->
+      <div class="sec-lbl" style="margin-top:8px;margin-bottom:8px">Ana Kasa (Kilitli Kök Yedek)</div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:14px">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px">
+          <span style="font-size:12px;font-weight:600;color:var(--text)">🔒 Kilitli Durum</span>
+          <span id="vault-meta-badge" style="font-family:var(--font-mono);font-size:10px;padding:3px 8px;border-radius:999px;background:rgba(79,142,247,0.14);color:var(--accent);font-weight:700">Yükleniyor...</span>
+        </div>
+        <div id="vault-status-text" style="font-size:11px;color:var(--text-muted);margin-bottom:10px;line-height:1.4">
+          Ana Kasa otomatik senkronla değişmez. Yanlışlıkla bozulan Repertuar tek tuşla geri yüklenir.
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:8px">
+          <button class="btn btn-secondary" style="flex:1;height:36px;font-size:11px;padding:0;min-height:unset" onclick="restoreFromMasterVault('current')">
+            🔄 Ana Kasa'yı Geri Yükle
+          </button>
+          <button class="btn btn-primary" style="flex:1;height:36px;font-size:11px;padding:0;min-height:unset;background:var(--accent);color:var(--accent-text,#fff)" onclick="sealMasterVaultFromSettings()">
+            🔒 Güncelle ve Kilitle
+          </button>
+        </div>
+        <button id="vault-origin-btn" class="btn btn-ghost" style="display:none;width:100%;height:32px;font-size:11px;padding:0;min-height:unset" onclick="restoreFromMasterVault('origin')">
+          📜 İlk Kök Kopyaya Dön (1867)
+        </button>
+      </div>
+
+      <!-- REPERTUAR YÖNETİMİ (EKLE / TOPLU YAPIŞTIR) -->
+      <div class="sec-lbl" style="margin-top:8px;margin-bottom:8px">Repertuar Yönetimi</div>
+      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:14px">
+        <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;line-height:1.4">
+          Mevcut şarkıları ana ekrandaki <b>Repertuar Düzenle</b> kartından güncelleyebilir, buradan yeni şarkı ekleyebilirsiniz.
+        </div>
+        <div style="display:flex;gap:8px">
+          <button class="btn btn-secondary" style="flex:1;height:36px;font-size:11px;padding:0;min-height:unset" onclick="closeSettingsModal();showAddSongModal()">
+            ＋ Yeni Şarkı Ekle
+          </button>
+          <button class="btn btn-secondary" style="flex:1;height:36px;font-size:11px;padding:0;min-height:unset" onclick="closeSettingsModal();showPasteImportModal()">
+            📋 Toplu Yapıştır
+          </button>
+        </div>
+      </div>
+
       <!-- REPERTUAR & SETLIST YEDEKLEME -->
       <div class="sec-lbl" style="margin-top:8px;margin-bottom:8px">Repertuar &amp; Setlist Yedekleme</div>
       <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:14px">
@@ -3540,9 +3579,9 @@
       <div id="ai-chips" style="display:flex;gap:6px;overflow-x:auto;padding-bottom:8px;margin-bottom:8px;-webkit-overflow-scrolling:touch;scrollbar-width:none">
         <button class="ai-chip" onclick="sendAiChip('90\'lar Türkçe Pop enerjik 12 şarkılık bir setlist oluştur')">🎸 90'lar Pop</button>
         <button class="ai-chip" onclick="sendAiChip('Repertuarımdan yüksek tempolu 10 şarkılık sahne akışı hazırla')">⚡ Enerjik Akış</button>
-        <button class="ai-chip" onclick="sendAiChip('Akustik ve dinlendirici 8 şarkılık slow setlist yap')">☕ Akustik Slow</button>
-        <button class="ai-chip" onclick="sendAiChip('Repertuarımdaki şarkıların orijinal tonlarını ve BPM değerlerini bulup yaz')">🎵 Orijinal Tonları Bul</button>
-        <button class="ai-chip" onclick="sendAiChip('Repertuarımdaki şarkılara uygun YouTube linklerini bul ve ekle')">🔗 YouTube Linkleri</button>
+        <button class="ai-chip" onclick="sendAiChip('Ana Kasa ve güncel Repertuar durumunu özetle')">🔒 Ana Kasa Durumu</button>
+        <button class="ai-chip" onclick="sendAiChip('Repertuardaki şarkıların orijinal tonlarını ve BPM değerlerini bulup yaz')">🎵 Orijinal Tonları Bul</button>
+        <button class="ai-chip" onclick="sendAiChip('Repertuardaki şarkılara uygun YouTube linklerini bul ve ekle')">🔗 YouTube Linkleri</button>
       </div>
 
       <!-- Chat Messages Scroll Container -->
@@ -3594,7 +3633,7 @@
         placeholder="Listeyi buraya yapıştır..."></textarea>
       <div style="display:flex;gap:10px;margin-top:14px">
         <button class="btn btn-ghost" style="flex:1" onclick="closePasteImportModal()">İptal</button>
-        <button class="btn btn-primary" style="flex:2" onclick="importFromPaste()">Kütüphaneye Ekle</button>
+        <button class="btn btn-primary" style="flex:2" onclick="importFromPaste()">Repertuara Ekle</button>
       </div>
     </div>
   </div>
@@ -3615,9 +3654,9 @@
     style="z-index: 240;">
     <div class="sheet">
       <div class="sheet-handle"></div>
-      <div class="sheet-title">YENİ KÜTÜPHANe</div>
+      <div class="sheet-title">YENİ REPERTUAR LİSTESİ</div>
       <div class="form-group">
-        <div class="form-label">Kütüphane Adı</div>
+        <div class="form-label">Liste Adı</div>
         <input id="new-lib-name" class="form-input" type="text" placeholder="ör. Rixsos, Hilton, Jazz Set" maxlength="50"
           onkeydown="if(event.key==='Enter')createSubLibrary()" />
       </div>
@@ -3628,7 +3667,7 @@
     </div>
   </div>
 
-  <!-- ADD SONG TO LIBRARY MODAL -->
+  <!-- ADD SONG TO REPERTOIRE MODAL -->
   <div class="overlay hidden" id="add-song-modal" onclick="if(event.target===this)closeAddSongModal()"
     style="z-index: 230;">
     <div class="sheet">
@@ -3653,39 +3692,16 @@
       </div>
       <div style="display:flex;gap:10px;margin-top:12px">
         <button class="btn btn-ghost" style="flex:1" onclick="closeAddSongModal()">İptal</button>
-        <button class="btn btn-primary" style="flex:2" onclick="addSongToLibrary()">Kütüphaneye Ekle</button>
+        <button class="btn btn-primary" style="flex:2" onclick="addSongToLibrary()">Repertuara Ekle</button>
       </div>
     </div>
   </div>
 
-
-
   </div>
 
-  <!-- REPERTUAR DÜZENLE (sadece mevcut şarkıları düzenleme) -->
-  <div class="overlay hidden" id="rep-edit-modal" onclick="if(event.target===this)closeRepEdit()" style="z-index: 212;">
-    <div class="sheet" style="height:88dvh">
-      <div class="sheet-handle"></div>
-      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px">
-        <div class="sheet-title" style="margin-bottom:0">REPERTUAR</div>
-        <span id="rep-edit-count" class="rep-edit-count"></span>
-      </div>
-      <div style="display:flex;gap:8px;margin-bottom:8px">
-        <input id="rep-edit-search" class="form-input" type="search" placeholder="Şarkı veya sanatçı ara..."
-          oninput="renderRepEditList()" style="flex:1;min-width:0" autocomplete="off" />
-        <button id="rep-edit-missing-btn" class="rep-edit-chip" onclick="toggleRepEditMissing()" title="Tonu veya BPM'i eksik olanlar">Eksik</button>
-      </div>
-      <div id="rep-clean-bar" class="rep-clean-bar" style="display:none">
-        <span id="rep-clean-text" style="flex:1;min-width:0"></span>
-        <button class="rep-clean-btn" onclick="openRepClean()">Temizle</button>
-      </div>
-      <div id="rep-edit-list" class="rep-edit-list"></div>
-      <button class="btn btn-secondary" style="width:100%;margin-top:12px;flex-shrink:0" onclick="closeRepEdit()">Kapat</button>
-    </div>
-  </div>
-
+  <!-- ŞARKIYI DÜZENLE (6 alan) -->
   <div class="overlay hidden" id="rep-song-edit-modal" onclick="if(event.target===this)closeRepSongEdit()" style="z-index: 236;">
-    <div class="sheet">
+    <div class="sheet" style="max-height:90dvh;overflow-y:auto">
       <div class="sheet-handle"></div>
       <div class="sheet-title">ŞARKIYI DÜZENLE</div>
       <div class="form-group">
@@ -3696,7 +3712,7 @@
         <div class="form-label">Sanatçı</div>
         <input id="rse-artist" class="form-input" type="text" maxlength="40" placeholder="Sanatçı" autocomplete="off" />
       </div>
-      <div style="display:flex;gap:10px">
+      <div style="display:flex;gap:10px;margin-bottom:12px">
         <div class="form-group" style="flex:1;margin:0">
           <div class="form-label">Ton</div>
           <input id="rse-key" class="form-input" type="text" maxlength="10" placeholder="ör. Em" autocomplete="off" />
@@ -3706,23 +3722,17 @@
           <input id="rse-bpm" class="form-input" type="number" inputmode="numeric" min="0" max="400" placeholder="120" />
         </div>
       </div>
+      <div class="form-group">
+        <div class="form-label">Notlar</div>
+        <textarea id="rse-notes" class="form-input" rows="3" maxlength="300" placeholder="İntro, geçiş veya sahne notu..." style="height:auto;padding-top:10px;padding-bottom:10px;resize:vertical"></textarea>
+      </div>
+      <div class="form-group">
+        <div class="form-label">Link</div>
+        <input id="rse-link" class="form-input" type="url" maxlength="300" placeholder="https://youtube.com/..." autocomplete="off" />
+      </div>
       <div style="display:flex;gap:10px;margin-top:14px">
         <button class="btn btn-ghost" style="flex:1" onclick="closeRepSongEdit()">İptal</button>
         <button class="btn btn-primary" style="flex:2" onclick="saveRepSongEdit()">Kaydet</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- REPERTUAR TEMİZLE (önizleme + onay) -->
-  <div class="overlay hidden" id="rep-clean-modal" onclick="if(event.target===this)closeRepClean()" style="z-index: 238;">
-    <div class="sheet" style="max-height:88dvh;overflow-y:auto">
-      <div class="sheet-handle"></div>
-      <div class="sheet-title">REPERTUARI TEMİZLE</div>
-      <div id="rep-clean-summary"></div>
-      <button class="btn btn-ghost" style="width:100%;margin-top:10px;height:40px;font-size:13px;flex-shrink:0" onclick="downloadBackupJson()">⬇ Önce yedek indir (önerilir)</button>
-      <div style="display:flex;gap:10px;margin-top:10px;flex-shrink:0">
-        <button class="btn btn-ghost" style="flex:1" onclick="closeRepClean()">Vazgeç</button>
-        <button class="btn btn-primary" style="flex:2" onclick="applyRepClean()">Temizle</button>
       </div>
     </div>
   </div>
@@ -3877,11 +3887,11 @@
     }
 
     const currentLib = () => (S.libraries[S.activeLibId] || S.libraries['default']).songs;
-    const saveLibraries = () => {
+    const saveLibraries = (syncOpts = {}) => {
       S.isDefaultLibraryOnly = isOnlyDefaultLibrary(S.libraries, S.setlists);
       LS.set('gs_libraries', S.libraries);
       updateQuickStageCount();
-      if (window.autoSyncToCloud) window.autoSyncToCloud();
+      if (window.autoSyncToCloud) window.autoSyncToCloud(false, syncOpts);
     };
     const saveSetlists = () => {
       S.isDefaultLibraryOnly = isOnlyDefaultLibrary(S.libraries, S.setlists);
@@ -4069,17 +4079,17 @@
       } else {
         const legacySongs = LS.get('gs_library');
         if (Array.isArray(legacySongs) && legacySongs.length > 0) {
-          S.libraries = { default: { id: 'default', name: 'Ana Kütüphane', songs: legacySongs } };
+          S.libraries = { default: { id: 'default', name: 'Ana Repertuar', songs: legacySongs } };
           LS.set('gs_libraries', S.libraries);
           S.isDefaultLibraryOnly = isOnlyDefaultLibrary(S.libraries, S.setlists);
         } else {
           const songs = DEFAULT_LIB.map((s, i) => ({ id: `lib_${i}`, ...s }));
-          S.libraries = { default: { id: 'default', name: 'Ana Kütüphane', songs } };
+          S.libraries = { default: { id: 'default', name: 'Ana Repertuar', songs } };
           S.isDefaultLibraryOnly = true;
         }
       }
       if (!S.libraries['default']) {
-        S.libraries['default'] = { id: 'default', name: 'Ana Kütüphane', songs: [] };
+        S.libraries['default'] = { id: 'default', name: 'Ana Repertuar', songs: [] };
       }
       S.activeLibId = 'default';
 
@@ -4155,14 +4165,12 @@
       updateHomeLiveBanner();
     };
 
-    window.showRepertuarModal = () => {
-      document.getElementById('repertuar-modal').classList.remove('hidden');
-      renderLibrary();
-    };
-    window.closeRepertuarModal = () => document.getElementById('repertuar-modal').classList.add('hidden');
+    window.showRepertuarModal = () => window.openRepEdit();
+    window.closeRepertuarModal = () => window.goBackFromRepEdit();
 
-    // ══════════ REPERTUAR DÜZENLE (sadece mevcut şarkıları düzenleme) ══════════
-    const REP_EDIT_LIMIT = 300;
+    // ══════════ REPERTUAR DÜZENLE (TAM EKRAN · SADECE MEVCUT ŞARKILAR) ══════════
+    const REP_EDIT_PAGE = 250;
+    let repEditLimit = REP_EDIT_PAGE;
     let repEditMissingOnly = false;
     let repEditSongId = null;
 
@@ -4177,32 +4185,52 @@
     }
 
     window.openRepEdit = () => {
-      document.getElementById('rep-edit-search').value = '';
+      const searchEl = document.getElementById('rep-edit-search');
+      if (searchEl) searchEl.value = '';
       repEditMissingOnly = false;
-      document.getElementById('rep-edit-modal').classList.remove('hidden');
-      renderRepEditList();
-      refreshRepCleanBar();
+      repEditLimit = REP_EDIT_PAGE;
+      renderRepEditList(true);
+      showScreen('rep-edit');
+      setTimeout(() => { if (searchEl) searchEl.focus(); }, 60);
     };
-    window.closeRepEdit = () => document.getElementById('rep-edit-modal').classList.add('hidden');
+
+    window.goBackFromRepEdit = () => {
+      showScreen('home');
+      renderSetlistCards();
+      syncLiveUI();
+    };
+
+    window.clearRepEditSearch = () => {
+      const searchEl = document.getElementById('rep-edit-search');
+      if (searchEl) {
+        searchEl.value = '';
+        searchEl.focus();
+      }
+      renderRepEditList(true);
+    };
+
+    window.loadMoreRepEdit = () => {
+      repEditLimit += 300;
+      renderRepEditList(false);
+    };
 
     window.toggleRepEditMissing = () => {
       repEditMissingOnly = !repEditMissingOnly;
-      renderRepEditList();
+      renderRepEditList(true);
     };
 
-    window.renderRepEditList = () => {
+    window.renderRepEditList = (resetLimit = false) => {
       const list = document.getElementById('rep-edit-list');
       if (!list) return;
-      const q = trNormalize(document.getElementById('rep-edit-search').value.trim());
-      // Farklı kütüphanelerdeki aynı şarkı (aynı ad + sanatçı) bir kez gösterilir; kaydedince hepsi güncellenir
-      const seenSongs = new Set();
-      const all = getAllRepertoireSongs().filter(s => {
-        if (!s || !s.id) return false;
-        const k = String(s.title || '').trim() + '\u0000' + String(s.artist || '').trim();
-        if (seenSongs.has(k)) return false;
-        seenSongs.add(k);
-        return true;
-      });
+      if (resetLimit) repEditLimit = REP_EDIT_PAGE;
+
+      const searchEl = document.getElementById('rep-edit-search');
+      const rawQ = searchEl ? searchEl.value : '';
+      const q = trNormalize(rawQ.trim());
+      const clearBtn = document.getElementById('rep-edit-search-clear');
+      if (clearBtn) clearBtn.style.display = rawQ ? 'flex' : 'none';
+
+      const all = getAllRepertoireSongs().filter(s => s && s.id);
       const missingCount = all.filter(isRepSongMissing).length;
 
       const filtered = all
@@ -4210,33 +4238,39 @@
         .filter(s => !repEditMissingOnly || isRepSongMissing(s))
         .sort((a, b) => String(a.title || '').localeCompare(String(b.title || ''), 'tr'));
 
-      document.getElementById('rep-edit-count').textContent = `${filtered.length} şarkı`;
+      const countEl = document.getElementById('rep-edit-count');
+      if (countEl) countEl.textContent = `${filtered.length} şarkı`;
       const missingBtn = document.getElementById('rep-edit-missing-btn');
-      missingBtn.textContent = `Eksik (${missingCount})`;
-      missingBtn.classList.toggle('active', repEditMissingOnly);
+      if (missingBtn) {
+        missingBtn.textContent = `Eksik (${missingCount})`;
+        missingBtn.classList.toggle('active', repEditMissingOnly);
+      }
 
       if (!filtered.length) {
         list.innerHTML = `<div class="rep-edit-note">${repEditMissingOnly ? 'Eksik bilgili şarkı yok 🎉' : 'Şarkı bulunamadı'}</div>`;
         return;
       }
 
-      const rows = filtered.slice(0, REP_EDIT_LIMIT).map(s => {
+      const shown = filtered.slice(0, repEditLimit);
+      const rows = shown.map(s => {
         const key = String(s.key || '').trim();
         const bpm = String(s.bpm || '').trim();
+        const hasNotes = Boolean(String(s.notes || '').trim());
         return `
           <div class="rep-edit-row" data-id="${esc(s.id)}" onclick="openRepSongEdit(this.dataset.id)">
             <div class="rep-edit-row-main">
               <div class="rep-edit-row-title">${esc(s.title || '—')}</div>
-              <div class="rep-edit-row-meta">${esc(s.artist || '—')}</div>
+              <div class="rep-edit-row-meta">${esc(s.artist || '—')}${hasNotes ? ' · 📝 Not' : ''}</div>
             </div>
             <div class="rep-edit-tags">
               <span class="rep-tag${key ? '' : ' miss'}">${key ? esc(key) : 'Ton'}</span>
-              <span class="rep-tag${bpm ? '' : ' miss'}">${bpm ? esc(bpm) : 'BPM'}</span>
+              <span class="rep-tag${bpm ? '' : ' miss'}">${bpm ? esc(bpm) + ' BPM' : 'BPM'}</span>
             </div>
           </div>`;
       }).join('');
-      const more = filtered.length > REP_EDIT_LIMIT
-        ? `<div class="rep-edit-note">İlk ${REP_EDIT_LIMIT} şarkı gösteriliyor — aramayı daraltın</div>`
+      const remaining = filtered.length - shown.length;
+      const more = remaining > 0
+        ? `<button class="rep-edit-more-btn" onclick="loadMoreRepEdit()">Daha fazla göster (${remaining} şarkı kaldı)</button>`
         : '';
       list.innerHTML = rows + more;
     };
@@ -4249,6 +4283,8 @@
       document.getElementById('rse-artist').value = s.artist || '';
       document.getElementById('rse-key').value = s.key || '';
       document.getElementById('rse-bpm').value = s.bpm || '';
+      document.getElementById('rse-notes').value = s.notes || '';
+      document.getElementById('rse-link').value = s.link || '';
       document.getElementById('rep-song-edit-modal').classList.remove('hidden');
     };
 
@@ -4264,24 +4300,25 @@
       const title = document.getElementById('rse-title').value.trim();
       if (!title) return showToast('Şarkı adı boş olamaz');
       const artist = document.getElementById('rse-artist').value.trim();
-      const key = document.getElementById('rse-key').value.trim();
-      const bpmNum = parseInt(document.getElementById('rse-bpm').value, 10);
+      const key = normalizeKeyName(document.getElementById('rse-key').value.trim());
+      const bpmRaw = document.getElementById('rse-bpm').value;
+      const bpmNum = parseInt(bpmRaw, 10);
       const bpm = Number.isFinite(bpmNum) && bpmNum > 0 ? String(bpmNum) : '';
+      const notes = document.getElementById('rse-notes').value.trim();
+      const link = document.getElementById('rse-link').value.trim();
 
-      const { setlistsChanged } = patchRepSong(repEditSongId, { title, artist, key, bpm });
-      afterRepertoireChange(setlistsChanged);
+      const { setlistsChanged, quickChanged } = patchRepSong(repEditSongId, { title, artist, key, bpm, notes, link });
+      afterRepertoireChange(setlistsChanged, quickChanged);
 
       closeRepSongEdit();
-      renderRepEditList();
-      refreshRepCleanBar();
+      renderRepEditList(false);
       showToast(`"${title}" güncellendi`);
     };
 
-    // Bir repertuar şarkısını günceller. Diğer kütüphanelerdeki aynı ad + sanatçılı kopyaları ve
-    // setlistlerdeki halleri de değişir. Kaydetmez (afterRepertoireChange çağrılmalı).
+    // Bir repertuar şarkısını günceller; setlistler, liveSongs ve Hızlı Sahne kopyalarını da 1:1 eşitler.
     function patchRepSong(id, patch) {
       const orig = findRepSong(id);
-      if (!orig) return { found: false, setlistsChanged: false };
+      if (!orig) return { found: false, setlistsChanged: false, quickChanged: false };
       const origTitle = String(orig.title || '').trim();
       const origArtist = String(orig.artist || '').trim();
       const sameSong = (s) => s && String(s.title || '').trim() === origTitle && String(s.artist || '').trim() === origArtist;
@@ -4296,48 +4333,59 @@
         });
       });
 
-      const inSetlist = (s) => s && ((s.libId && libIds.has(s.libId)) || sameSong(s));
+      const inCopy = (s) => s && ((s.libId && libIds.has(s.libId)) || sameSong(s));
       let setlistsChanged = false;
       Object.values(S.setlists || {}).forEach(sl => {
         if (!sl || !Array.isArray(sl.songs)) return;
         sl.songs = sl.songs.map(s => {
-          if (!inSetlist(s)) return s;
+          if (!inCopy(s)) return s;
           setlistsChanged = true;
           return { ...s, ...patch };
         });
       });
       if (Array.isArray(S.liveSongs)) {
-        S.liveSongs = S.liveSongs.map(s => inSetlist(s) ? { ...s, ...patch } : s);
+        S.liveSongs = S.liveSongs.map(s => inCopy(s) ? { ...s, ...patch } : s);
       }
-      return { found: true, setlistsChanged };
+      let quickChanged = false;
+      if (Array.isArray(S.quickSongs)) {
+        S.quickSongs = S.quickSongs.map(s => {
+          if (!inCopy(s)) return s;
+          quickChanged = true;
+          return { ...s, ...patch };
+        });
+      }
+      return { found: true, setlistsChanged, quickChanged };
     }
 
-    // Repertuar değiştikten sonra: kaydet, buluta eşitle, canlı setlisti ve ekranları güncelle
-    function afterRepertoireChange(setlistsChanged) {
+    // Repertuar değiştikten sonra: kaydet, buluta eşitle, canlı setlist/Hızlı Sahne ve ekranları güncelle
+    function afterRepertoireChange(setlistsChanged, quickChanged = false, syncOpts = {}) {
       LS.set('gs_last_updated_at', Date.now());
-      saveLibraries();
+      saveLibraries(syncOpts);
       if (setlistsChanged) saveSetlists();
 
       if (setlistsChanged && S.activeRoomCode === 'LIVE' && S.liveMode === 'setlist'
           && S.liveSetlistId && S.liveSetlistId === S.activeSetlistId && typeof pushSetlistToWorker === 'function') {
         pushSetlistToWorker();
       }
+      if (quickChanged && S.activeRoomCode === 'LIVE' && S.liveMode === 'quick' && typeof ensureLiveRoomOpen === 'function') {
+        ensureLiveRoomOpen({
+          mode: 'quick',
+          setlistId: null,
+          name: 'Hızlı Sahne',
+          band: 'Repertuar',
+          songs: S.quickSongs.map((s, i) => ({ ...s, order: i })),
+          activeSongId: S.liveActiveSong,
+          forceUpsert: true
+        });
+      }
 
       renderLibrary();
       renderSetlistCards();
+      updateHomeLiveBanner();
       if (S.activeSetlistId && document.getElementById('leader')?.classList.contains('active')) renderLeaderSongList();
       if (document.getElementById('quick-stage')?.classList.contains('active')) renderQuickStageView();
+      if (typeof updateQuickStageNowBar === 'function') updateQuickStageNowBar();
     }
-
-    // ══════════ REPERTUAR TEMİZLE ══════════
-    const CLEAN_PAIR_RE = /^\s*"([^"]+)"\s*:\s*"([^"]+)"\s*,?\s*$/;
-    const CLEAN_KEY_ONLY_RE = /^\s*[-–—]?\s*[A-G][#b♯♭]?m?(\s*\/\s*[A-G][#b♯♭]?m?)*\s*$/;
-    const CLEAN_DIVIDER_RE = /^[\s\-–—_.=*•·|~"'“”]*$/;
-    const CLEAN_PAIR_FRAGMENT_RE = /^\s*"[^"]*"\s*:/; // bölünmüş düzeltme satırı: "the wall": "A
-    // Yanlışlıkla yapıştırılmış program kodu satırları (# yorum, x = y, .replace( ..., "for x in y:")
-    const CLEAN_CODE_RE = /^\s*#|^\s*[{}\[\]()]\s*$|\s=\s|==|=\s*[\[{(]|\b(re\.sub|\.replace|\.strip|\.append|\.lower|\.upper|\.split|\.rsplit|\.sort|\.items|\.read|\.startswith)\s*\(|\\n|"""|^\s*(if|for|with|def|elif|else|try|except|while|return)\b.*:\s*$|\b(range|print|len|open)\s*\(|^\s*return\s+[a-z_]+\s*$|'[^']*'\s+in\s+\w/i;
-    const CLEAN_MAX_LEN = 80; // bundan uzun ad/sanatçı şarkı değil, yapıştırılmış cümle
-    const CLEAN_TRAILING_KEY_RE = /^(.*?)\s*\(\s*([A-Ga-g][#b♯♭]?m?)\s*\)\s*$/;
 
     // "dm" → "Dm", "f#m" → "F#m", "b" → "B"; tanınmayan yazımlar olduğu gibi kalır
     function normalizeKeyName(k) {
@@ -4348,194 +4396,13 @@
       return m[1].toUpperCase() + acc + m[3];
     }
 
-    // Bozuk kayıtları bulur ve temizlenmiş kütüphanelerin kopyasını hazırlar (S'yi değiştirmez)
-    function planRepertoireCleanup(libraries) {
-      const libs = JSON.parse(JSON.stringify(libraries || {}));
-      const stats = { pairs: 0, renamed: 0, junk: 0, keysMoved: 0, keysFixed: 0, merged: 0 };
-      const examples = { pairs: [], renamed: [], junk: [], keysMoved: [], keysFixed: [], merged: [] };
-      const addEx = (k, v) => { if (examples[k].length < 3 && !examples[k].includes(v)) examples[k].push(v); };
-      const idMap = {};
-      const nk = (t) => trNormalize(String(t || '')).replace(/[’'`´".,!?()\[\]\-–—_/\\]/g, ' ').replace(/\s+/g, ' ').trim();
-      const has = (v) => String(v || '').trim() !== '';
-
-      // 1) Yanlışlıkla şarkı olarak eklenmiş düzeltme listesi satırları: "yanlış": "Doğru",
-      const fixMap = new Map();
-      Object.values(libs).forEach(lib => (lib && Array.isArray(lib.songs) ? lib.songs : []).forEach(s => {
-        const m = String((s && s.title) || '').match(CLEAN_PAIR_RE);
-        if (m) {
-          s._pair = m[2].trim();
-          fixMap.set(nk(m[1]), m[2].trim());
-        }
-      }));
-
-      Object.values(libs).forEach(lib => {
-        if (!lib || !Array.isArray(lib.songs)) return;
-
-        // 2) Listede yanlış yazılmış olarak geçen şarkıları doğru ada çevir
-        lib.songs.forEach(s => {
-          if (!s || s._pair) return;
-          const right = fixMap.get(nk(s.title));
-          if (right && String(s.title || '').trim() !== right) {
-            addEx('renamed', `${String(s.title).trim()} → ${right}`);
-            s.title = right;
-            stats.renamed++;
-          }
-        });
-
-        const titlesInLib = new Set(lib.songs.filter(s => s && !s._pair).map(s => nk(s.title)));
-        lib.songs = lib.songs.filter(s => {
-          if (!s) return false;
-          if (s._pair !== undefined) {
-            const right = s._pair;
-            delete s._pair;
-            stats.pairs++;
-            addEx('pairs', right);
-            if (!right || titlesInLib.has(nk(right))) return false; // doğru adıyla zaten var
-            s.title = right;
-            titlesInLib.add(nk(right));
-            return true;
-          }
-          // 3) Sadece ton ("-A/Am") ya da çizgi ("——") olan kayıtlar
-          const t = String(s.title || '');
-          const a = String(s.artist || '');
-          if (CLEAN_DIVIDER_RE.test(t) || CLEAN_KEY_ONLY_RE.test(t) || CLEAN_PAIR_FRAGMENT_RE.test(t)
-              || CLEAN_CODE_RE.test(t) || CLEAN_CODE_RE.test(a)
-              || t.length > CLEAN_MAX_LEN || a.length > CLEAN_MAX_LEN) {
-            stats.junk++;
-            addEx('junk', t.trim() || '(boş)');
-            return false;
-          }
-          return true;
-        });
-
-        lib.songs.forEach(s => {
-          // 4) Ad ya da sanatçının sonundaki "(Dm)" tonunu Ton alanına taşı
-          ['artist', 'title'].forEach(field => {
-            const m = String(s[field] || '').match(CLEAN_TRAILING_KEY_RE);
-            if (!m || (field === 'title' && !m[1].trim())) return;
-            const found = normalizeKeyName(m[2]);
-            const cur = String(s.key || '').trim();
-            if (!cur || normalizeKeyName(cur) === found) {
-              s[field] = m[1].trim();
-              s.key = found;
-              stats.keysMoved++;
-              addEx('keysMoved', `${s.title}${s.artist ? ' – ' + s.artist : ''}: ${found}`);
-            }
-          });
-          // 5) Ton yazımını düzelt (dm → Dm)
-          const cur = String(s.key || '').trim();
-          if (cur) {
-            const fixed = normalizeKeyName(cur);
-            if (fixed !== cur) {
-              stats.keysFixed++;
-              addEx('keysFixed', `${cur} → ${fixed}`);
-            }
-            s.key = fixed;
-          }
-        });
-
-        // 6) Tekrar eden kayıtları birleştir (bilgisi en dolu olan kalır, boş alanları diğerlerinden dolar)
-        const score = (s) => (has(s.artist) ? 4 : 0) + (has(s.key) ? 2 : 0) + (has(s.bpm) ? 2 : 0)
-          + ((has(s.notes) || has(s.link)) ? 1 : 0) + (/[çğıöşüÇĞİÖŞÜ]/.test(s.title || '') ? 1 : 0);
-        const byTitle = new Map();
-        lib.songs.forEach((s, i) => {
-          const k = nk(s.title);
-          if (!byTitle.has(k)) byTitle.set(k, []);
-          byTitle.get(k).push(i);
-        });
-        const drop = new Set();
-        byTitle.forEach(idxs => {
-          if (idxs.length < 2) return;
-          // Aynı adda tek sanatçı (ya da hiç) varsa hepsi aynı şarkı; farklı sanatçılar ayrı tutulur
-          const artists = new Set(idxs.map(i => nk(lib.songs[i].artist)).filter(Boolean));
-          const buckets = new Map();
-          idxs.forEach(i => {
-            const bk = artists.size <= 1 ? '*' : (nk(lib.songs[i].artist) || '?');
-            if (!buckets.has(bk)) buckets.set(bk, []);
-            buckets.get(bk).push(i);
-          });
-          buckets.forEach(b => {
-            if (b.length < 2) return;
-            const sorted = [...b].sort((x, y) => score(lib.songs[y]) - score(lib.songs[x]) || x - y);
-            const keep = lib.songs[sorted[0]];
-            sorted.slice(1).forEach(i => {
-              const other = lib.songs[i];
-              ['artist', 'key', 'bpm', 'notes', 'link'].forEach(f => {
-                if (!has(keep[f]) && has(other[f])) keep[f] = other[f];
-              });
-              if (other.id && keep.id) idMap[other.id] = keep.id;
-              drop.add(i);
-              stats.merged++;
-            });
-            addEx('merged', `${keep.title}${keep.artist ? ' – ' + keep.artist : ''} (${b.length}→1)`);
-          });
-        });
-        if (drop.size) lib.songs = lib.songs.filter((_, i) => !drop.has(i));
-      });
-
-      const count = (o) => Object.values(o || {}).reduce((n, l) => n + ((l && Array.isArray(l.songs)) ? l.songs.length : 0), 0);
-      const total = Object.values(stats).reduce((a, b) => a + b, 0);
-      return { libraries: libs, idMap, stats, examples, total, before: count(libraries), after: count(libs) };
-    }
-
-    function refreshRepCleanBar() {
-      const bar = document.getElementById('rep-clean-bar');
-      if (!bar) return;
-      const plan = planRepertoireCleanup(S.libraries);
-      if (!plan.total) { bar.style.display = 'none'; return; }
-      document.getElementById('rep-clean-text').textContent = `🧹 ${plan.total} düzeltme önerisi (${plan.before} → ${plan.after} kayıt)`;
-      bar.style.display = 'flex';
-    }
-
-    window.openRepClean = () => {
-      const p = planRepertoireCleanup(S.libraries);
-      if (!p.total) { refreshRepCleanBar(); return showToast('Temizlenecek bir şey yok'); }
-      const rows = [
-        ['pairs', 'düzeltme listesi satırı (doğru ada çevrilecek ya da fazlası silinecek)'],
-        ['renamed', 'yanlış yazılmış şarkı adı düzeltilecek'],
-        ['junk', 'şarkı olmayan kayıt silinecek (ton/çizgi satırı, kod satırı, cümle)'],
-        ['keysMoved', 'ad/sanatçı içindeki ton "Ton" alanına taşınacak'],
-        ['keysFixed', 'ton yazımı düzeltilecek'],
-        ['merged', 'tekrar eden kayıt birleştirilecek'],
-      ].filter(([k]) => p.stats[k] > 0);
-      document.getElementById('rep-clean-summary').innerHTML = rows.map(([k, label]) => `
-        <div class="rep-clean-item">
-          <div><b>${p.stats[k]}</b> ${label}</div>
-          <div class="rep-clean-ex">${p.examples[k].map(esc).join(' · ')}${p.stats[k] > p.examples[k].length ? ' …' : ''}</div>
-        </div>`).join('') + `<div class="rep-clean-total">${p.before} kayıt → ${p.after} kayıt</div>`;
-      document.getElementById('rep-clean-modal').classList.remove('hidden');
-    };
-    window.closeRepClean = () => document.getElementById('rep-clean-modal').classList.add('hidden');
-
-    window.applyRepClean = () => {
-      const p = planRepertoireCleanup(S.libraries); // güncel veriyle yeniden hesapla
-      if (!p.total) return closeRepClean();
-      S.libraries = p.libraries;
-
-      // Setlistlerdeki şarkı bağlantılarını birleştirilen kayda yönlendir
-      const remap = (s) => (s && s.libId && p.idMap[s.libId]) ? { ...s, libId: p.idMap[s.libId] } : s;
-      let setlistsChanged = false;
-      Object.values(S.setlists || {}).forEach(sl => {
-        if (!sl || !Array.isArray(sl.songs)) return;
-        const next = sl.songs.map(remap);
-        if (next.some((s, i) => s !== sl.songs[i])) { sl.songs = next; setlistsChanged = true; }
-      });
-      if (Array.isArray(S.liveSongs)) S.liveSongs = S.liveSongs.map(remap);
-
-      afterRepertoireChange(setlistsChanged);
-      closeRepClean();
-      renderRepEditList();
-      refreshRepCleanBar();
-      showToast(`Repertuar temizlendi: ${p.before} → ${p.after} kayıt`);
-    };
-
     window.updateUsernameDisplay = () => {
       const el = document.getElementById('home-username-display');
       if (el) el.textContent = S.username || 'İSİM GİR';
       const memEl = document.getElementById('member-username-display');
       if (memEl) memEl.textContent = S.username || 'Müzisyen';
       const qsEl = document.getElementById('qs-username');
-      if (qsEl) qsEl.textContent = S.username || 'Lider';
+      if (qsEl) qsEl.textContent = S.username || 'Yönetici';
     };
 
     window.showScreen = (id) => {
@@ -4545,50 +4412,27 @@
 
     window.switchHomeTab = (tab) => {
       document.querySelectorAll('.home-tab').forEach(t => t.classList.remove('active'));
-      document.getElementById(`htab-${tab}`).classList.add('active');
+      document.getElementById(`htab-${tab}`)?.classList.add('active');
       const slider = document.getElementById('home-slider');
-      slider.style.transform = tab === 'rooms' ? 'translateX(0)' : 'translateX(-50%)';
+      if (slider) slider.style.transform = tab === 'rooms' ? 'translateX(0)' : 'translateX(-50%)';
       if (tab === 'library') renderLibrary();
     };
 
     let selectedLibIds = new Set();
 
     function renderLibrary() {
-      renderLibTabs();
-      const q = trNormalize(document.getElementById('lib-search-input').value);
-      const list = document.getElementById('lib-list');
-      const filtered = currentLib().filter(s => {
-        if (!q) return true;
-        return trNormalize(s.title).includes(q) || trNormalize(s.artist || '').includes(q);
-      });
-
-      const badge = document.getElementById('lib-count-badge');
-      if (badge) badge.textContent = filtered.length;
-
-      list.innerHTML = filtered.map(s => `
-    <div class="lib-item">
-      <input type="checkbox" class="lib-checkbox" ${selectedLibIds.has(s.id) ? 'checked' : ''} onchange="toggleLibSelection('${s.id}')" style="width:18px; height:18px; margin-right:4px; accent-color:var(--accent)" />
-      <div class="lib-item-info">
-        <div class="lib-item-title">${esc(s.title)}</div>
-        <div class="lib-item-meta">${esc(s.artist || '—')}</div>
-      </div>
-      <div class="lib-key">${esc(s.key || '')}</div>
-      <button class="lib-send" onclick="showSendToLibSheet(['${s.id}'])" title="Kütüphaneye gönder">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </button>
-      <button class="lib-del" onclick="deleteFromLibrary('${s.id}')" title="Sil">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
-      </button>
-    </div>
-  `).join('');
-      updateBulkDeleteUI(filtered);
+      updateQuickStageCount();
+      if (document.getElementById('rep-edit')?.classList.contains('active')) {
+        renderRepEditList(false);
+      }
     }
 
     window.toggleLibSelection = (id) => {
       if (selectedLibIds.has(id)) selectedLibIds.delete(id);
       else selectedLibIds.add(id);
-
-      const q = trNormalize(document.getElementById('lib-search-input').value);
+      const searchEl = document.getElementById('lib-search-input');
+      if (!searchEl) return;
+      const q = trNormalize(searchEl.value);
       const filtered = currentLib().filter(s => {
         if (!q) return true;
         return trNormalize(s.title).includes(q) || trNormalize(s.artist || '').includes(q);
@@ -4659,11 +4503,11 @@
 
     window.clearLibrary = () => {
       const libName = S.libraries[S.activeLibId].name;
-      if (!confirm(`"${libName}" kütüphanesindeki tüm şarkıları silmek istediğine emin misin?`)) return;
+      if (!confirm(`"${libName}" listesindeki tüm şarkıları silmek istediğine emin misin?`)) return;
       S.libraries[S.activeLibId].songs = [];
-      saveLibraries();
+      saveLibraries({ force: true });
       renderLibrary();
-      showToast('Kütüphane temizlendi');
+      showToast('Repertuar temizlendi');
     };
 
     // ══ LIBRARY TABS ══
@@ -4700,20 +4544,20 @@
 
     window.createSubLibrary = () => {
       const name = document.getElementById('new-lib-name').value.trim();
-      if (!name) { showToast('Kütüphane adı gir'); return; }
+      if (!name) { showToast('Liste adı gir'); return; }
       const id = 'lib_' + Date.now();
       S.libraries[id] = { id, name, songs: [] };
       saveLibraries();
       S.activeLibId = id;
       closeCreateLibModal();
       renderLibrary();
-      showToast(`"${name}" kütüphanesi oluşturuldu`);
+      showToast(`"${name}" listesi oluşturuldu`);
     };
 
     let _undoLibTimer = null;
 
     window.deleteLibraryWithUndo = (id) => {
-      if (id === 'default') { showToast('Ana Kütüphane silinemez'); return; }
+      if (id === 'default') { showToast('Ana Repertuar silinemez'); return; }
       const lib = S.libraries[id];
       if (!lib) return;
 
@@ -4745,12 +4589,12 @@
     window.showSendToLibSheet = (ids) => {
       pendingSendIds = ids.map(String);
       const otherLibs = Object.values(S.libraries).filter(l => l.id !== S.activeLibId);
-      if (!otherLibs.length) { showToast('Başka kütüphane yok — önce bir tane oluştur'); return; }
+      if (!otherLibs.length) { showToast('Başka liste yok — önce bir tane oluştur'); return; }
 
       const titleEl = document.getElementById('send-to-lib-title');
       titleEl.textContent = ids.length === 1
-        ? 'HANGI KÜTÜPHANEye GÖNDER?'
-        : `${ids.length} ŞARKILARI GÖNDER`;
+        ? 'HANGİ LİSTEYE GÖNDER?'
+        : `${ids.length} ŞARKIYI GÖNDER`;
 
       const listEl = document.getElementById('send-to-lib-list');
       listEl.innerHTML = otherLibs.map(lib => `
@@ -4793,8 +4637,8 @@
       selectedLibIds.clear();
       renderLibrary();
 
-      if (added === 0) showToast('Zaten bu kütüphanede mevcut');
-      else showToast(`${added} şarkı "${targetLib.name}" kütüphanesine eklendi`);
+      if (added === 0) showToast('Zaten bu listede mevcut');
+      else showToast(`${added} şarkı "${targetLib.name}" listesine eklendi`);
     };
 
     window.showAddSongModal = () => {
@@ -4803,7 +4647,7 @@
       const modal = document.getElementById('add-song-modal');
       modal.querySelector('.sheet-title').textContent = 'YENİ ŞARKI';
       const saveBtn = modal.querySelector('[onclick="addSongToLibrary()"]');
-      if (saveBtn) saveBtn.textContent = 'Kütüphaneye Ekle';
+      if (saveBtn) saveBtn.textContent = 'Repertuara Ekle';
       document.getElementById('ns-title').value = '';
       document.getElementById('ns-artist').value = '';
       document.getElementById('ns-key').value = '';
@@ -4817,7 +4661,7 @@
       if (modal) {
         modal.querySelector('.sheet-title').textContent = 'YENİ ŞARKI';
         const saveBtn = modal.querySelector('[onclick="addSongToLibrary()"]');
-        if (saveBtn) saveBtn.textContent = 'Kütüphaneye Ekle';
+        if (saveBtn) saveBtn.textContent = 'Repertuara Ekle';
       }
       document.getElementById('add-song-modal').classList.add('hidden');
     };
@@ -5005,7 +4849,7 @@
         const modal = document.getElementById('add-song-modal');
         modal.querySelector('.sheet-title').textContent = 'YENİ ŞARKI';
         const saveBtn = modal.querySelector('[onclick="addSongToLibrary()"]');
-        if (saveBtn) saveBtn.textContent = 'Kütüphaneye Ekle';
+        if (saveBtn) saveBtn.textContent = 'Repertuara Ekle';
         closeAddSongModal();
         return;
       }
@@ -5235,7 +5079,7 @@
       healTurkishData();
       S.liveSongs = [...(sl.songs || [])];
       document.getElementById('leader-setlist-name').textContent = sl.name;
-      document.getElementById('leader-username').textContent = S.username || 'Lider';
+      document.getElementById('leader-username').textContent = S.username || 'Yönetici';
       document.getElementById('leader-code').textContent = S.activeRoomCode === 'LIVE' ? 'CANLI' : '—';
       syncLiveUI();
       renderLeaderSongList();
@@ -5499,7 +5343,7 @@
 
     async function ensureLiveRoomOpen({ mode, setlistId = null, name = 'Canlı Sahne', band = '', songs = [], activeSongId = null, forceUpsert = false }) {
       const code = 'LIVE';
-      const leader = S.username || 'Lider';
+      const leader = S.username || 'Yönetici';
       const wasOffline = !S.activeRoomCode;
       const prevState = {
         code: S.activeRoomCode,
@@ -5590,7 +5434,7 @@
 
       const connectWs = () => {
         if (!S.activeRoomCode || S.activeRoomCode !== code) return;
-        const wsUrl = getWsUrl(`/ws?room=${code}&name=${encodeURIComponent(S.username || 'Lider')}&role=leader&clientId=${encodeURIComponent(getClientId())}`);
+        const wsUrl = getWsUrl(`/ws?room=${code}&name=${encodeURIComponent(S.username || 'Yönetici')}&role=leader&clientId=${encodeURIComponent(getClientId())}`);
         const ws = new WebSocket(wsUrl);
         ws._suppressReconnect = false;
         leaderWs = ws;
@@ -5687,7 +5531,7 @@
         return `
           <div style="display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--surface2);border-radius:10px;margin-bottom:6px;border:1px solid var(--border)">
             <div style="width:30px;height:30px;border-radius:7px;background:var(--accent);color:var(--accent-text,#000);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0">${esc((m.name || '?').charAt(0).toUpperCase())}</div>
-            <div style="flex:1;min-width:0;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(m.name || '—')} ${m.isLeader ? '<span style="font-size:10px;color:var(--accent);font-family:var(--font-mono);margin-left:6px">(LİDER)</span>' : ''}</div>
+            <div style="flex:1;min-width:0;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(m.name || '—')} ${m.isLeader ? '<span style="font-size:10px;color:var(--accent);font-family:var(--font-mono);margin-left:6px">(YÖNETİCİ)</span>' : ''}</div>
             ${removeBtn}
           </div>
         `;
@@ -5835,9 +5679,19 @@
       const titleEl = document.getElementById('qs-now-title');
       const artistEl = document.getElementById('qs-now-artist');
       const keyEl = document.getElementById('qs-now-key');
+      const bpmEl = document.getElementById('qs-now-bpm');
       if (titleEl) titleEl.textContent = activeSong.title || '—';
       if (artistEl) artistEl.textContent = activeSong.artist || '';
       if (keyEl) keyEl.textContent = activeSong.key || '';
+      if (bpmEl) {
+        if (activeSong.bpm) {
+          bpmEl.textContent = `${activeSong.bpm} BPM`;
+          bpmEl.style.display = 'inline-block';
+        } else {
+          bpmEl.textContent = '';
+          bpmEl.style.display = 'none';
+        }
+      }
       bar.style.display = 'flex';
     }
 
@@ -5899,7 +5753,10 @@
                   <div class="qs-row-title">${esc(s.title)}</div>
                   <div class="qs-row-meta">${esc(s.artist || '—')}</div>
                 </div>
-                <div class="qs-row-key">${esc(s.key || '')}</div>
+                <div class="qs-row-tags">
+                  <div class="qs-row-key">${esc(s.key || '')}</div>
+                  ${s.bpm ? `<div class="qs-row-bpm">${esc(s.bpm)} BPM</div>` : ''}
+                </div>
                 ${played
                   ? '<span class="qs-played-badge">✓ ÇALINDI</span>'
                   : '<div style="font-family:var(--font-mono);font-size:11px;color:var(--accent);font-weight:700;flex-shrink:0">▶</div>'}
@@ -5930,7 +5787,10 @@
                   <div class="qs-row-title">${esc(entry.title)}</div>
                   <div class="qs-row-meta">${esc(entry.artist || '—')}</div>
                 </div>
-                <div class="qs-row-key">${esc(entry.key || '')}</div>
+                <div class="qs-row-tags">
+                  <div class="qs-row-key">${esc(entry.key || '')}</div>
+                  ${entry.bpm ? `<div class="qs-row-bpm">${esc(entry.bpm)} BPM</div>` : ''}
+                </div>
                 <button class="qs-row-del" data-entry-id="${esc(entry.id)}" onclick="event.stopPropagation();removeQuickHistorySong(this.dataset.entryId)" title="Listeden çıkar">×</button>
               </div>
             `;
@@ -5950,7 +5810,10 @@
               <div class="qs-row-title">${esc(s.title)}</div>
               <div class="qs-row-meta">${esc(s.artist || '—')}</div>
             </div>
-            <div class="qs-row-key">${esc(s.key || '')}</div>
+            <div class="qs-row-tags">
+              <div class="qs-row-key">${esc(s.key || '')}</div>
+              ${s.bpm ? `<div class="qs-row-bpm">${esc(s.bpm)} BPM</div>` : ''}
+            </div>
           </div>
         `).join('')}
       ` : '';
@@ -6171,6 +6034,15 @@
           order: S.quickSongs.length
         };
         S.quickSongs.push(entry);
+      } else {
+        // Ana Repertuar ile 1:1 eşitlik: var olan kaydın yazım/ton/BPM/not/link bilgilerini tazele
+        entry.title = song.title || entry.title || 'Şarkı';
+        entry.artist = song.artist || '';
+        entry.key = song.key || '';
+        entry.bpm = song.bpm || '';
+        entry.notes = song.notes || '';
+        entry.link = song.link || '';
+        if (song.id) entry.libId = song.id;
       }
 
       const input = document.getElementById('qs-search-input');
@@ -6390,6 +6262,11 @@
           nextBar.style.display = '';
           document.getElementById('mem-next-title').textContent = next.title || '';
           document.getElementById('mem-next-key').textContent = next.key || '';
+          const nextBpmEl = document.getElementById('mem-next-bpm');
+          if (nextBpmEl) {
+            nextBpmEl.textContent = next.bpm ? `${next.bpm} BPM` : '';
+            nextBpmEl.style.display = next.bpm ? '' : 'none';
+          }
         } else {
           nextBar.style.display = 'none';
         }
@@ -6488,7 +6365,7 @@
               document.getElementById('mem-room-name').textContent = 'Canlı Sahne';
               document.getElementById('mem-room-band').textContent = '';
               updateNowDisplay();
-              showToast('Sahne kapatıldı — lider bekleniyor');
+              showToast('Sahne kapatıldı — yönetici bekleniyor');
             } else if (data.type === 'KICKED') {
               ws._suppressReconnect = true;
               if (memberPingTimer) { clearInterval(memberPingTimer); memberPingTimer = null; }
@@ -6496,7 +6373,7 @@
               activeSongId = null;
               songs = {};
               updateNowDisplay();
-              showToast('Lider tarafından listeden çıkarıldın');
+              showToast('Yönetici tarafından listeden çıkarıldın');
             } else if (data.type === 'REPLACED') {
               ws._suppressReconnect = true;
               if (memberPingTimer) { clearInterval(memberPingTimer); memberPingTimer = null; }
@@ -6737,6 +6614,7 @@
 
       const input = document.getElementById('settings-worker-url');
       if (input) input.value = getWorkerUrl();
+      if (typeof refreshVaultMetaUI === 'function') refreshVaultMetaUI();
     };
     window.closeSettingsModal = () => document.getElementById('settings-modal').classList.add('hidden');
 
@@ -6819,13 +6697,12 @@
       appendTypingIndicator(typingId);
       isAiGenerating = true;
 
-      // Kullanıcının TÜM kütüphanelerindeki ve setlistlerindeki eksiksiz güncel durumunu hazırla
+      // Tüm Repertuar, Setlist, Canlı Sahne, Ana Kasa ve Ayar durumunu eksiksiz hazırla
       const allSongs = [];
       const aiSongIds = []; // AI'nin "no" ile işaret ettiği şarkıları bulmak için (allSongs ile aynı sırada)
       const seenIds = new Set();
-      Object.entries(S.libraries || {}).forEach(([libId, lib]) => {
-        const libName = lib.name || 'Genel';
-        (lib.songs || []).forEach(s => {
+      Object.values(S.libraries || {}).forEach((lib) => {
+        ((lib && lib.songs) || []).forEach(s => {
           if (s && s.id && !seenIds.has(s.id)) {
             seenIds.add(s.id);
             aiSongIds.push(s.id);
@@ -6835,22 +6712,45 @@
               k: s.key || '',
               b: s.bpm || '',
               n: s.notes || '',
-              l: libName
+              u: s.link || ''
             });
           }
         });
       });
 
       const setlists = Object.values(S.setlists || {}).map(sl => ({
+        id: sl.id,
         name: sl.name || 'Setlist',
         band: sl.band || '',
         songs: (sl.songs || []).map(s => s.title + (s.artist ? ' - ' + s.artist : ''))
       }));
 
+      let activeSongTitle = '';
+      if (S.activeRoomCode === 'LIVE' && S.liveActiveSong) {
+        if (S.liveMode === 'quick') {
+          activeSongTitle = (S.quickSongs.find(s => s.id === S.liveActiveSong) || {}).title || '';
+        } else if (S.liveSetlistId && S.setlists[S.liveSetlistId]) {
+          activeSongTitle = ((S.setlists[S.liveSetlistId].songs || []).find(s => s.id === S.liveActiveSong) || {}).title || '';
+        }
+      }
+
+      if (!cachedVaultMeta && typeof fetchVaultMeta === 'function') {
+        await fetchVaultMeta().catch(() => null);
+      }
+
       const context = {
-        username: S.username || 'Lider',
-        allSongs: allSongs,
-        setlists: setlists
+        username: S.username || 'Yönetici',
+        theme: LS.get('gs_theme') || 'dark',
+        groupKey: S.groupKey || '',
+        allSongs,
+        setlists,
+        stage: {
+          isLive: S.activeRoomCode === 'LIVE',
+          mode: S.liveMode || null,
+          activeSongTitle,
+          members: (S.currentMembers || []).map(m => ({ id: m.id, name: m.name, isLeader: Boolean(m.isLeader) }))
+        },
+        vault: cachedVaultMeta || { exists: false }
       };
 
       try {
@@ -6874,7 +6774,7 @@
 
         const data = await res.json();
         const reply = data.reply || 'Bir yanıt oluşturulamadı.';
-        if (data.action && data.action.action === 'UPDATE_LIBRARY') {
+        if (data.action) {
           data.action._songIds = aiSongIds;
         }
 
@@ -6882,12 +6782,12 @@
         aiChatHistory.push({ role: 'user', content: text });
         aiChatHistory.push({ role: 'assistant', content: reply });
 
-        // Aksiyon varsa önce oluştur (ID'si önceden oluşsun)
-        if (data.action) {
-          handleAiAction(data.action);
+        // Canlı Sahne şarkı seçme ve sahne açma komutları doğrulandıktan sonra anında çalışır;
+        // diğer tüm yazma/silme/Ana Kasa/ayar/kapatma/çıkarma işlemleri onay kartı gösterir.
+        if (data.action && (data.action.action === 'STAGE_SELECT_SONG' || data.action.action === 'STAGE_OPEN')) {
+          data.action._instantResult = await executeInstantStageAction(data.action);
         }
 
-        // Asistan baloncuğunu ve interaktif aksiyon kartını ekle
         appendAiBubble('bot', reply, data.action);
       } catch (err) {
         removeTypingIndicator(typingId);
@@ -6912,37 +6812,16 @@
 
       bubbleDiv.innerHTML = formattedText;
 
-      // Eğer aksiyon varsa interaktif kart oluştur
-      if (action && action.action === 'CREATE_SETLIST') {
-        const actionCard = document.createElement('div');
-        actionCard.style.cssText = 'background:var(--surface3);border:1px solid var(--accent);border-radius:12px;padding:12px;margin-top:10px';
-        const songsPreview = (action.songs || []).slice(0, 4).map(s => esc(s.title + (s.key ? ' (' + s.key + ')' : ''))).join(' · ');
-        const moreCount = (action.songs || []).length > 4 ? ` +${action.songs.length - 4} şarkı daha` : '';
-        actionCard.innerHTML = `
-          <div style="font-weight:700;color:var(--accent);font-size:13px;margin-bottom:4px;font-family:var(--font-mono)">🎵 ${esc(action.name || 'Setlist')} (${(action.songs || []).length} Şarkı)</div>
-          <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">${songsPreview}${moreCount}</div>
-          <button class="btn btn-primary" style="width:100%;height:36px;font-size:12px;padding:0">🚀 Bu Setlisti Aç</button>
-        `;
-        const openBtn = actionCard.querySelector('button');
-        openBtn.onclick = () => {
-          closeAiChatModal();
-          const targetId = action._createdId;
-          if (targetId && typeof openLeader === 'function') {
-            openLeader(targetId);
-          } else {
-            showScreen('home');
-            renderSetlistCards();
-          }
-        };
-        bubbleDiv.appendChild(actionCard);
-      } else if (action && action.action === 'ADD_TO_LIBRARY') {
-        const actionCard = document.createElement('div');
-        actionCard.style.cssText = 'background:var(--surface3);border:1px solid var(--green);border-radius:12px;padding:10px 12px;margin-top:10px;font-size:12px;color:var(--green);font-family:var(--font-mono)';
-        actionCard.innerHTML = `✅ ${(action.songs || []).length} şarkı kütüphanene başarıyla eklendi!`;
-        bubbleDiv.appendChild(actionCard);
-      } else if (action && action.action === 'UPDATE_LIBRARY') {
-        // Düzeltmeler hemen uygulanmaz: önce liste gösterilir, kullanıcı onaylar
-        bubbleDiv.appendChild(buildLibraryUpdateCard(action));
+      if (action && action.action) {
+        if (action.action === 'STAGE_SELECT_SONG' || action.action === 'STAGE_OPEN') {
+          const res = action._instantResult || { ok: false, label: 'İşlem doğrulanamadı' };
+          const statusCard = document.createElement('div');
+          statusCard.style.cssText = `background:var(--surface3);border:1px solid ${res.ok ? 'var(--green)' : 'var(--red)'};border-radius:12px;padding:10px 12px;margin-top:10px;font-size:12px;color:${res.ok ? 'var(--green)' : 'var(--red)'};font-family:var(--font-mono)`;
+          statusCard.textContent = res.label;
+          bubbleDiv.appendChild(statusCard);
+        } else {
+          bubbleDiv.appendChild(buildAiApprovalCard(action));
+        }
       }
 
       msgDiv.appendChild(bubbleDiv);
@@ -6970,57 +6849,93 @@
       if (el) el.remove();
     }
 
-    function handleAiAction(action) {
-      if (!action || !action.action) return;
+    const VALID_AI_THEMES = new Set([
+      'dark', 'orange', 'gold', 'light', 'stage', 'grey', 'amber', 'red',
+      'rose', 'green', 'cyan', 'indigo', 'violet', 'ocean', 'sunset', 'mint', 'midnight'
+    ]);
 
-      if (action.action === 'CREATE_SETLIST') {
-        const newId = 'sl_' + Date.now();
-        const songs = (action.songs || []).map((s, idx) => ({
-          id: 's_' + Date.now() + '_' + idx,
-          title: s.title || 'Şarkı',
-          artist: s.artist || '',
-          key: s.key || '',
-          bpm: s.bpm || '',
-          notes: s.notes || '',
-          link: s.link || '',
-          order: idx
-        }));
-
-        S.setlists[newId] = {
-          id: newId,
-          name: action.name || 'Yeni Setlist',
-          band: action.band || '',
-          songs: songs,
-          createdAt: Date.now()
-        };
-        action._createdId = newId;
-
-        saveSetlists();
-        renderSetlistCards();
-        showToast(`"${action.name}" setlisti oluşturuldu! 🎵`);
-      } else if (action.action === 'ADD_TO_LIBRARY') {
-        const songs = action.songs || [];
-        songs.forEach((s, idx) => {
-          currentLib().unshift({
-            id: 'lib_' + Date.now() + '_' + idx,
-            title: s.title || 'Şarkı',
-            artist: s.artist || '',
-            key: s.key || '',
-            bpm: s.bpm || '',
-            notes: s.notes || '',
-            link: s.link || '',
-            createdAt: Date.now()
-          });
-        });
-        saveLibraries();
-        if (S.userRole === 'host') renderLibrary();
-        showToast(`${songs.length} şarkı kütüphaneye eklendi! 📚`);
+    function resolveSongByAiRef(action, noVal, titleVal) {
+      const ids = Array.isArray(action && action._songIds) ? action._songIds : [];
+      const n = parseInt(noVal, 10);
+      if (Number.isFinite(n) && n >= 1 && n <= ids.length) {
+        const s = findRepSong(ids[n - 1]);
+        if (s) return s;
       }
+      const nq = trNormalize(String(titleVal || '').trim());
+      if (!nq) return null;
+      const all = getAllRepertoireSongs();
+      return all.find(s => trNormalize(s.title) === nq)
+        || all.find(s => trNormalize(s.title).includes(nq))
+        || null;
     }
 
-    // ══════════ AI REPERTUAR DÜZELTMESİ (UPDATE_LIBRARY) ══════════
-    // AI şarkıları repertuar listesindeki sıra numarasıyla ("no") belirtir; numara o istekte
-    // gönderilen listeye göre şarkı kimliğine çevrilir.
+    function resolveSetlistByAiRef(action) {
+      const list = Object.values(S.setlists || {});
+      if (action.setlistId && S.setlists[action.setlistId]) return S.setlists[action.setlistId];
+      const targetName = trNormalize(String(action.setlistName || action.name || '').trim());
+      if (!targetName) return null;
+      return list.find(sl => trNormalize(sl.name) === targetName)
+        || list.find(sl => trNormalize(sl.name).includes(targetName))
+        || null;
+    }
+
+    async function executeInstantStageAction(action) {
+      if (action.action === 'STAGE_SELECT_SONG') {
+        const repMatch = resolveSongByAiRef(action, action.no, action.title);
+        if (S.activeRoomCode === 'LIVE' && S.liveMode === 'setlist' && S.liveSetlistId && S.setlists[S.liveSetlistId]) {
+          const sl = S.setlists[S.liveSetlistId];
+          const nq = trNormalize(String((repMatch && repMatch.title) || action.title || '').trim());
+          const slMatch = (sl.songs || []).find(s =>
+            (repMatch && repMatch.id && s.libId === repMatch.id) ||
+            (nq && trNormalize(s.title) === nq)
+          );
+          if (slMatch) {
+            if (S.activeSetlistId !== sl.id) openLeader(sl.id);
+            await selectSongInRoom(slMatch.id);
+            return {
+              ok: true,
+              label: `⚡ Canlı sahnede: ${slMatch.title}${slMatch.key ? ' (' + slMatch.key + ')' : ''}${slMatch.bpm ? ' · ' + slMatch.bpm + ' BPM' : ''}`
+            };
+          }
+        }
+        if (!repMatch) {
+          return { ok: false, label: `⚠️ Repertuarda şarkı bulunamadı: ${action.title || action.no || '—'}` };
+        }
+        await playQuickStageSongObj(repMatch);
+        return {
+          ok: true,
+          label: `⚡ Canlı sahnede: ${repMatch.title}${repMatch.key ? ' (' + repMatch.key + ')' : ''}${repMatch.bpm ? ' · ' + repMatch.bpm + ' BPM' : ''}`
+        };
+      }
+
+      if (action.action === 'STAGE_OPEN') {
+        if (action.mode === 'setlist' || action.setlistId || action.setlistName) {
+          const sl = resolveSetlistByAiRef(action);
+          if (!sl) {
+            return { ok: false, label: `⚠️ Setlist bulunamadı: ${action.setlistName || action.setlistId || '—'}` };
+          }
+          openLeader(sl.id);
+          await openRoomDirect();
+          return { ok: true, label: `🔴 Canlı sahne açıldı: ${sl.name}` };
+        }
+        openQuickStage();
+        const ok = await ensureLiveRoomOpen({
+          mode: 'quick',
+          setlistId: null,
+          name: 'Hızlı Sahne',
+          band: 'Repertuar',
+          songs: S.quickSongs.map((s, i) => ({ ...s, order: i })),
+          activeSongId: S.liveActiveSong
+        });
+        return ok
+          ? { ok: true, label: '🔴 Hızlı Sahne canlı yayına açıldı' }
+          : { ok: false, label: '⚠️ Canlı sahne açılamadı' };
+      }
+
+      return { ok: false, label: 'Bilinmeyen sahne komutu' };
+    }
+
+    // ══════════ AI REPERTUAR DÜZELTMESİ (UPDATE_REPERTOIRE / DELETE_FROM_REPERTOIRE) ══════════
     function resolveAiLibraryUpdate(action) {
       const ids = Array.isArray(action._songIds) ? action._songIds : [];
       const byNo = (no) => {
@@ -7036,7 +6951,7 @@
         const song = id ? findRepSong(id) : null;
         if (!song) { skipped++; return; }
         const patch = {};
-        ['title', 'artist', 'key', 'bpm'].forEach(f => {
+        ['title', 'artist', 'key', 'bpm', 'notes', 'link'].forEach(f => {
           if (c[f] !== undefined && c[f] !== null) patch[f] = String(c[f]).trim();
         });
         if ('title' in patch && !patch.title) delete patch.title;
@@ -7061,56 +6976,14 @@
       return { changes, removes, skipped };
     }
 
-    function buildLibraryUpdateCard(action) {
-      const card = document.createElement('div');
-      card.style.cssText = 'background:var(--surface3);border:1px solid var(--accent);border-radius:12px;padding:12px;margin-top:10px';
-      const r = resolveAiLibraryUpdate(action);
-      if (!r.changes.length && !r.removes.length) {
-        card.innerHTML = '<div style="font-size:12px;color:var(--text-muted)">Uygulanacak bir değişiklik bulunamadı.</div>';
-        return card;
-      }
-      const fmt = (title, artist) => `${title || '—'}${artist ? ' – ' + artist : ''}`;
-      const lines = [
-        ...r.changes.map(c => {
-          const p = c.patch;
-          const parts = [];
-          if ('title' in p || 'artist' in p) {
-            parts.push(`${fmt(c.song.title, c.song.artist)} → ${fmt(p.title ?? c.song.title, p.artist ?? c.song.artist)}`);
-          } else {
-            parts.push(fmt(c.song.title, c.song.artist));
-          }
-          if ('key' in p) parts.push(`Ton: ${p.key || '—'}`);
-          if ('bpm' in p) parts.push(`BPM: ${p.bpm || '—'}`);
-          return '✏️ ' + parts.join(' · ');
-        }),
-        ...r.removes.map(x => '🗑 ' + fmt(x.song.title, x.song.artist)),
-      ];
-      const head = [
-        r.changes.length ? `${r.changes.length} düzenleme` : '',
-        r.removes.length ? `${r.removes.length} silme` : '',
-      ].filter(Boolean).join(' · ');
-      const shown = lines.slice(0, 8).map(l =>
-        `<div style="font-size:12px;color:var(--text);padding:4px 0;border-bottom:1px solid var(--border);word-break:break-word">${esc(l)}</div>`).join('');
-      const more = lines.length > 8
-        ? `<div style="font-size:11px;color:var(--text-muted);padding-top:6px">+${lines.length - 8} değişiklik daha</div>` : '';
-      card.innerHTML = `
-        <div style="font-weight:700;color:var(--accent);font-size:13px;margin-bottom:6px;font-family:var(--font-mono)">📝 Repertuar: ${esc(head)}</div>
-        ${shown}${more}
-        <button class="btn btn-primary" style="width:100%;height:36px;font-size:12px;padding:0;margin-top:10px">Değişiklikleri Uygula</button>`;
-      const btn = card.querySelector('button');
-      btn.onclick = () => {
-        const res = applyAiLibraryUpdate(action);
-        btn.disabled = true;
-        btn.textContent = res.applied ? `Uygulandı ✓ (${res.applied})` : 'Değişiklik kalmadı';
-      };
-      return card;
-    }
-
     function applyAiLibraryUpdate(action) {
-      const r = resolveAiLibraryUpdate(action); // güncel veriye göre yeniden çöz
+      const r = resolveAiLibraryUpdate(action);
       let setlistsChanged = false;
+      let quickChanged = false;
       r.changes.forEach(c => {
-        if (patchRepSong(c.id, c.patch).setlistsChanged) setlistsChanged = true;
+        const res = patchRepSong(c.id, c.patch);
+        if (res.setlistsChanged) setlistsChanged = true;
+        if (res.quickChanged) quickChanged = true;
       });
       if (r.removes.length) {
         const ids = new Set(r.removes.map(x => x.id));
@@ -7120,14 +6993,340 @@
       }
       const applied = r.changes.length + r.removes.length;
       if (applied) {
-        afterRepertoireChange(setlistsChanged);
-        if (!document.getElementById('rep-edit-modal').classList.contains('hidden')) {
-          renderRepEditList();
-          refreshRepCleanBar();
-        }
+        afterRepertoireChange(setlistsChanged, quickChanged, r.removes.length ? { force: true } : {});
         showToast(`Repertuar güncellendi: ${applied} değişiklik`);
       }
       return { applied };
+    }
+
+    function planAiApprovalAction(action) {
+      const type = action.action;
+      const fmtSong = (title, artist) => `${title || '—'}${artist ? ' – ' + artist : ''}`;
+
+      if (type === 'UPDATE_REPERTOIRE' || type === 'DELETE_FROM_REPERTOIRE') {
+        const r = resolveAiLibraryUpdate(action);
+        if (!r.changes.length && !r.removes.length) {
+          return { valid: false, error: 'Uygulanacak geçerli repertuar değişikliği bulunamadı.' };
+        }
+        const lines = [
+          ...r.changes.map(c => {
+            const p = c.patch;
+            const parts = [];
+            if ('title' in p || 'artist' in p) {
+              parts.push(`${fmtSong(c.song.title, c.song.artist)} → ${fmtSong(p.title ?? c.song.title, p.artist ?? c.song.artist)}`);
+            } else {
+              parts.push(fmtSong(c.song.title, c.song.artist));
+            }
+            if ('key' in p) parts.push(`Ton: ${p.key || '—'}`);
+            if ('bpm' in p) parts.push(`BPM: ${p.bpm || '—'}`);
+            if ('notes' in p) parts.push(`Not: ${p.notes ? p.notes.slice(0, 30) : '—'}`);
+            if ('link' in p) parts.push(`Link: ${p.link ? 'Güncellendi' : 'Temizlendi'}`);
+            return '✏️ ' + parts.join(' · ');
+          }),
+          ...r.removes.map(x => '🗑 ' + fmtSong(x.song.title, x.song.artist)),
+        ];
+        const head = [
+          r.changes.length ? `${r.changes.length} düzenleme` : '',
+          r.removes.length ? `${r.removes.length} silme` : '',
+        ].filter(Boolean).join(' · ');
+        return {
+          valid: true,
+          title: `📝 Repertuar: ${head}`,
+          lines,
+          btnLabel: 'Onayla ve Uygula',
+          apply: async () => {
+            const res = applyAiLibraryUpdate(action);
+            return res.applied ? `Uygulandı ✓ (${res.applied})` : 'Değişiklik kalmadı';
+          }
+        };
+      }
+
+      if (type === 'ADD_TO_REPERTOIRE') {
+        const songs = (Array.isArray(action.songs) ? action.songs : [])
+          .filter(s => s && String(s.title || '').trim())
+          .map(s => ({
+            title: String(s.title).trim(),
+            artist: String(s.artist || '').trim(),
+            key: normalizeKeyName(s.key || ''),
+            bpm: (Number.isFinite(parseInt(s.bpm, 10)) && parseInt(s.bpm, 10) > 0) ? String(parseInt(s.bpm, 10)) : '',
+            notes: String(s.notes || '').trim(),
+            link: String(s.link || '').trim()
+          }));
+        if (!songs.length) return { valid: false, error: 'Eklenecek geçerli şarkı bulunamadı.' };
+        return {
+          valid: true,
+          title: `➕ Repertuara Ekle (${songs.length} şarkı)`,
+          lines: songs.map(s => `+ ${fmtSong(s.title, s.artist)}${s.key ? ' (' + s.key + ')' : ''}${s.bpm ? ' [' + s.bpm + ' BPM]' : ''}`),
+          btnLabel: 'Onayla ve Repertuara Ekle',
+          apply: async () => {
+            songs.forEach((s, idx) => {
+              currentLib().unshift({
+                id: 'lib_' + Date.now() + '_' + idx,
+                ...s,
+                createdAt: Date.now()
+              });
+            });
+            afterRepertoireChange(false, false);
+            showToast(`${songs.length} şarkı Repertuara eklendi`);
+            return `Eklendi ✓ (${songs.length})`;
+          }
+        };
+      }
+
+      if (type === 'RESTORE_MASTER_VAULT') {
+        const target = action.target === 'origin' || Number.isInteger(action.target) ? action.target : 'current';
+        const targetLabel = target === 'origin'
+          ? 'İlk Kök Kopya (1867)'
+          : Number.isInteger(target) ? `Geçmiş Sürüm #${target + 1}` : 'Güncel Mühürlü Ana Kasa';
+        return {
+          valid: true,
+          title: '🔒 Ana Kasa Geri Yükleme',
+          lines: [`Hedef: ${targetLabel}`, 'Yalnızca Repertuar geri yüklenir; mevcut Setlistler korunur.'],
+          btnLabel: 'Onayla ve Geri Yükle',
+          apply: async () => {
+            const ok = await restoreFromMasterVault(target, true);
+            return ok ? 'Geri Yüklendi ✓' : 'Geri Yüklenemedi';
+          }
+        };
+      }
+
+      if (type === 'SEAL_MASTER_VAULT') {
+        const count = getAllRepertoireSongs().length;
+        if (!count) return { valid: false, error: 'Ana Kasa\'ya kilitlenecek şarkı yok.' };
+        const label = String(action.label || `Güncel Ana Kasa (${count} şarkı)`).trim();
+        return {
+          valid: true,
+          title: '🔒 Ana Kasa Güncelle ve Kilitle',
+          lines: [`Kilitlenecek: ${count} şarkı`, `Etiket: ${label}`, 'Önceki sürüm 5\'li geçmişe yedeklenir.'],
+          btnLabel: 'Onayla ve Kilitle',
+          apply: async () => {
+            const ok = await sealMasterVaultFromSettings(label, true);
+            return ok ? 'Kilitlendi ✓' : 'Kilitlenemedi';
+          }
+        };
+      }
+
+      if (type === 'CREATE_SETLIST') {
+        const name = String(action.name || 'Yeni Setlist').trim();
+        const rawSongs = Array.isArray(action.songs) ? action.songs : [];
+        if (!rawSongs.length) return { valid: false, error: 'Setlist için geçerli şarkı bulunamadı.' };
+        const resolvedSongs = rawSongs.map((s, idx) => {
+          const matched = resolveSongByAiRef(action, s && s.no, s && s.title);
+          const base = matched || s || {};
+          return {
+            id: 's_' + Date.now() + '_' + idx,
+            libId: matched && matched.id ? matched.id : '',
+            title: String((s && s.title) || base.title || 'Şarkı').trim(),
+            artist: String((s && s.artist) !== undefined ? s.artist : (base.artist || '')).trim(),
+            key: normalizeKeyName(String((s && s.key) || base.key || '').trim()),
+            bpm: String((s && s.bpm) || base.bpm || '').trim(),
+            notes: String((s && s.notes) || base.notes || '').trim(),
+            link: String((s && s.link) || base.link || '').trim(),
+            order: idx
+          };
+        });
+        return {
+          valid: true,
+          title: `🎵 Setlist Oluştur: ${name} (${resolvedSongs.length} şarkı)`,
+          lines: resolvedSongs.map((s, i) => `${i + 1}. ${fmtSong(s.title, s.artist)}${s.key ? ' (' + s.key + ')' : ''}${s.bpm ? ' [' + s.bpm + ' BPM]' : ''}`),
+          btnLabel: 'Onayla ve Setlisti Oluştur',
+          apply: async () => {
+            const newId = 'sl_' + Date.now();
+            S.setlists[newId] = {
+              id: newId,
+              name,
+              band: String(action.band || '').trim(),
+              songs: resolvedSongs.map((s, i) => ({ ...s, id: 's_' + Date.now() + '_' + i, order: i })),
+              createdAt: Date.now()
+            };
+            saveSetlists();
+            renderSetlistCards();
+            showToast(`"${name}" setlisti oluşturuldu`);
+            return `Oluşturuldu ✓`;
+          }
+        };
+      }
+
+      if (type === 'UPDATE_SETLIST') {
+        const sl = resolveSetlistByAiRef(action);
+        if (!sl) return { valid: false, error: `Setlist bulunamadı: ${action.setlistName || action.setlistId || '—'}` };
+        const lines = [];
+        if (action.newName) lines.push(`Yeni Ad: ${String(action.newName).trim()}`);
+        if (action.band !== undefined) lines.push(`Grup/Sahne: ${String(action.band).trim() || '—'}`);
+        const adds = (Array.isArray(action.addNos) ? action.addNos : [])
+          .map(no => resolveSongByAiRef(action, no, ''))
+          .filter(Boolean);
+        if (adds.length) lines.push(`Eklenecek (${adds.length}): ${adds.map(s => s.title).join(', ')}`);
+        const removeSet = new Set((Array.isArray(action.removeTitles) ? action.removeTitles : []).map(t => trNormalize(String(t || '').trim())).filter(Boolean));
+        if (removeSet.size) lines.push(`Çıkarılacak: ${[...removeSet].length} eşleşme`);
+        const reorder = Array.isArray(action.reorderTitles) ? action.reorderTitles.map(t => trNormalize(String(t || '').trim())).filter(Boolean) : [];
+        if (reorder.length) lines.push(`Yeni Sıralama: ${reorder.length} şarkı`);
+        if (!lines.length) return { valid: false, error: 'Setlistte uygulanacak değişiklik yok.' };
+        return {
+          valid: true,
+          title: `✏️ Setlist Güncelle: ${sl.name}`,
+          lines,
+          btnLabel: 'Onayla ve Güncelle',
+          apply: async () => {
+            if (action.newName && String(action.newName).trim()) sl.name = String(action.newName).trim();
+            if (action.band !== undefined) sl.band = String(action.band || '').trim();
+            let list = [...(sl.songs || [])];
+            if (removeSet.size) {
+              list = list.filter(s => !removeSet.has(trNormalize(s.title)));
+            }
+            adds.forEach((rep, idx) => {
+              list.push({ ...rep, libId: rep.id, id: `live_${Date.now()}_${idx}`, order: list.length });
+            });
+            if (reorder.length) {
+              const rank = new Map();
+              reorder.forEach((t, i) => { if (!rank.has(t)) rank.set(t, i); });
+              list.sort((a, b) => {
+                const ra = rank.has(trNormalize(a.title)) ? rank.get(trNormalize(a.title)) : 99999;
+                const rb = rank.has(trNormalize(b.title)) ? rank.get(trNormalize(b.title)) : 99999;
+                return ra - rb;
+              });
+            }
+            sl.songs = list.map((s, i) => ({ ...s, order: i }));
+            if (S.activeSetlistId === sl.id) S.liveSongs = [...sl.songs];
+            saveSetlists();
+            renderSetlistCards();
+            if (S.activeSetlistId === sl.id) renderLeaderSongList();
+            if (S.activeRoomCode === 'LIVE' && S.liveMode === 'setlist' && S.liveSetlistId === sl.id && typeof pushSetlistToWorker === 'function') {
+              S.liveSongs = [...sl.songs];
+              await pushSetlistToWorker();
+            }
+            showToast(`"${sl.name}" güncellendi`);
+            return 'Güncellendi ✓';
+          }
+        };
+      }
+
+      if (type === 'DELETE_SETLIST') {
+        const sl = resolveSetlistByAiRef(action);
+        if (!sl) return { valid: false, error: `Silinecek setlist bulunamadı: ${action.setlistName || action.setlistId || '—'}` };
+        return {
+          valid: true,
+          title: '🗑 Setlisti Sil',
+          lines: [`"${sl.name}" (${(sl.songs || []).length} şarkı)`],
+          btnLabel: 'Onayla ve Sil',
+          apply: async () => {
+            const slId = sl.id;
+            const slName = sl.name;
+            delete S.setlists[slId];
+            applySetlistDeletions({ [slId]: Date.now() });
+            LS.set('gs_last_updated_at', Date.now());
+            saveSetlists();
+            if (S.activeSetlistId === slId) goBackFromLeader();
+            else renderSetlistCards();
+            if (window.autoSyncToCloud) window.autoSyncToCloud(true);
+            showToast(`"${slName}" silindi`);
+            return 'Silindi ✓';
+          }
+        };
+      }
+
+      if (type === 'STAGE_CLOSE') {
+        if (S.activeRoomCode !== 'LIVE') return { valid: false, error: 'Canlı sahne şu an zaten kapalı.' };
+        return {
+          valid: true,
+          title: '⏹ Canlı Sahneyi Kapat',
+          lines: ['Canlı yayın durdurulacak ve grup ekranları bekleme moduna geçecek.'],
+          btnLabel: 'Onayla ve Kapat',
+          apply: async () => {
+            await closeRoomFromLeader();
+            return 'Sahne Kapatıldı ✓';
+          }
+        };
+      }
+
+      if (type === 'STAGE_KICK_MEMBER') {
+        const selfClientId = getClientId();
+        const members = (S.currentMembers || []).filter(m => !(m.isLeader && m.clientId === selfClientId));
+        const target = members.find(m => action.memberId && m.id === action.memberId)
+          || members.find(m => action.memberName && trNormalize(m.name) === trNormalize(String(action.memberName)))
+          || null;
+        if (!target) return { valid: false, error: `Çıkarılacak bağlı üye bulunamadı: ${action.memberName || action.memberId || '—'}` };
+        return {
+          valid: true,
+          title: '👤 Üyeyi Canlı Sahneden Çıkar',
+          lines: [`Üye: ${target.name}`],
+          btnLabel: 'Onayla ve Çıkar',
+          apply: async () => {
+            await kickMemberFromRoom(target.id);
+            return 'Çıkarıldı ✓';
+          }
+        };
+      }
+
+      if (type === 'UPDATE_SETTINGS') {
+        const lines = [];
+        const theme = action.theme ? String(action.theme).trim().toLowerCase() : '';
+        const username = action.username ? String(action.username).trim() : '';
+        const groupKey = action.groupKey !== undefined && action.groupKey !== null ? String(action.groupKey).trim() : null;
+        if (username) lines.push(`Kullanıcı Adı: ${username}`);
+        if (theme && VALID_AI_THEMES.has(theme)) lines.push(`Tema: ${theme}`);
+        if (groupKey) lines.push(`Grup Anahtarı: ${groupKey}`);
+        if (!lines.length) return { valid: false, error: 'Uygulanacak geçerli ayar değişikliği bulunamadı.' };
+        return {
+          valid: true,
+          title: '⚙️ Ayarları Güncelle',
+          lines,
+          btnLabel: 'Onayla ve Kaydet',
+          apply: async () => {
+            if (username) {
+              S.username = username;
+              LS.set('gs_username', username);
+              updateUsernameDisplay();
+              if (S.userRole === 'host' && S.activeRoomCode === 'LIVE') startLeaderRealtime('LIVE');
+            }
+            if (theme && VALID_AI_THEMES.has(theme)) applyTheme(theme);
+            if (groupKey) {
+              if (!S.groupKeys.includes(groupKey)) S.groupKeys.push(groupKey);
+              S.groupKey = groupKey;
+              LS.set('gs_group_keys', S.groupKeys);
+              LS.set('gs_group_key', groupKey);
+              renderGroupKeys();
+            }
+            if (window.autoSyncToCloud) window.autoSyncToCloud();
+            showToast('Ayarlar güncellendi');
+            return 'Kaydedildi ✓';
+          }
+        };
+      }
+
+      return { valid: false, error: 'Desteklenmeyen işlem türü.' };
+    }
+
+    function buildAiApprovalCard(action) {
+      const card = document.createElement('div');
+      card.style.cssText = 'background:var(--surface3);border:1px solid var(--accent);border-radius:12px;padding:12px;margin-top:10px';
+      const plan = planAiApprovalAction(action);
+      if (!plan.valid) {
+        card.innerHTML = `<div style="font-size:12px;color:var(--text-muted)">${esc(plan.error)}</div>`;
+        return card;
+      }
+      const shown = plan.lines.slice(0, 8).map(l =>
+        `<div style="font-size:12px;color:var(--text);padding:4px 0;border-bottom:1px solid var(--border);word-break:break-word">${esc(l)}</div>`).join('');
+      const more = plan.lines.length > 8
+        ? `<div style="font-size:11px;color:var(--text-muted);padding-top:6px">+${plan.lines.length - 8} öğe daha</div>` : '';
+      card.innerHTML = `
+        <div style="font-weight:700;color:var(--accent);font-size:13px;margin-bottom:6px;font-family:var(--font-mono)">${esc(plan.title)}</div>
+        ${shown}${more}
+        <button class="btn btn-primary" style="width:100%;height:36px;font-size:12px;padding:0;margin-top:10px">${esc(plan.btnLabel || 'Onayla ve Uygula')}</button>`;
+      const btn = card.querySelector('button');
+      btn.onclick = async () => {
+        btn.disabled = true;
+        btn.textContent = 'Uygulanıyor...';
+        try {
+          const doneText = await plan.apply();
+          btn.textContent = doneText || 'Uygulandı ✓';
+        } catch (err) {
+          btn.disabled = false;
+          btn.textContent = plan.btnLabel || 'Onayla ve Uygula';
+          showToast('Hata: ' + err.message);
+        }
+      };
+      return card;
     }
 
     // ══════════ SES TANIMA & CANLI SES DALGASI (WEB AUDIO + SPEECH) ══════════
@@ -7468,6 +7667,122 @@
       event.target.value = "";
     };
 
+    // ══════════ ANA KASA (KİLİTLİ KÖK YEDEK) ══════════
+    let cachedVaultMeta = null;
+
+    async function fetchVaultMeta() {
+      try {
+        const res = await fetch(`${getWorkerUrl()}/api/vault?user=master`);
+        if (!res.ok) return null;
+        const json = await res.json();
+        if (json && json.vault) {
+          cachedVaultMeta = json.vault;
+          return cachedVaultMeta;
+        }
+      } catch (e) {
+        console.warn('Ana Kasa bilgisi okunamadı:', e);
+      }
+      return null;
+    }
+
+    async function refreshVaultMetaUI() {
+      const badge = document.getElementById('vault-meta-badge');
+      const txt = document.getElementById('vault-status-text');
+      const originBtn = document.getElementById('vault-origin-btn');
+      const meta = await fetchVaultMeta();
+      if (!meta || !meta.exists) {
+        if (badge) badge.textContent = 'Henüz mühürlenmedi';
+        if (txt) txt.textContent = 'Ana Kasa henüz mühürlenmemiş. Mevcut Repertuarı kilitleyerek koruma oluşturabilirsin.';
+        if (originBtn) originBtn.style.display = 'none';
+        return;
+      }
+      const cur = meta.current || meta.origin;
+      const orig = meta.origin;
+      if (badge && cur) badge.textContent = `${cur.count} şarkı · KİLİTLİ`;
+      if (txt && cur) {
+        const dt = cur.sealedAt ? new Date(cur.sealedAt).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' }) : '';
+        const histCount = Array.isArray(meta.history) ? meta.history.length : 0;
+        txt.textContent = `Güncel Mühürlü: ${cur.count} şarkı${dt ? ' (' + dt + ')' : ''}`
+          + (orig ? ` · Kök: ${orig.count} şarkı` : '')
+          + (histCount ? ` · Geçmiş: ${histCount} sürüm` : '');
+      }
+      if (originBtn) {
+        const differs = Boolean(orig && cur && (orig.count !== cur.count || orig.sealedAt !== cur.sealedAt));
+        originBtn.style.display = differs ? '' : 'none';
+        if (orig) originBtn.textContent = `📜 İlk Kök Kopyaya Dön (${orig.count})`;
+      }
+    }
+
+    window.restoreFromMasterVault = async (target = 'current', skipConfirm = false) => {
+      const targetDesc = target === 'origin' ? 'ilk kök kopyadaki (1867)' : 'Ana Kasa\'daki';
+      if (!skipConfirm && !confirm(`${targetDesc} şarkılar aktif Repertuar'a geri yüklenecek. Mevcut Setlistlerin korunacak. Devam edilsin mi?`)) {
+        return false;
+      }
+      try {
+        const res = await fetch(`${getWorkerUrl()}/api/vault/restore?user=master`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ target })
+        });
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok || !json.success || !json.libraries) {
+          showToast(json.error || 'Ana Kasa geri yüklenemedi');
+          return false;
+        }
+        S.libraries = json.libraries;
+        S.activeLibId = S.libraries['default'] ? 'default' : (Object.keys(S.libraries)[0] || 'default');
+        S.isDefaultLibraryOnly = isOnlyDefaultLibrary(S.libraries, S.setlists);
+        LS.set('gs_libraries', S.libraries);
+        LS.set('gs_last_updated_at', json.updatedAt || Date.now());
+        healTurkishData();
+        updateQuickStageCount();
+        renderLibrary();
+        renderSetlistCards();
+        if (document.getElementById('quick-stage')?.classList.contains('active')) renderQuickStageView();
+        await refreshVaultMetaUI();
+        updateCloudSyncBadge(true);
+        showToast(`Ana Kasa geri yüklendi (${json.count} şarkı) — Setlistler korundu`);
+        return true;
+      } catch (e) {
+        showToast('Ana Kasa bağlantı hatası: ' + e.message);
+        return false;
+      }
+    };
+
+    window.sealMasterVaultFromSettings = async (label = '', skipConfirm = false) => {
+      const count = getAllRepertoireSongs().length;
+      if (!count) {
+        showToast('Ana Kasa\'ya kilitlenecek şarkı yok');
+        return false;
+      }
+      if (!skipConfirm && !confirm(`Mevcut ${count} şarkılık Repertuar yeni Ana Kasa sürümü olarak kilitlensin mi?`)) {
+        return false;
+      }
+      try {
+        const res = await fetch(`${getWorkerUrl()}/api/vault/seal?user=master`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            confirm: true,
+            libraries: S.libraries,
+            label: String(label || `Güncel Ana Kasa (${count} şarkı)`).trim()
+          })
+        });
+        const json = await res.json().catch(() => ({}));
+        if (!res.ok || !json.success) {
+          showToast(json.error || 'Ana Kasa kilitlenemedi');
+          return false;
+        }
+        if (json.vault) cachedVaultMeta = json.vault;
+        await refreshVaultMetaUI();
+        showToast(`Ana Kasa güncellendi ve kilitlendi (${count} şarkı)`);
+        return true;
+      } catch (e) {
+        showToast('Ana Kasa kilitleme hatası: ' + e.message);
+        return false;
+      }
+    };
+
     // ══════════ OTOMATİK BULUT SENKRONİZASYONU (MULTI-DEVICE AUTO-SYNC) ══════════
     let cloudSyncTimeout = null;
     let isCloudSyncing = false;
@@ -7480,6 +7795,11 @@
         badge.style.background = 'rgba(34,197,94,0.15)';
         badge.style.color = '#22c55e';
         badge.title = 'Tüm cihazlar Cloudflare ile güncel ve eşitlendi (Dokun: Şimdi Eşitle)';
+      } else if (text && text.includes('KORUNDU')) {
+        badge.innerHTML = text;
+        badge.style.background = 'rgba(245,158,11,0.18)';
+        badge.style.color = '#f59e0b';
+        badge.title = 'Senkron düşüş kalkanı devreye girdi';
       } else {
         badge.innerHTML = text || '☁️ EŞİTLENİYOR...';
         badge.style.background = 'rgba(79,142,247,0.15)';
@@ -7487,10 +7807,11 @@
       }
     };
 
-    window.autoSyncToCloud = (immediate = false) => {
+    window.autoSyncToCloud = (immediate = false, opts = {}) => {
       if (S.userRole !== 'host') return;
       if (S.isDefaultLibraryOnly || isOnlyDefaultLibrary(S.libraries, S.setlists)) return;
 
+      const forceWrite = Boolean(opts && opts.force);
       clearTimeout(cloudSyncTimeout);
       const now = Date.now();
       LS.set('gs_last_updated_at', now);
@@ -7509,17 +7830,23 @@
             groupKey: S.groupKey,
             groupKeys: S.groupKeys,
             deletedSetlists: S.deletedSetlists || {},
-            updatedAt: updatedAt
+            updatedAt: updatedAt,
+            force: forceWrite
           };
           const res = await fetch(`${getWorkerUrl()}/api/backup?user=master`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(backupData)
           });
+          const result = await res.json().catch(() => null);
+          if (res.status === 409 || (result && result.blocked)) {
+            updateCloudSyncBadge(false, '🛡️ KORUNDU');
+            showToast((result && result.error) || 'Senkron koruma kalkanı devreye girdi — toplu şarkı kaybı engellendi');
+            return;
+          }
           if (res.ok) {
             updateCloudSyncBadge(true);
             // Sunucu başka cihazlarda silinen setlistleri bildirirse burada da kaldır
-            const result = await res.json().catch(() => null);
             if (result && result.deletedSetlists && applySetlistDeletions(result.deletedSetlists)) {
               S.isDefaultLibraryOnly = isOnlyDefaultLibrary(S.libraries, S.setlists);
               renderSetlistCards();

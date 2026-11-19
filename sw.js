@@ -1,4 +1,4 @@
-const CACHE = 'gigsync-v23-single-member-kick';
+const CACHE = 'gigsync-v24-vault-ai-repedit';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/Gig_Sync_Logo.png'];
 
 self.addEventListener('install', e => {

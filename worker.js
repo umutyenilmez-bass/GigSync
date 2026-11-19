@@ -17,6 +17,41 @@ const corsHeaders = {
 const STALE_MS = 75000;
 const SWEEP_MS = 30000;
 
+const VALID_THEMES = [
+  "dark", "orange", "gold", "light", "stage", "grey", "amber", "red",
+  "rose", "green", "cyan", "indigo", "violet", "ocean", "sunset", "mint", "midnight"
+];
+
+const ALLOWED_AI_ACTIONS = new Set([
+  "UPDATE_REPERTOIRE",
+  "ADD_TO_REPERTOIRE",
+  "DELETE_FROM_REPERTOIRE",
+  "RESTORE_MASTER_VAULT",
+  "SEAL_MASTER_VAULT",
+  "CREATE_SETLIST",
+  "UPDATE_SETLIST",
+  "DELETE_SETLIST",
+  "STAGE_SELECT_SONG",
+  "STAGE_OPEN",
+  "STAGE_CLOSE",
+  "STAGE_KICK_MEMBER",
+  "UPDATE_SETTINGS"
+]);
+
+const AI_ACTION_ALIASES = {
+  UPDATE_LIBRARY: "UPDATE_REPERTOIRE",
+  ADD_TO_LIBRARY: "ADD_TO_REPERTOIRE"
+};
+
+function countLibrarySongs(libraries) {
+  if (!libraries || typeof libraries !== "object") return 0;
+  let total = 0;
+  for (const lib of Object.values(libraries)) {
+    if (lib && Array.isArray(lib.songs)) total += lib.songs.length;
+  }
+  return total;
+}
+
 /**
  * Silinen setlistlerin geri gelmemesi için yedekleri birleştirir.
  * Silme kayıtları (deletedSetlists: { id: silinmeZamanı }) hiçbir cihazın yedeğiyle kaybolmaz;
@@ -196,7 +231,7 @@ export class SyncRoom extends DurableObject {
   async closeRoom() {
     this.broadcast({
       type: "ROOM_CLOSED",
-      message: "Oda lider tarafından kapatıldı",
+      message: "Oda yönetici tarafından kapatıldı",
     });
 
     // Close all connected sockets
@@ -216,14 +251,116 @@ export class SyncRoom extends DurableObject {
 
   async saveBackup(data) {
     const existing = await this.ctx.storage.get("user_backup");
-    const merged = mergeSetlistDeletions(existing, data);
+    const existingCount = countLibrarySongs(existing && existing.libraries);
+    const incomingCount = countLibrarySongs(data && data.libraries);
+    if (!(data && data.force) && existingCount >= 50 && incomingCount < existingCount - 20) {
+      return {
+        success: false,
+        blocked: true,
+        status: 409,
+        error: "Senkron düşüş kalkanı: Repertuar tek seferde 20'den fazla şarkı azaldığı için otomatik kayıt engellendi.",
+        existingCount,
+        incomingCount,
+      };
+    }
+
+    const cleanData = data ? { ...data } : {};
+    delete cleanData.force;
+    const merged = mergeSetlistDeletions(existing, cleanData);
     await this.ctx.storage.put("user_backup", merged);
-    return { success: true, timestamp: Date.now(), deletedSetlists: merged.deletedSetlists };
+    return {
+      success: true,
+      timestamp: Date.now(),
+      count: incomingCount,
+      deletedSetlists: merged.deletedSetlists,
+    };
   }
 
   async getBackup() {
     const data = await this.ctx.storage.get("user_backup");
     return data || null;
+  }
+
+  async getVaultMeta() {
+    const v = await this.ctx.storage.get("master_vault");
+    if (!v || (!v.current && !v.origin)) {
+      return { exists: false, origin: null, current: null, history: [] };
+    }
+    const metaOf = (s) => (s ? { count: s.count || 0, sealedAt: s.sealedAt || 0, label: s.label || "" } : null);
+    return {
+      exists: true,
+      origin: metaOf(v.origin),
+      current: metaOf(v.current || v.origin),
+      history: Array.isArray(v.history) ? v.history.map((h, i) => ({ index: i, ...metaOf(h) })) : [],
+    };
+  }
+
+  async sealVault({ confirm, libraries, label, seedOrigin } = {}) {
+    if (confirm !== true) {
+      return { success: false, status: 400, error: "Ana Kasa mühürlemek için açık onay (confirm: true) gereklidir." };
+    }
+    let libs = libraries;
+    if (!libs || countLibrarySongs(libs) === 0) {
+      const existing = await this.ctx.storage.get("user_backup");
+      libs = existing && existing.libraries;
+    }
+    const count = countLibrarySongs(libs);
+    if (!libs || count === 0) {
+      return { success: false, status: 400, error: "Ana Kasa'ya mühürlenecek şarkı bulunamadı." };
+    }
+
+    const vault = (await this.ctx.storage.get("master_vault")) || { origin: null, current: null, history: [] };
+    const snap = {
+      libraries: JSON.parse(JSON.stringify(libs)),
+      count,
+      sealedAt: Date.now(),
+      label: String(label || `Mühürlü Ana Kasa (${count})`).trim(),
+    };
+    if (!vault.origin || seedOrigin === true) {
+      vault.origin = JSON.parse(JSON.stringify(snap));
+    }
+    if (vault.current && countLibrarySongs(vault.current.libraries) > 0) {
+      const prev = Array.isArray(vault.history) ? vault.history : [];
+      vault.history = [vault.current, ...prev].slice(0, 5);
+    }
+    vault.current = snap;
+    await this.ctx.storage.put("master_vault", vault);
+    return { success: true, vault: await this.getVaultMeta() };
+  }
+
+  async restoreVault({ target = "current" } = {}) {
+    const vault = await this.ctx.storage.get("master_vault");
+    if (!vault || (!vault.current && !vault.origin)) {
+      return { success: false, status: 404, error: "Ana Kasa kaydı bulunamadı." };
+    }
+    let snap = null;
+    if (target === "origin") {
+      snap = vault.origin || vault.current;
+    } else if (typeof target === "number" && Number.isInteger(target) && Array.isArray(vault.history) && vault.history[target]) {
+      snap = vault.history[target];
+    } else {
+      snap = vault.current || vault.origin;
+    }
+    if (!snap || !snap.libraries) {
+      return { success: false, status: 404, error: "Seçilen Ana Kasa sürümü bulunamadı." };
+    }
+
+    const restoredLibs = JSON.parse(JSON.stringify(snap.libraries));
+    const existing = (await this.ctx.storage.get("user_backup")) || {};
+    const now = Date.now();
+    const updatedBackup = {
+      ...existing,
+      libraries: restoredLibs,
+      updatedAt: now,
+    };
+    await this.ctx.storage.put("user_backup", updatedBackup);
+    return {
+      success: true,
+      libraries: restoredLibs,
+      count: countLibrarySongs(restoredLibs),
+      updatedAt: now,
+      label: snap.label || "Ana Kasa",
+    };
   }
 
   getMemberList() {
@@ -251,7 +388,7 @@ export class SyncRoom extends DurableObject {
       const meta = ws.deserializeAttachment() || this.sessions.get(ws);
       if (meta && meta.id === targetId) {
         try {
-          ws.send(JSON.stringify({ type: "KICKED", message: "Lider tarafından çıkarıldın" }));
+          ws.send(JSON.stringify({ type: "KICKED", message: "Yönetici tarafından çıkarıldın" }));
         } catch (e) {}
         try {
           ws.serializeAttachment(null);
@@ -557,11 +694,29 @@ export default {
             const id = env.ROOMS.idFromName("BACKUP_" + userKey);
             const stub = env.ROOMS.get(id);
             const res = await stub.saveBackup(body);
+            if (res && res.blocked) {
+              return jsonResponse(res, 409);
+            }
             return jsonResponse(res);
           } else {
-            const merged = mergeSetlistDeletions(memoryRooms.get("BACKUP_" + userKey), body);
+            const existing = memoryRooms.get("BACKUP_" + userKey);
+            const existingCount = countLibrarySongs(existing && existing.libraries);
+            const incomingCount = countLibrarySongs(body && body.libraries);
+            if (!(body && body.force) && existingCount >= 50 && incomingCount < existingCount - 20) {
+              return jsonResponse({
+                success: false,
+                blocked: true,
+                status: 409,
+                error: "Senkron düşüş kalkanı: Repertuar tek seferde 20'den fazla şarkı azaldığı için otomatik kayıt engellendi.",
+                existingCount,
+                incomingCount,
+              }, 409);
+            }
+            const cleanBody = body ? { ...body } : {};
+            delete cleanBody.force;
+            const merged = mergeSetlistDeletions(existing, cleanBody);
             memoryRooms.set("BACKUP_" + userKey, merged);
-            return jsonResponse({ success: true, timestamp: Date.now(), deletedSetlists: merged.deletedSetlists });
+            return jsonResponse({ success: true, timestamp: Date.now(), count: incomingCount, deletedSetlists: merged.deletedSetlists });
           }
         } catch (err) {
           return jsonResponse({ error: "Yedek kaydedilemedi: " + err.message }, 400);
@@ -578,6 +733,40 @@ export default {
           return jsonResponse({ success: true, data: data });
         }
       }
+    }
+
+    // Ana Kasa (Master Vault) Endpoints: /api/vault, /api/vault/seal, /api/vault/restore
+    if (path === "/api/vault" || path === "/api/vault/seal" || path === "/api/vault/restore") {
+      const userKey = (url.searchParams.get("user") || "master").trim().toLowerCase();
+      if (!env.ROOMS) {
+        return jsonResponse({ success: false, error: "Durable Objects kullanılamıyor." }, 503);
+      }
+      const id = env.ROOMS.idFromName("BACKUP_" + userKey);
+      const stub = env.ROOMS.get(id);
+
+      if (path === "/api/vault" && request.method === "GET") {
+        const vault = await stub.getVaultMeta();
+        return jsonResponse({ success: true, vault });
+      }
+      if (path === "/api/vault/seal" && request.method === "POST") {
+        try {
+          const body = await request.json();
+          const res = await stub.sealVault(body);
+          return jsonResponse(res, res.status || (res.success ? 200 : 400));
+        } catch (err) {
+          return jsonResponse({ success: false, error: "Ana Kasa mühürlenemedi: " + err.message }, 400);
+        }
+      }
+      if (path === "/api/vault/restore" && request.method === "POST") {
+        try {
+          const body = await request.json().catch(() => ({}));
+          const res = await stub.restoreVault(body);
+          return jsonResponse(res, res.status || (res.success ? 200 : 400));
+        } catch (err) {
+          return jsonResponse({ success: false, error: "Ana Kasa geri yüklenemedi: " + err.message }, 400);
+        }
+      }
+      return jsonResponse({ error: "Desteklenmeyen Ana Kasa isteği" }, 405);
     }
 
     // AI Sahne Direktörü & Asistanı Endpoint: /api/ai/chat
@@ -601,88 +790,133 @@ export default {
 
         const rawSongs = context.allSongs || context.librarySongs || [];
         const rawSetlists = context.setlists || [];
+        const stageInfo = context.stage || {};
+        const vaultInfo = context.vault || {};
 
-        // Eksiksiz ve kompakt repertuar listesi (tüm kütüphaneler dahil)
+        // Eksiksiz ve kompakt Repertuar listesi
         const formattedRepertoire = rawSongs.map((s, i) => {
           const title = s.t || s.title || "İsimsiz";
           const artist = s.a || s.artist ? ` - ${s.a || s.artist}` : "";
           const key = s.k || s.key ? ` (${s.k || s.key})` : "";
           const bpm = s.b || s.bpm ? ` [${s.b || s.bpm} BPM]` : "";
-          const lib = s.l ? ` [${s.l}]` : "";
-          return `${i + 1}. ${title}${artist}${key}${bpm}${lib}`;
+          const noteText = (s.n || s.notes || "").replace(/\s+/g, " ").trim();
+          const notes = noteText ? ` {Not: ${noteText.slice(0, 60)}}` : "";
+          const hasLink = (s.u || s.link) ? " [Link]" : "";
+          return `${i + 1}. ${title}${artist}${key}${bpm}${notes}${hasLink}`;
         }).join("\n");
 
-        // Eksiksiz setlistler ve içerdikleri şarkılar
+        // Eksiksiz Setlistler
         const formattedSetlists = rawSetlists.map(sl => {
           const songList = Array.isArray(sl.songs) ? sl.songs.join(", ") : "";
-          return `- "${sl.name}" (${(sl.songs || []).length} şarkı)${sl.band ? ' [' + sl.band + ']' : ''}: ${songList || 'Boş'}`;
+          const idTag = sl.id ? `[id: ${sl.id}] ` : "";
+          return `- ${idTag}"${sl.name}" (${(sl.songs || []).length} şarkı)${sl.band ? ' [' + sl.band + ']' : ''}: ${songList || 'Boş'}`;
         }).join("\n");
 
-        const systemInstruction = `Sen GigSync canlı sahne uygulamasının ultra hızlı profesyonel sahne direktörüsün.
-Kullanıcının adı: ${context.username || "Müzisyen"}.
+        // Canlı Sahne durumu
+        const stageMembers = Array.isArray(stageInfo.members) ? stageInfo.members : [];
+        const membersText = stageMembers.length
+          ? stageMembers.map(m => `[id: ${m.id}] ${m.name}${m.isLeader ? " (Yönetici)" : " (Üye)"}`).join(", ")
+          : "Bağlı üye yok";
+        const formattedStage = `Durum: ${stageInfo.isLive ? "CANLI" : "KAPALI"} | Mod: ${stageInfo.mode || "-"} | Aktif Şarkı: ${stageInfo.activeSongTitle || "Yok"} | Bağlı Üyeler: ${membersText}`;
 
-KULLANICININ TÜM VE GÜNCEL REPERTUARI (Toplam ${rawSongs.length} Şarkı):
+        // Ana Kasa durumu
+        const originMeta = vaultInfo.origin;
+        const currentMeta = vaultInfo.current;
+        const historyList = Array.isArray(vaultInfo.history) ? vaultInfo.history : [];
+        const formattedVault = vaultInfo.exists
+          ? `Orijinal: ${originMeta ? originMeta.count + " şarkı" : "Yok"} | Güncel Mühürlü: ${currentMeta ? currentMeta.count + " şarkı" : "Yok"} | Geçmiş: ${historyList.length} sürüm`
+          : "Ana Kasa bilgisi henüz okunmadı";
+
+        // Ayarlar durumu
+        const formattedSettings = `Yönetici Adı: ${context.username || "Müzisyen"} | Tema: ${context.theme || "dark"} | Grup Anahtarı: ${context.groupKey || "-"} | Geçerli Temalar: ${VALID_THEMES.join(", ")}`;
+
+        const systemInstruction = `Sen GigSync canlı sahne yönetim asistanısın.
+Yönetici: ${context.username || "Müzisyen"}.
+
+CANLI REPERTUAR (Toplam ${rawSongs.length} Şarkı):
 ${formattedRepertoire || "Repertuarda henüz hiç şarkı yok."}
 
-KULLANICININ TÜM VE GÜNCEL SETLİSTLERİ (Toplam ${rawSetlists.length} Setlist):
+SETLİSTLER (Toplam ${rawSetlists.length} Setlist):
 ${formattedSetlists || "Henüz hiç setlist yok."}
 
-KRİTİK MÜZİSYEN VE SAHNE KURALLARI:
-1. REPERTUAR VE SETLİST HAKİMİYETİ:
-- Yukarıdaki repertuar ve setlist dökümü kullanıcının anlık, canlı ve eksiksiz verisidir.
-- Kullanıcı aynı isimli şarkıları, silinen/eklenen parçaları veya hangi şarkının hangi setlistte olduğunu sorduğunda bu gerçek listeyi tara ve doğrudan net bilgi ver.
-2. ASLA KAFANA GÖRE ORİJİNAL TON (KEY), BPM VEYA YOUTUBE LİNKİ DOLDURMA!
-Canlı müzikte şarkılar solistin ses rengine göre transpoze edilir. Bu nedenle:
-- YALNIZCA kullanıcı açıkça "orijinal tonlarını yaz", "orijinal tonunu bul", "BPM ekle", "YouTube linklerini bul" gibi özel bir talepte bulunursa bu alanları doldur.
-- Kullanıcı bu detayları özellikle istemediyse key, bpm, link, notes alanlarını BOŞ ("") bırak!
-3. AŞIRI SADELİK VE HIZ (SIFIR BOŞ LAF VE AÇIKLAMA):
-- "Kuralımız gereği tonları ve bpm'leri boş bıraktım...", "Aşağıdaki butona dokunarak setlisti aktarabilirsin...", "Hazırsan iyi sahneler..." gibi gereksiz robotik açıklamaları ve kalıp lafları KESİNLİKLE YAZMA. Kullanıcı zaten butonu görüyor ve biliyor.
-- Sadece 1 kısa cümlelik profesyonel bir sahne yorumu yap, şarkı listesini sırala ve yanıtının sonuna aksiyon JSON bloğunu koy. Lafı uzatma, doğrudan sonuca odaklan!
-4. Kullanıcı senden bir setlist oluşturmanı veya kütüphaneye şarkı eklemeni istediğinde:
-Yanıtının en sonuna aşağıdaki özel formatta bir JSON aksiyon bloğu ekle. GigSync uygulaması bu bloğu okuyup tek dokunuşla ekrana setlist olarak işleyecektir!
+CANLI SAHNE DURUMU:
+${formattedStage}
 
-Setlist Oluşturma Formatı (Yanıtının EN SONUNA ekle):
+ANA KASA DURUMU:
+${formattedVault}
+
+AYARLAR:
+${formattedSettings}
+
+KATI KURALLAR (ASLA İHLAL ETME):
+1. KAPALI ALAN KİLİDİ:
+- Sen YALNIZCA GigSync (Repertuar, Setlistler, Canlı Sahne, Ana Kasa, Ayarlar) konusunda çalışırsın.
+- GigSync dışındaki HERHANGİ BİR İSTEKTE ("araba yap", "yemek tarifi", "kod yaz", "hava durumu", genel bilgi, matematik, sohbet vb.) hiçbir \`gigsync_action\` bloğu ÜRETME ve YALNIZCA şunu yaz:
+"Ben sadece GigSync sahne, repertuar ve setlist asistanıyım; bu konuda yardımcı olamam."
+2. SIFIR UYDURMA VE DOĞRULAMA:
+- Sistemde olmayan bir özelliği, şarkıyı, setlisti veya üyeyi ASLA uydurma; yukarıdaki gerçek listelerde yoksa "bulunamadı" de.
+- Kullanıcının "orijinal tonunu yaz / BPM ekle / YouTube linki bul" açık talebi olmadıkça yeni key, bpm, link, notes UYDURMA; boş ("") bırak.
+- Repertuar, setlist, Ana Kasa veya ayar değiştiren işlemlerde uygula butonunu kullanıcı onaylar; sadece sahnede şarkı seçme ve sahneyi açma komutları anında uygulanır. Yanıtlarında "butona dokun" gibi gereksiz açıklamalar yazma, kısa ve net ol.
+3. YALNIZCA BU 13 RESMİ AKSİYONU KULLAN (yanıtının EN SONUNA tek bir \`\`\`gigsync_action ... \`\`\` bloğu ekle):
+
+(A) REPERTUAR:
+1) UPDATE_REPERTOIRE (mevcut şarkının title/artist/key/bpm/notes/link alanlarını düzelt; sıra no listeden aynen alınır; tek yanıtta en fazla 120 kayıt):
 \`\`\`gigsync_action
-{
-  "action": "CREATE_SETLIST",
-  "name": "Setlist Adı",
-  "band": "Grup veya Boş",
-  "songs": [
-    { "title": "Şarkı Adı", "artist": "Sanatçı", "key": "", "bpm": "", "notes": "", "link": "" }
-  ]
-}
+{ "action": "UPDATE_REPERTOIRE", "changes": [{ "no": 12, "key": "Dm", "bpm": "120", "notes": "...", "link": "..." }] }
+\`\`\`
+2) ADD_TO_REPERTOIRE (yeni şarkı ekle):
+\`\`\`gigsync_action
+{ "action": "ADD_TO_REPERTOIRE", "songs": [{ "title": "Şarkı Adı", "artist": "Sanatçı", "key": "", "bpm": "", "notes": "", "link": "" }] }
+\`\`\`
+3) DELETE_FROM_REPERTOIRE (YALNIZCA kullanıcı açıkça şarkı silmek isterse):
+\`\`\`gigsync_action
+{ "action": "DELETE_FROM_REPERTOIRE", "remove": [57] }
+\`\`\`
+4) RESTORE_MASTER_VAULT (Ana Kasa'yı Repertuar'a geri yükle; target: "current" | "origin" | 0..4):
+\`\`\`gigsync_action
+{ "action": "RESTORE_MASTER_VAULT", "target": "origin" }
+\`\`\`
+5) SEAL_MASTER_VAULT (mevcut Repertuar'ı yeni Ana Kasa sürümü olarak kilitle):
+\`\`\`gigsync_action
+{ "action": "SEAL_MASTER_VAULT", "label": "Güncel Ana Kasa" }
 \`\`\`
 
-Kütüphaneye Toplu Şarkı Ekleme Formatı:
+(B) SETLİSTLER:
+6) CREATE_SETLIST:
 \`\`\`gigsync_action
-{
-  "action": "ADD_TO_LIBRARY",
-  "songs": [
-    { "title": "Şarkı Adı", "artist": "Sanatçı", "key": "", "bpm": "", "notes": "", "link": "" }
-  ]
-}
+{ "action": "CREATE_SETLIST", "name": "Setlist Adı", "band": "", "songs": [{ "no": 12, "title": "Şarkı Adı", "artist": "Sanatçı", "key": "", "bpm": "", "notes": "", "link": "" }] }
+\`\`\`
+7) UPDATE_SETLIST (setlistId veya setlistName ile eşle; newName, band, addNos, removeTitles, reorderTitles isteğe bağlı):
+\`\`\`gigsync_action
+{ "action": "UPDATE_SETLIST", "setlistId": "...", "setlistName": "...", "newName": "...", "band": "...", "addNos": [1, 2], "removeTitles": ["..."], "reorderTitles": ["..."] }
+\`\`\`
+8) DELETE_SETLIST:
+\`\`\`gigsync_action
+{ "action": "DELETE_SETLIST", "setlistId": "...", "setlistName": "..." }
 \`\`\`
 
-5. REPERTUARDAKİ ŞARKILARI DÜZELTME / DÜZENLEME:
-Kullanıcı repertuardaki şarkıların adını, sanatçısını, tonunu veya BPM'ini düzeltmeni/değiştirmeni ya da bozuk veya tekrar eden kayıtları silmeni isterse UPDATE_LIBRARY aksiyonunu kullan (yeni şarkı EKLEME, var olanı düzenle).
-- Şarkıyı yukarıdaki repertuar listesindeki SIRA NUMARASIYLA ("no") belirt. Numarayı listeden aynen al, asla tahmin etme.
-- Her değişiklikte SADECE değişen alanları yaz. Değişmeyen alanları hiç yazma.
-- Yazım düzeltmesinde doğru Türkçe karakterleri ve şarkının/sanatçının bilinen doğru yazımını kullan (ör. "Elves Presley" → "Elvis Presley", "californiacation" → "Californication").
-- Ton ve BPM için kural 2 geçerli: kullanıcı açıkça istemedikçe key/bpm yazma.
-- "remove" listesini YALNIZCA kullanıcı silme/temizleme istediyse kullan.
-- Tek yanıtta en fazla 120 değişiklik yaz; daha fazlası varsa yanıtında kalanlar için "devam et" demesini söyle.
-- Değişiklikler kullanıcı onaylayınca uygulanır; yanıtında kısaca ne yaptığını söyle.
-
-Repertuar Düzeltme Formatı:
+(C) CANLI SAHNE:
+9) STAGE_SELECT_SONG (repertuardaki "no" ve/veya "title" ile sahnede şarkıyı hemen aç):
 \`\`\`gigsync_action
-{
-  "action": "UPDATE_LIBRARY",
-  "changes": [
-    { "no": 12, "title": "Doğru Şarkı Adı" },
-    { "no": 40, "artist": "Doğru Sanatçı" }
-  ],
-  "remove": [57]
-}
+{ "action": "STAGE_SELECT_SONG", "no": 12, "title": "Şarkı Adı" }
+\`\`\`
+10) STAGE_OPEN ("quick" veya "setlist" modunda canlı sahneyi aç):
+\`\`\`gigsync_action
+{ "action": "STAGE_OPEN", "mode": "quick", "setlistId": "...", "setlistName": "..." }
+\`\`\`
+11) STAGE_CLOSE (canlı sahneyi kapat):
+\`\`\`gigsync_action
+{ "action": "STAGE_CLOSE" }
+\`\`\`
+12) STAGE_KICK_MEMBER (bağlı üyeyi çıkar):
+\`\`\`gigsync_action
+{ "action": "STAGE_KICK_MEMBER", "memberId": "...", "memberName": "..." }
+\`\`\`
+
+(D) AYARLAR:
+13) UPDATE_SETTINGS (username, geçerli listeden theme, groupKey):
+\`\`\`gigsync_action
+{ "action": "UPDATE_SETTINGS", "username": "...", "theme": "dark", "groupKey": "..." }
 \`\`\``;
 
         const contents = [];
@@ -765,14 +999,22 @@ Repertuar Düzeltme Formatı:
         const geminiData = await geminiRes.json();
         const rawText = geminiData.candidates?.[0]?.content?.parts?.[0]?.text || "Bir yanıt oluşturulamadı.";
 
-        // gigsync_action bloğunu ayıkla
+        // gigsync_action bloğunu ayıkla ve beyaz liste ile doğrula
         let action = null;
         let cleanReply = rawText;
         const actionMatch = rawText.match(/```gigsync_action\s*([\s\S]*?)\s*```/);
         if (actionMatch) {
           try {
-            action = JSON.parse(actionMatch[1]);
+            const parsed = JSON.parse(actionMatch[1]);
             cleanReply = rawText.replace(/```gigsync_action[\s\S]*?```/, "").trim();
+            if (parsed && typeof parsed.action === "string") {
+              const rawName = parsed.action.trim();
+              const normalizedName = AI_ACTION_ALIASES[rawName] || rawName;
+              if (ALLOWED_AI_ACTIONS.has(normalizedName)) {
+                parsed.action = normalizedName;
+                action = parsed;
+              }
+            }
           } catch (e) {
             console.warn("Aksiyon bloğu ayrıştırılamadı:", e);
           }
