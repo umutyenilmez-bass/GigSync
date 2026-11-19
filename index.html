@@ -4130,7 +4130,10 @@
       <div class="sheet-title" id="me-modal-title">+ MASHUP</div>
       <div class="form-group">
         <div class="form-label">Mashup Adı</div>
-        <input id="me-title" class="form-input" type="text" maxlength="80" placeholder="ör. Roman Potpuri / 90'lar Pop" autocomplete="off" />
+        <div style="display:flex;gap:8px">
+          <input id="me-title" class="form-input" style="flex:1;min-width:0" type="text" maxlength="80" placeholder="ör. Roman Potpuri / 90'lar Pop" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();saveMashupFromEditor();}" />
+          <button class="btn btn-primary" style="flex-shrink:0;padding:0 20px" onclick="saveMashupFromEditor()">Kaydet</button>
+        </div>
       </div>
       <div class="form-group">
         <div class="form-label" id="me-parts-count" style="display:none"></div>
@@ -4148,7 +4151,6 @@
       <div style="display:flex;gap:8px;margin-top:14px">
         <button id="me-delete-btn" class="btn btn-danger" style="display:none;flex:0 0 auto;padding:0 14px" onclick="deleteMashupFromEditor()">Sil</button>
         <button class="btn btn-ghost" style="flex:1" onclick="closeMashupEditor()">İptal</button>
-        <button class="btn btn-primary" style="flex:2" onclick="saveMashupFromEditor()">Kaydet</button>
       </div>
     </div>
   </div>
