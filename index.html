@@ -5621,6 +5621,9 @@
               }
             } else if (data.type === 'REPLACED' || data.type === 'KICKED') {
               ws._suppressReconnect = true;
+              if (leaderPingTimer) { clearInterval(leaderPingTimer); leaderPingTimer = null; }
+              try { ws.close(1000, data.type); } catch (e) {}
+              showToast(data.type === 'KICKED' ? 'Listeden çıkarıldın' : 'Yeni oturum açıldı');
             }
           } catch (err) {
             console.error('[GigSync Leader] WebSocket parse error:', err);
@@ -5647,7 +5650,7 @@
       // Ekran kilidi açılınca veya sekmeye dönünce bağlantıyı kontrol et
       const onLeaderVisibilityChange = () => {
         if (document.visibilityState === 'visible' && S.activeRoomCode === code) {
-          if (!leaderWs || leaderWs.readyState !== WebSocket.OPEN) {
+          if (!leaderWs || (leaderWs.readyState !== WebSocket.OPEN && !leaderWs._suppressReconnect)) {
             connectWs();
           }
         }
@@ -6488,12 +6491,16 @@
               showToast('Sahne kapatıldı — lider bekleniyor');
             } else if (data.type === 'KICKED') {
               ws._suppressReconnect = true;
+              if (memberPingTimer) { clearInterval(memberPingTimer); memberPingTimer = null; }
+              try { ws.close(1000, data.type); } catch (e) {}
               activeSongId = null;
               songs = {};
               updateNowDisplay();
               showToast('Lider tarafından listeden çıkarıldın');
             } else if (data.type === 'REPLACED') {
               ws._suppressReconnect = true;
+              if (memberPingTimer) { clearInterval(memberPingTimer); memberPingTimer = null; }
+              try { ws.close(1000, data.type); } catch (e) {}
               showToast('Yeni oturum açıldı');
             }
           } catch (err) {

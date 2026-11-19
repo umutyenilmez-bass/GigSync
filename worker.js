@@ -469,6 +469,10 @@ export class SyncRoom extends DurableObject {
       ws.serializeAttachment(null);
     } catch (e) {}
     this.sessions.delete(ws);
+    try {
+      const safeCode = (typeof code === "number" && (code === 1000 || (code >= 3000 && code <= 4999))) ? code : 1000;
+      ws.close(safeCode, typeof reason === "string" ? reason : "Closed");
+    } catch (e) {}
     if (!meta) return;
 
     const members = this.getMemberList();
