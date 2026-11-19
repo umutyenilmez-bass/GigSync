@@ -1303,6 +1303,13 @@
       transition: transform .2s;
     }
     .home-sec-toggle.open .home-sec-chev { transform: rotate(90deg); }
+    .setlists-section-hdr .home-sec-toggle {
+      flex: 1;
+      display: flex;
+      padding: 12px 14px;
+      font-size: 13px;
+    }
+    .home-sec-toggle .home-sec-count { margin-left: auto; }
     .home-sec-count { opacity: .7; }
     .home-add-row {
       padding: 10px 12px;
@@ -6107,6 +6114,14 @@
     // Ana ekran bölümleri (Setlistler / Mashuplar) açılır-kapanır; durum cihazda hatırlanır
     function isHomeSecOpen(k) { return LS.get('gs_home_open_' + k) === true; }
     window.toggleHomeSection = (k) => {
+      const count = k === 'setlists'
+        ? Object.keys(S.setlists || {}).length
+        : getAllRepertoireSongs().filter(isMashupSong).length;
+      if (!count) {
+        if (k === 'setlists') showCreateSetlistModal();
+        else openMashupEditor();
+        return;
+      }
       LS.set('gs_home_open_' + k, !isHomeSecOpen(k));
       applyHomeSections();
     };
