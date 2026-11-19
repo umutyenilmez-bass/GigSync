@@ -3066,7 +3066,7 @@
       <div class="sheet-title">ADIN</div>
       <div class="form-group">
         <div class="form-label">Sahnedeki adın</div>
-        <input id="username-input" class="form-input" type="text" placeholder="ör. Umut" maxlength="30" />
+        <input id="username-input" class="form-input" type="text" placeholder="adınızı yazın" maxlength="30" />
       </div>
       <div style="display:flex;gap:10px">
         <button class="btn btn-ghost" style="flex:1" onclick="closeNameModal()">İptal</button>
@@ -3347,7 +3347,7 @@
         <!-- Welcome message -->
         <div class="ai-msg bot">
           <div class="ai-msg-bubble">
-            Selam Umut! 🎸 Nasıl bir setlist yapalım?
+            Selam! 🎸 Nasıl bir setlist yapalım?
           </div>
         </div>
       </div>
@@ -6085,7 +6085,7 @@
       }));
 
       const context = {
-        username: S.username || 'Umut',
+        username: S.username || 'Lider',
         allSongs: allSongs,
         setlists: setlists
       };
@@ -6611,7 +6611,7 @@
         try {
           const updatedAt = parseInt(LS.get('gs_last_updated_at') || '0', 10) || Date.now();
           const backupData = {
-            username: S.username || 'Umut',
+            username: S.username || '',
             libraries: S.libraries,
             setlists: S.setlists,
             groupKey: S.groupKey,
@@ -6741,20 +6741,15 @@
     function initApp() {
       loadAll();
       loadTheme();
-      if (!S.userRole) {
-        showScreen('splash');
-      } else if (S.userRole === 'crew') {
-        applyRole();
-        joinRoomDirect(true);
-      } else {
-        applyRole();
-        showScreen('home');
-        renderSetlistCards();
-        renderLibrary();
-        updateQuickStageCount();
-        syncLiveUI();
-        autoSyncFromCloud(true);
-      }
+      // Sayfa her açıldığında yönetici (host) ana sayfası açılır
+      S.userRole = 'host';
+      applyRole();
+      showScreen('home');
+      renderSetlistCards();
+      renderLibrary();
+      updateQuickStageCount();
+      syncLiveUI();
+      autoSyncFromCloud(true);
     }
     if (document.readyState !== 'loading') {
       initApp();
