@@ -13,7 +13,7 @@ Yöneticinin sahnede kullandığı ve düzenlediği aktif şarkı havuzu.
 _Avoid_: Kütüphane, REP, library
 
 **Mashup**:
-Repertuar içinden seçilen 2 veya daha fazla şarkının sahnede hiç durmadan peş peşe çalınmak üzere sıralandığı, kendine özel ton/BPM ezmesi ve isteğe bağlı geçiş notu içerebilen kesintisiz şarkı bloğu.
+Repertuar içinden seçilen 2 veya daha fazla şarkının sahnede hiç durmadan peş peşe çalınmak üzere sıralandığı, her parça için kendine özel ton/BPM içerebilen kesintisiz şarkı bloğu.
 _Avoid_: Karma, karışık
 
 **Setlist**:
