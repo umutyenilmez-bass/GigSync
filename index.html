@@ -6850,7 +6850,12 @@
       if (clearBtn) clearBtn.style.display = rawQ ? 'flex' : 'none';
 
       updateQuickStageNowBar();
-      const allSongs = sortRepertoireSongs(getAllRepertoireSongs());
+      // Mashuplar en üstte (en yeni önce), ardından tüm şarkılar A-Z
+      const sortedSongs = sortRepertoireSongs(getAllRepertoireSongs());
+      const allSongs = [
+        ...sortedSongs.filter(isMashupSong).sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0)),
+        ...sortedSongs.filter(s => !isMashupSong(s))
+      ];
 
       if (q) {
         const matches = allSongs.filter(s => matchesSongQuery(s, q));

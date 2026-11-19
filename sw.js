@@ -1,4 +1,4 @@
-const CACHE = 'gigsync-v29-ai-mashup-chip';
+const CACHE = 'gigsync-v30-qs-mashups-first';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/Gig_Sync_Logo.png'];
 
 self.addEventListener('install', e => {
