@@ -13,6 +13,10 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Requested-With",
 };
 
+// Bir bağlantı bu süre boyunca PING göndermezse (telefon kilitlendi, bağlantı koptu) listeden düşer
+const STALE_MS = 75000;
+const SWEEP_MS = 30000;
+
 function jsonResponse(data, status = 200, extraHeaders = {}) {
   return new Response(JSON.stringify(data), {
     status,
@@ -227,6 +231,47 @@ export class SyncRoom extends DurableObject {
     return { success: true, members };
   }
 
+  // Yanıt vermeyen bağlantıları kapat. Bir şey kapatıldıysa true döner.
+  pruneStale() {
+    const now = Date.now();
+    let changed = false;
+    for (const ws of this.ctx.getWebSockets()) {
+      const meta = this.sessions.get(ws) || ws.deserializeAttachment();
+      if (!meta) continue;
+      if (now - (meta.lastSeen || meta.joinedAt || 0) > STALE_MS) {
+        try { ws.close(1001, "Stale connection"); } catch (e) {}
+        this.sessions.delete(ws);
+        changed = true;
+      }
+    }
+    return changed;
+  }
+
+  // Bağlantının son görülme zamanını güncelle (PING geldiğinde)
+  touch(ws) {
+    const meta = this.sessions.get(ws) || ws.deserializeAttachment();
+    if (!meta) return;
+    meta.lastSeen = Date.now();
+    this.sessions.set(ws, meta);
+    try { ws.serializeAttachment(meta); } catch (e) {}
+  }
+
+  async scheduleSweep() {
+    if (this.ctx.getWebSockets().length === 0) return;
+    const existing = await this.ctx.storage.getAlarm();
+    if (!existing) await this.ctx.storage.setAlarm(Date.now() + SWEEP_MS);
+  }
+
+  async alarm() {
+    if (this.pruneStale()) {
+      const members = this.getMemberList();
+      this.broadcast({ type: "MEMBERS_UPDATE", members, count: members.length });
+    }
+    if (this.ctx.getWebSockets().length > 0) {
+      await this.ctx.storage.setAlarm(Date.now() + SWEEP_MS);
+    }
+  }
+
   broadcast(messageObj, excludeWs = null) {
     const payload = typeof messageObj === "string" ? messageObj : JSON.stringify(messageObj);
     for (const ws of this.ctx.getWebSockets()) {
@@ -288,6 +333,7 @@ export class SyncRoom extends DurableObject {
         role,
         isLeader,
         joinedAt: Date.now(),
+        lastSeen: Date.now(),
       };
 
       // Accept socket via Hibernation API
@@ -311,6 +357,7 @@ export class SyncRoom extends DurableObject {
         members,
         count: members.length,
       });
+      await this.scheduleSweep();
 
       return new Response(null, {
         status: 101,
@@ -362,6 +409,7 @@ export class SyncRoom extends DurableObject {
         }
 
         case "PING": {
+          this.touch(ws);
           ws.send(JSON.stringify({ type: "PONG", timestamp: Date.now() }));
           break;
         }
