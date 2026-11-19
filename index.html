@@ -5175,9 +5175,19 @@
 
     window.saveMashupFromEditor = () => {
       const title = (document.getElementById('me-title')?.value || '').trim();
-      if (!title) return showToast('Mashup adı boş olamaz');
       const cleanParts = cloneMashupParts(meDraftParts);
       if (cleanParts.length < 2) return showToast('Mashup için en az 2 şarkı ekle');
+      if (!title) {
+        askName({
+          title: 'MASHUP ADI',
+          value: cleanParts.map(p => p.title).filter(Boolean).join(' + ').slice(0, 60),
+          onSave: (v) => {
+            document.getElementById('me-title').value = v;
+            saveMashupFromEditor();
+          }
+        });
+        return;
+      }
       const notes = (document.getElementById('me-notes')?.value || '').trim();
 
       const existingRep = meEditingId ? findRepSong(meEditingId) : null;
@@ -5601,10 +5611,64 @@
       _saveQuickStagePending = false;
       document.getElementById('create-setlist-modal').classList.add('hidden');
     };
+    // İsimsiz kaydetmeye basılınca isim kutusu açılır (önerilen ad seçili gelir); isim verilmeden kayıt olmaz
+    let _nameAskSave = null;
+    function askName({ title, value = '', onSave }) {
+      let modal = document.getElementById('name-ask-modal');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'name-ask-modal';
+        modal.className = 'overlay hidden';
+        modal.style.zIndex = '260';
+        modal.onclick = (e) => { if (e.target === modal) closeNameAsk(); };
+        modal.innerHTML = `
+          <div class="sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title" id="na-title"></div>
+            <input id="na-input" class="form-input" type="text" maxlength="80" autocomplete="off" />
+            <div style="display:flex;gap:10px;margin-top:14px">
+              <button class="btn btn-ghost" style="flex:1" onclick="closeNameAsk()">İptal</button>
+              <button class="btn btn-primary" style="flex:2" onclick="confirmNameAsk()">Kaydet</button>
+            </div>
+          </div>`;
+        document.body.appendChild(modal);
+        modal.querySelector('#na-input').addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') { e.preventDefault(); confirmNameAsk(); }
+        });
+      }
+      _nameAskSave = onSave;
+      document.getElementById('na-title').textContent = title;
+      const input = document.getElementById('na-input');
+      input.value = value;
+      modal.classList.remove('hidden');
+      setTimeout(() => { input.focus(); input.select(); }, 60);
+    }
+    window.closeNameAsk = () => {
+      _nameAskSave = null;
+      document.getElementById('name-ask-modal')?.classList.add('hidden');
+    };
+    window.confirmNameAsk = () => {
+      const v = (document.getElementById('na-input')?.value || '').trim();
+      if (!v) { document.getElementById('na-input')?.focus(); return; }
+      const cb = _nameAskSave;
+      closeNameAsk();
+      if (cb) cb(v);
+    };
+
     window.createSetlist = () => {
       const name = document.getElementById('new-setlist-name').value.trim();
       const band = document.getElementById('new-setlist-band').value.trim();
-      if (!name) { showToast('Setlist adı gir'); return; }
+      if (!name) {
+        askName({
+          title: 'SETLİST ADI',
+          value: 'Setlist ' + new Date().toLocaleDateString('tr-TR'),
+          onSave: (v) => {
+            document.getElementById('new-setlist-name').value = v;
+            createSetlist();
+          }
+        });
+        return;
+      }
       const wasQuickSave = _saveQuickStagePending;
       const songs = wasQuickSave
         ? S.quickSongs.map((s, i) => ({

@@ -1,4 +1,4 @@
-const CACHE = 'gigsync-v36-layer-divider';
+const CACHE = 'gigsync-v37-name-ask';
 const ASSETS = ['/', '/index.html', '/manifest.json', '/Gig_Sync_Logo.png'];
 
 self.addEventListener('install', e => {
