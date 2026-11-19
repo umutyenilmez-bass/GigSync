@@ -3874,6 +3874,12 @@
       return out;
     }
 
+    function sortRepertoireSongs(list) {
+      return [...(list || [])].sort((a, b) =>
+        String((a && a.title) || '').localeCompare(String((b && b.title) || ''), 'tr')
+      );
+    }
+
     function updateQuickStageCount() {
       const count = getAllRepertoireSongs().length;
       const cardSub = document.getElementById('qs-card-count');
@@ -4233,10 +4239,11 @@
       const all = getAllRepertoireSongs().filter(s => s && s.id);
       const missingCount = all.filter(isRepSongMissing).length;
 
-      const filtered = all
-        .filter(s => !q || trNormalize(s.title).includes(q) || trNormalize(s.artist || '').includes(q))
-        .filter(s => !repEditMissingOnly || isRepSongMissing(s))
-        .sort((a, b) => String(a.title || '').localeCompare(String(b.title || ''), 'tr'));
+      const filtered = sortRepertoireSongs(
+        all
+          .filter(s => !q || trNormalize(s.title).includes(q) || trNormalize(s.artist || '').includes(q))
+          .filter(s => !repEditMissingOnly || isRepSongMissing(s))
+      );
 
       const countEl = document.getElementById('rep-edit-count');
       if (countEl) countEl.textContent = `${filtered.length} şarkı`;
@@ -5267,6 +5274,8 @@
     let leaderReconnectTimer = null;
     let _qsSearchResults = [];
     let _qsBrowseResults = [];
+    const QS_BROWSE_PAGE = 250;
+    let qsBrowseLimit = QS_BROWSE_PAGE;
 
     function updateMemberCountDots(count) {
       ['member-count-dot', 'qs-member-count-dot'].forEach(id => {
@@ -5640,6 +5649,7 @@
 
     // ══════════ HIZLI SAHNE (SETLISTSİZ REPERTUAR YAYINI) ══════════
     window.openQuickStage = () => {
+      qsBrowseLimit = QS_BROWSE_PAGE;
       updateUsernameDisplay();
       updateQuickStageCount();
       syncLiveUI();
@@ -5658,11 +5668,17 @@
     };
 
     window.clearQuickStageSearch = () => {
+      qsBrowseLimit = QS_BROWSE_PAGE;
       const input = document.getElementById('qs-search-input');
       if (input) {
         input.value = '';
         input.focus();
       }
+      renderQuickStageView();
+    };
+
+    window.loadMoreQuickStage = () => {
+      qsBrowseLimit += 300;
       renderQuickStageView();
     };
 
@@ -5717,7 +5733,7 @@
       if (clearBtn) clearBtn.style.display = rawQ ? 'flex' : 'none';
 
       updateQuickStageNowBar();
-      const allSongs = getAllRepertoireSongs();
+      const allSongs = sortRepertoireSongs(getAllRepertoireSongs());
 
       if (q) {
         const matches = allSongs.filter(s =>
@@ -5729,15 +5745,15 @@
           if (isSongPlayedTonight(s)) playedMatches.push(s);
           else unplayedMatches.push(s);
         });
-        _qsSearchResults = [...unplayedMatches, ...playedMatches].slice(0, 60);
+        _qsSearchResults = [...unplayedMatches, ...playedMatches].slice(0, 250);
 
         if (!_qsSearchResults.length) {
           container.innerHTML = `<div style="text-align:center;padding:36px 16px;color:var(--text-muted);font-size:13px">"${esc(rawQ.trim())}" için repertuarda şarkı bulunamadı.</div>`;
           return;
         }
 
-        const extraNote = matches.length > 60
-          ? `<span style="font-size:10px;color:var(--text-muted)">İlk 60 gösteriliyor</span>`
+        const extraNote = matches.length > 250
+          ? `<span style="font-size:10px;color:var(--text-muted)">İlk 250 gösteriliyor</span>`
           : '';
 
         container.innerHTML = `
@@ -5798,9 +5814,13 @@
         : '';
 
       const unplayedSongs = allSongs.filter(s => !isSongPlayedTonight(s));
-      _qsBrowseResults = unplayedSongs.slice(0, 40);
+      _qsBrowseResults = unplayedSongs.slice(0, qsBrowseLimit);
       const dividerHtml = (S.quickSongs.length > 0 && _qsBrowseResults.length > 0)
         ? '<div class="divider" style="margin:14px 0"></div>'
+        : '';
+      const remainingBrowse = unplayedSongs.length - _qsBrowseResults.length;
+      const moreBrowseBtn = remainingBrowse > 0
+        ? `<button class="rep-edit-more-btn" onclick="loadMoreQuickStage()">Daha fazla göster (${remainingBrowse} şarkı kaldı)</button>`
         : '';
       const browseHtml = _qsBrowseResults.length > 0 ? `
         ${dividerHtml}
@@ -5816,6 +5836,7 @@
             </div>
           </div>
         `).join('')}
+        ${moreBrowseBtn}
       ` : '';
 
       container.innerHTML = `
