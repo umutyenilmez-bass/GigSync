@@ -3336,6 +3336,20 @@
     .me-picker-row:last-child { border-bottom: none; }
     .me-picker-row:active { background: var(--surface3); }
 
+    .row-grip {
+      flex-shrink: 0;
+      width: 22px;
+      text-align: center;
+      font-size: 18px;
+      line-height: 1;
+      color: var(--text-muted);
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+    }
+    #cs-selected .me-parts-box { max-height: 26dvh; overflow-y: auto; }
+    #cs-selected .me-part-row,
+    #me-parts-list .me-part-row { cursor: pointer; }
     /* Ana ekran bölümleri: başlık kenardan içeride, liste başlığa sol çizgiyle bağlı.
        Setlistler mavi (vurgu rengi), Mashuplar mor (mavinin yanında uyumlu bir ton). */
     #setlists-toggle { --sec: var(--accent); }
@@ -5223,7 +5237,8 @@
         return;
       }
       list.innerHTML = '<div class="me-parts-box">' + meDraftParts.map((p, i) => `
-        <div class="me-part-row${meReplaceIdx === i ? ' is-replacing' : ''}">
+        <div class="me-part-row${meReplaceIdx === i ? ' is-replacing' : ''}" onclick="if(!event.target.closest('input,button'))removeMashupPart(${i})">
+          <span class="row-grip" onpointerdown="rowDragStart(event,'me')" onclick="event.stopPropagation()">≡</span>
           <span class="me-part-num">${i + 1}</span>
           <div class="rep-edit-row-main">
             <div class="rep-edit-row-title">${esc(p.title || '—')}</div>
@@ -5234,10 +5249,7 @@
             <input class="rep-tag me-tag-input" type="text" inputmode="numeric" maxlength="3" placeholder="BPM" value="${esc(p.bpm || '')}" oninput="updateMashupPartField(${i}, 'bpm', this.value)" />
           </div>
           <div class="me-part-btns">
-            <button type="button" class="me-icon-btn" onclick="moveMashupPart(${i}, -1)" ${i === 0 ? 'disabled style="opacity:.3"' : ''} title="Yukarı">↑</button>
-            <button type="button" class="me-icon-btn" onclick="moveMashupPart(${i}, 1)" ${i === meDraftParts.length - 1 ? 'disabled style="opacity:.3"' : ''} title="Aşağı">↓</button>
-            <button type="button" class="me-icon-btn" onclick="startReplaceMashupPart(${i})" title="Parçayı değiştir">⇄</button>
-            <button type="button" class="me-icon-btn del" onclick="removeMashupPart(${i})" title="Çıkar">×</button>
+            <button type="button" class="me-icon-btn" onclick="event.stopPropagation();startReplaceMashupPart(${i})" title="Parçayı değiştir">⇄</button>
           </div>
         </div>
       `).join('') + '</div>';
@@ -5676,6 +5688,58 @@
       document.getElementById('add-song-modal').classList.add('hidden');
     };
 
+    // ══ SÜRÜKLEYEREK SIRALAMA: setlist ve mashup parçaları (ok ve × yerine) ══
+    const DRAG_LISTS = {
+      cs: { box: 'cs-selected', arr: () => csSelectedIds, redraw: () => renderCreateSetlistPicker() },
+      me: { box: 'me-parts-list', arr: () => meDraftParts, redraw: () => { renderMashupEditorParts(); renderMashupSongPicker(); } }
+    };
+    let _rowDrag = null;
+    function rowDragRows(key) {
+      return [...document.querySelectorAll('#' + DRAG_LISTS[key].box + ' .me-part-row')];
+    }
+    window.rowDragStart = (e, key) => {
+      e.preventDefault();
+      const row = e.currentTarget.closest('.me-part-row');
+      if (!row) return;
+      _rowDrag = { key, row };
+      row.style.opacity = '.55';
+      window.addEventListener('pointermove', rowDragMove);
+      window.addEventListener('pointerup', rowDragEnd);
+      window.addEventListener('pointercancel', rowDragEnd);
+    };
+    function rowDragMove(e) {
+      if (!_rowDrag) return;
+      const arr = DRAG_LISTS[_rowDrag.key].arr();
+      const rows = rowDragRows(_rowDrag.key);
+      const cur = rows.indexOf(_rowDrag.row);
+      if (cur < 0) return;
+      let target = cur;
+      for (let i = 0; i < rows.length; i++) {
+        const r = rows[i].getBoundingClientRect();
+        const mid = r.top + r.height / 2;
+        if (i < cur && e.clientY < mid) { target = i; break; }
+        if (i > cur && e.clientY > mid) target = i;
+      }
+      if (target === cur) return;
+      const [item] = arr.splice(cur, 1);
+      arr.splice(target, 0, item);
+      if (target < cur) rows[target].before(_rowDrag.row);
+      else rows[target].after(_rowDrag.row);
+      rowDragRows(_rowDrag.key).forEach((r, i) => {
+        const n = r.querySelector('.me-part-num');
+        if (n) n.textContent = i + 1;
+      });
+    }
+    function rowDragEnd() {
+      window.removeEventListener('pointermove', rowDragMove);
+      window.removeEventListener('pointerup', rowDragEnd);
+      window.removeEventListener('pointercancel', rowDragEnd);
+      if (!_rowDrag) return;
+      const key = _rowDrag.key;
+      _rowDrag = null;
+      DRAG_LISTS[key].redraw();
+    }
+
     // ══ CREATE SETLIST · ŞARKI / MASHUP SEÇİMİ ══
     let csSelectedIds = [];
 
@@ -5712,15 +5776,11 @@
       if (selEl) {
         const chosen = csSelectedIds.map(id => repAll.find(x => x && x.id === id)).filter(Boolean);
         selEl.innerHTML = chosen.length ? '<div class="me-parts-box">' + chosen.map((x, i) => `
-          <div class="me-part-row">
+          <div class="me-part-row" data-id="${esc(x.id)}" onclick="toggleCreateSetlistSong(this.dataset.id)">
+            <span class="row-grip" onpointerdown="rowDragStart(event,'cs')" onclick="event.stopPropagation()">≡</span>
             <span class="me-part-num">${i + 1}</span>
             ${songMainHtml(x)}
             <div class="rep-edit-tags">${songTagsHtml(x)}</div>
-            <div class="me-part-btns">
-              <button type="button" class="me-icon-btn" onclick="moveCreateSetlistSong(${i}, -1)" ${i === 0 ? 'disabled style="opacity:.3"' : ''} title="Yukarı">↑</button>
-              <button type="button" class="me-icon-btn" onclick="moveCreateSetlistSong(${i}, 1)" ${i === chosen.length - 1 ? 'disabled style="opacity:.3"' : ''} title="Aşağı">↓</button>
-              <button type="button" class="me-icon-btn del" data-id="${esc(x.id)}" onclick="toggleCreateSetlistSong(this.dataset.id)" title="Çıkar">×</button>
-            </div>
           </div>`).join('') + '</div>' : '';
       }
 
