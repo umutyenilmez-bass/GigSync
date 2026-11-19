@@ -2958,9 +2958,9 @@
       font-family: var(--font-mono);
       font-size: 10px;
       font-weight: 700;
-      color: var(--accent);
-      background: var(--accent-glow);
-      border: 1px solid rgba(79, 142, 247, 0.35);
+      color: #a78bfa;
+      background: rgba(167, 139, 250, 0.14);
+      border: 1px solid rgba(167, 139, 250, 0.35);
       padding: 2px 7px;
       border-radius: 999px;
       vertical-align: middle;
@@ -3408,7 +3408,9 @@
       background: var(--bg);
       border-top: 1px solid var(--border2);
     }
-    .fp-picker .picker-search { flex-shrink: 0; height: 46px; }
+    .fp-picker .picker-search { flex-shrink: 0; height: 46px; padding: 0 16px; }
+    .fp-chosen { padding: 4px 14px; }
+    .fp-picker .me-picker-list { padding: 0 14px; }
     .fp-picker .me-picker-list {
       flex: 1;
       min-height: 0;
@@ -3451,6 +3453,30 @@
     }
     .fp-compact .fp-top { border-bottom: none; padding-top: 16px; }
     .fp-compact .fp-body { display: none; }
+
+    /* Setlist / Hızlı Sahne üst çubuğu telefonda taşmasın: başlık kısalır, düğmeler sıkışır, CANLI BAŞLAT tek satır */
+    #leader .leader-header,
+    #quick-stage .leader-header { gap: 8px; padding-left: 12px; padding-right: 12px; }
+    #leader .leader-header > div:first-child,
+    #quick-stage .leader-header > div:first-child { flex: 1; min-width: 0; }
+    #leader .leader-header { flex-wrap: wrap; row-gap: 8px; }
+    #leader .leader-header > div:first-child { flex: 1 1 150px; }
+    #leader .hdr-actions { margin-left: auto; }
+    #leader .leader-title {
+      font-size: 20px;
+      letter-spacing: 1px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    #leader .hdr-actions,
+    #quick-stage .hdr-actions { flex-shrink: 0; align-items: center; }
+    #leader .btn-leader-open { padding: 8px 12px; font-size: 11px; letter-spacing: 1px; white-space: nowrap; gap: 6px; }
+    #leader .hist-btns,
+    #quick-stage .hist-btns,
+    #rep-edit .hist-btns { margin-right: 0; }
+    #leader-song-list .drag-row { gap: 8px !important; padding: 10px !important; }
+    #leader-song-list .drag-row > div:first-child { min-width: 22px !important; font-size: 20px !important; }
 
     /* Ana ekran bölümleri: başlık kenardan içeride, liste başlığa sol çizgiyle bağlı.
        Setlistler mavi (vurgu rengi), Mashuplar mor (mavinin yanında uyumlu bir ton). */
