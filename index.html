@@ -529,7 +529,7 @@
       height: 38px !important;
     }
     body.theme-stage .fab-ai {
-      right: 120px !important;
+      right: 20px !important;
       height: 88px !important;
       padding: 0 24px !important;
       font-size: 16px !important;
@@ -594,6 +594,17 @@
     body.theme-stage .qs-mini-btn {
       font-size: 14px !important;
       padding: 8px 12px !important;
+    }
+    body.theme-stage .setlists-section-title {
+      font-size: 14px !important;
+    }
+    body.theme-stage .btn-new-setlist {
+      font-size: 14px !important;
+      padding: 10px 16px !important;
+    }
+    body.theme-stage .qs-played-badge {
+      font-size: 13px !important;
+      padding: 5px 10px !important;
     }
     body.theme-stage .member-hdr-btn {
       font-size: 15px !important;
@@ -1171,6 +1182,61 @@
     .qs-row.active {
       border-color: var(--green);
       background: rgba(52, 217, 142, 0.1);
+    }
+    .qs-row.played {
+      opacity: 0.72;
+    }
+    .qs-played-badge {
+      font-family: var(--font-mono);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: .5px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(52, 217, 142, 0.14);
+      color: var(--green);
+      border: 1px solid rgba(52, 217, 142, 0.28);
+      flex-shrink: 0;
+    }
+
+    /* SETLIST SECTION HEADER & + YENİ SETLİST */
+    .setlists-section-hdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin: 4px 2px 10px 2px;
+    }
+    .setlists-section-title {
+      font-family: var(--font-mono);
+      font-size: 11px;
+      letter-spacing: 2px;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+    .btn-new-setlist {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 7px 12px;
+      border-radius: 10px;
+      border: 1px solid var(--accent);
+      background: rgba(79, 142, 247, 0.14);
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 11px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      cursor: pointer;
+      transition: transform .15s, background-color .15s;
+    }
+    .btn-new-setlist:active {
+      transform: scale(0.96);
+    }
+    body.theme-light .btn-new-setlist {
+      background: #1C1917;
+      color: #FAF7F0;
+      border-color: #1C1917;
     }
     .qs-row-info {
       flex: 1;
@@ -2481,7 +2547,7 @@
     .fab-ai {
       position: fixed;
       bottom: max(env(safe-area-inset-bottom), 24px);
-      right: 86px;
+      right: 20px;
       height: 54px;
       padding: 0 18px;
       border-radius: 16px;
@@ -2498,13 +2564,9 @@
       box-shadow: 0 4px 20px rgba(79,142,247,0.35);
       cursor: pointer;
       z-index: 85;
-      transition: transform .2s, box-shadow .2s, right .2s;
+      transition: transform .2s, box-shadow .2s;
     }
     .fab-ai:hover { transform: scale(1.04); box-shadow: 0 6px 24px rgba(139,92,246,0.45); }
-    #fab-create[style*="none"] ~ #fab-ai,
-    #fab-create[style*="none"] + #fab-ai {
-      right: 20px;
-    }
     .ai-chip {
       background: var(--surface2);
       border: 1px solid var(--border);
@@ -2683,7 +2745,13 @@
           </svg>
         </div>
 
-        <div id="setlists-section-label" style="display:none;font-family:var(--font-mono);font-size:10px;letter-spacing:2px;color:var(--text-muted);margin:2px 2px 8px 2px;font-weight:700">SETLİSTLER</div>
+        <div id="setlists-section-hdr" class="setlists-section-hdr" style="display:none">
+          <div class="setlists-section-title">SETLİSTLER</div>
+          <button id="btn-new-setlist" class="btn-new-setlist" onclick="showCreateSetlistModal()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
+            YENİ SETLİST
+          </button>
+        </div>
         <div id="setlists-list"></div>
 
         <!-- CREW JOIN AREA (FALLBACK) -->
@@ -2708,13 +2776,6 @@
         <div style="height:80px"></div>
       </div>
     </div>
-
-    <button class="fab" id="fab-create" onclick="showCreateSetlistModal()">
-      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-        stroke-linecap="round">
-        <path d="M12 5v14M5 12h14" />
-      </svg>
-    </button>
 
     <button class="fab-ai" id="fab-ai" onclick="toggleAiChatModal()" title="AI Sahne Asistanı">
       <span style="font-size:14px">✨</span> AI ASİSTAN
@@ -3702,12 +3763,10 @@
       const isHost = S.userRole === 'host';
       const libBtn = document.getElementById('header-lib-btn');
       if (libBtn) libBtn.style.display = isHost ? '' : 'none';
-      const fab = document.getElementById('fab-create');
-      if (fab) fab.style.display = isHost ? '' : 'none';
       const quickCard = document.getElementById('quick-stage-card');
       if (quickCard) quickCard.style.display = isHost ? 'flex' : 'none';
-      const slLabel = document.getElementById('setlists-section-label');
-      if (slLabel) slLabel.style.display = isHost ? 'block' : 'none';
+      const slHdr = document.getElementById('setlists-section-hdr');
+      if (slHdr) slHdr.style.display = isHost ? 'flex' : 'none';
       const setlistsList = document.getElementById('setlists-list');
       if (setlistsList) setlistsList.style.display = isHost ? '' : 'none';
       const crewArea = document.getElementById('crew-join-area');
@@ -4340,7 +4399,7 @@
       const localSl = Object.values(S.setlists).sort((a, b) => b.createdAt - a.createdAt);
 
       if (localSl.length === 0) {
-        list.innerHTML = `<div style="text-align:center;padding:28px 16px;color:var(--text-muted);font-size:13px;line-height:1.6">Kayıtlı setlist yok — yukarıdan <strong style="color:var(--text)">Hızlı Sahne</strong> açabilir veya sağ alttaki <strong style="color:var(--text)">+</strong> ile setlist oluşturabilirsin.</div>`;
+        list.innerHTML = `<div style="text-align:center;padding:28px 16px;color:var(--text-muted);font-size:13px;line-height:1.6">Kayıtlı setlist yok — yukarıdan <strong style="color:var(--text)">Hızlı Sahne</strong> açabilir veya hemen üstteki <strong style="color:var(--text)">+ YENİ SETLİST</strong> butonuna dokunabilirsin.</div>`;
         return;
       }
 
@@ -5002,6 +5061,17 @@
       bar.style.display = 'flex';
     }
 
+    function isSameQuickSong(entry, song) {
+      if (!entry || !song) return false;
+      if (song.id && entry.libId && entry.libId === song.id) return true;
+      return trNormalize(entry.title) === trNormalize(song.title) &&
+             trNormalize(entry.artist || '') === trNormalize(song.artist || '');
+    }
+
+    function isSongPlayedTonight(song) {
+      return S.quickSongs.some(entry => isSameQuickSong(entry, song));
+    }
+
     window.renderQuickStageView = () => {
       const input = document.getElementById('qs-search-input');
       const clearBtn = document.getElementById('qs-search-clear');
@@ -5019,7 +5089,13 @@
         const matches = allSongs.filter(s =>
           trNormalize(s.title).includes(q) || trNormalize(s.artist || '').includes(q)
         );
-        _qsSearchResults = matches.slice(0, 60);
+        const unplayedMatches = [];
+        const playedMatches = [];
+        matches.forEach(s => {
+          if (isSongPlayedTonight(s)) playedMatches.push(s);
+          else unplayedMatches.push(s);
+        });
+        _qsSearchResults = [...unplayedMatches, ...playedMatches].slice(0, 60);
 
         if (!_qsSearchResults.length) {
           container.innerHTML = `<div style="text-align:center;padding:36px 16px;color:var(--text-muted);font-size:13px">"${esc(rawQ.trim())}" için repertuarda şarkı bulunamadı.</div>`;
@@ -5035,16 +5111,21 @@
             <div class="qs-section-title">REPERTUARDA ${matches.length} EŞLEŞME</div>
             ${extraNote}
           </div>
-          ${_qsSearchResults.map((s, i) => `
-            <div class="qs-row" onclick="playQuickStageResult(${i})">
-              <div class="qs-row-info">
-                <div class="qs-row-title">${esc(s.title)}</div>
-                <div class="qs-row-meta">${esc(s.artist || '—')}</div>
+          ${_qsSearchResults.map((s, i) => {
+            const played = isSongPlayedTonight(s);
+            return `
+              <div class="qs-row${played ? ' played' : ''}" onclick="playQuickStageResult(${i})">
+                <div class="qs-row-info">
+                  <div class="qs-row-title">${esc(s.title)}</div>
+                  <div class="qs-row-meta">${esc(s.artist || '—')}</div>
+                </div>
+                <div class="qs-row-key">${esc(s.key || '')}</div>
+                ${played
+                  ? '<span class="qs-played-badge">✓ ÇALINDI</span>'
+                  : '<div style="font-family:var(--font-mono);font-size:11px;color:var(--accent);font-weight:700;flex-shrink:0">▶</div>'}
               </div>
-              <div class="qs-row-key">${esc(s.key || '')}</div>
-              <div style="font-family:var(--font-mono);font-size:11px;color:var(--accent);font-weight:700;flex-shrink:0">▶</div>
-            </div>
-          `).join('')}
+            `;
+          }).join('')}
         `;
         return;
       }
@@ -5075,10 +5156,13 @@
             Yukarıdan arayıp şarkıya dokun — canlı sahne otomatik açılır.
           </div>`;
 
-      _qsBrowseResults = allSongs.slice(0, 40);
+      const unplayedSongs = allSongs.filter(s => !isSongPlayedTonight(s));
+      _qsBrowseResults = unplayedSongs.slice(0, 40);
+      const browseTitle = S.quickSongs.length > 0 ? 'KALAN REPERTUAR' : 'REPERTUAR';
+      const browseCountText = unplayedSongs.length > 40 ? 'İLK 40 · ARAMA İLE TÜMÜ' : unplayedSongs.length;
       const browseHtml = _qsBrowseResults.length > 0 ? `
         <div class="qs-section-hdr" style="margin-top:16px">
-          <div class="qs-section-title">REPERTUAR (${allSongs.length > 40 ? 'İLK 40 · ARAMA İLE TÜMÜ' : allSongs.length})</div>
+          <div class="qs-section-title">${browseTitle} (${browseCountText})</div>
         </div>
         ${_qsBrowseResults.map((s, i) => `
           <div class="qs-row" onclick="playQuickStageBrowse(${i})">
@@ -5113,12 +5197,9 @@
 
     async function playQuickStageSongObj(song) {
       if (!song) return;
-      const last = S.quickSongs[S.quickSongs.length - 1];
-      let entry = null;
+      let entry = S.quickSongs.find(item => isSameQuickSong(item, song)) || null;
 
-      if (last && ((song.id && last.libId === song.id) || (!song.id && last.title === song.title && (last.artist || '') === (song.artist || '')))) {
-        entry = last;
-      } else {
+      if (!entry) {
         entry = {
           id: 'qs_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
           title: song.title || 'Şarkı',
