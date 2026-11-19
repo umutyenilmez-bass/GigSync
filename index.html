@@ -544,11 +544,11 @@
       height: 38px !important;
     }
     body.theme-stage .fab-ai {
-      right: 20px !important;
-      height: 88px !important;
-      padding: 0 24px !important;
-      font-size: 16px !important;
-      border-radius: 20px !important;
+      right: 16px !important;
+      height: 40px !important;
+      padding: 0 14px !important;
+      font-size: 12px !important;
+      border-radius: 999px !important;
     }
 
     /* Setlist card (home) */
@@ -1062,6 +1062,7 @@
     }
 
     /* QUICK STAGE SCREEN */
+    .qs-now-bar[hidden] { display: none !important; }
     .qs-now-bar {
       display: none;
       align-items: center;
@@ -1278,6 +1279,51 @@
       gap: 10px;
       margin: 4px 2px 10px 2px;
     }
+    .home-sec-hdr { justify-content: flex-start; }
+    .setlists-section-hdr .home-sec-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 14px;
+      border-radius: 10px;
+      border: 1px solid var(--accent);
+      background: rgba(79, 142, 247, 0.14);
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      cursor: pointer;
+      user-select: none;
+    }
+    .setlists-section-hdr .home-sec-toggle.open { background: rgba(79, 142, 247, 0.26); }
+    .home-sec-chev {
+      display: inline-block;
+      font-size: 9px;
+      transition: transform .2s;
+    }
+    .home-sec-toggle.open .home-sec-chev { transform: rotate(90deg); }
+    .home-sec-count { opacity: .7; }
+    .home-add-row {
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      border: 1px dashed var(--border);
+      border-radius: 12px;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 1px;
+      text-align: center;
+      cursor: pointer;
+    }
+    .home-add-row:active { border-color: var(--accent); color: var(--accent); }
+    .home-sec-add {
+      padding: 6px 12px;
+      font-size: 15px;
+      line-height: 1;
+    }
+    .home-collapsed { display: none !important; }
     .setlists-section-title {
       font-family: var(--font-mono);
       font-size: 11px;
@@ -1585,6 +1631,8 @@
       text-overflow: ellipsis
     }
 
+    .hist-btns { display: flex; align-items: center; gap: 4px; }
+    .hist-btns .btn:disabled { opacity: .3; cursor: default; }
     .home-view {
       flex: 1;
       overflow: hidden;
@@ -2633,27 +2681,26 @@
     /* AI CHAT ASİSTANI STİLLERİ */
     .fab-ai {
       position: fixed;
-      bottom: max(env(safe-area-inset-bottom), 24px);
-      right: 20px;
-      height: 54px;
-      padding: 0 18px;
-      border-radius: 16px;
-      background: linear-gradient(135deg, #4f8ef7, #8b5cf6);
-      color: #fff;
-      border: none;
+      bottom: max(env(safe-area-inset-bottom), 20px);
+      right: 16px;
+      height: 32px;
+      padding: 0 12px;
+      border-radius: 999px;
+      background: var(--surface2);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
       font-family: var(--font-mono);
       font-weight: 700;
-      font-size: 12px;
+      font-size: 10px;
       letter-spacing: 1px;
       display: flex;
       align-items: center;
       gap: 6px;
-      box-shadow: 0 4px 20px rgba(79,142,247,0.35);
       cursor: pointer;
       z-index: 85;
-      transition: transform .2s, box-shadow .2s;
+      transition: color .2s, border-color .2s;
     }
-    .fab-ai:hover { transform: scale(1.04); box-shadow: 0 6px 24px rgba(139,92,246,0.45); }
+    .fab-ai:hover { color: var(--text); border-color: var(--accent); }
     .ai-chip {
       background: var(--surface2);
       border: 1px solid var(--border);
@@ -2789,6 +2836,14 @@
       cursor: pointer;
     }
     .rep-edit-row:active { background: var(--surface2); }
+    .mashup-home-list {
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0 10px;
+    }
+    .mashup-home-list .rep-edit-row:last-child { border-bottom: none; }
+    .mashup-home-list .rep-edit-row:active { background: var(--surface3); }
     .rep-edit-row-main { flex: 1; min-width: 0; }
     .rep-edit-row-title {
       font-size: 15px;
@@ -2878,6 +2933,7 @@
       width: 100%;
       display: flex;
       flex-direction: column;
+      gap: 8px;
       align-items: center;
     }
     .mashup-step-row {
@@ -3057,66 +3113,93 @@
     .lmc-next:disabled { opacity: 0.4; cursor: default; }
 
     /* Mashup Editor Modal */
-    .me-part-card {
-      background: var(--surface2);
+    .me-parts-box {
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 10px 12px;
-      margin-bottom: 8px;
+      border-radius: 10px;
+      background: var(--surface2);
+      overflow: hidden;
     }
-    .me-part-hdr {
+    .me-part-row {
       display: flex;
       align-items: center;
       gap: 8px;
-      margin-bottom: 8px;
+      padding: 7px 8px 7px 10px;
+      border-bottom: 1px solid var(--border);
     }
+    .me-part-row:last-child { border-bottom: none; }
+    .me-part-row.is-replacing { background: var(--accent-glow); }
     .me-part-num {
       font-family: var(--font-mono);
       font-size: 12px;
       font-weight: 700;
       color: var(--accent);
-      min-width: 20px;
+      min-width: 16px;
     }
+    .me-part-main { flex: 1; min-width: 0; }
     .me-part-title {
-      flex: 1;
-      min-width: 0;
       font-size: 14px;
       font-weight: 600;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
     }
+    .me-part-meta {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 3px;
+      font-family: var(--font-mono);
+      font-size: 10px;
+      color: var(--text-muted);
+    }
+    .me-mini-input {
+      height: 22px;
+      padding: 0 5px;
+      border: 1px solid var(--border);
+      border-radius: 5px;
+      background: transparent;
+      color: var(--accent);
+      font-family: var(--font-mono);
+      font-size: 12px;
+      font-weight: 700;
+      outline: none;
+    }
+    .me-mini-input:focus { border-color: var(--accent); }
+    .me-tag-input {
+      width: 46px;
+      height: 24px;
+      border: 1px solid var(--border);
+      text-align: center;
+      outline: none;
+      padding: 0 4px;
+    }
+    .me-tag-input::placeholder { color: var(--text-muted); font-weight: 700; }
+    .me-tag-input:focus { border-color: var(--accent); }
+    .me-picker-row .rep-edit-row-title { font-size: 14px; }
+    .me-part-row .rep-edit-row-title { font-size: 14px; }
     .me-part-btns {
       display: flex;
-      gap: 4px;
+      gap: 0;
       flex-shrink: 0;
     }
     .me-icon-btn {
-      width: 28px;
-      height: 28px;
-      border-radius: 7px;
-      border: 1px solid var(--border);
-      background: var(--surface3);
-      color: var(--text);
-      font-size: 12px;
+      width: 22px;
+      height: 24px;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 13px;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
       justify-content: center;
+      padding: 0;
     }
+    .me-icon-btn:active { background: var(--surface3); }
     .me-icon-btn.del { color: var(--red); }
-    .me-part-fields {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-    .me-part-fields .form-input {
-      height: 34px;
-      font-size: 13px;
-      padding: 0 8px;
-    }
     .me-picker-list {
-      max-height: 185px;
+      max-height: 48dvh;
       overflow-y: auto;
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -3194,9 +3277,7 @@
       <div
         style="font-family:'FrizQuadrata', serif; font-size:48px; letter-spacing:2px; line-height:1; color:var(--text);">
         GIG<span style="color:#4f8ef7">SYNC</span></div>
-      <div
-        style="font-family:var(--font-mono);font-size:11px;color:var(--text-muted);letter-spacing:3px;text-transform:uppercase;margin-bottom:40px">
-        Sahne Senkronizasyonu</div>
+      <div style="height:30px"></div>
 
       <div style="width:100%;display:flex;flex-direction:column;gap:12px">
         <button class="btn btn-primary" style="width:100%;height:64px;font-size:17px;border-radius:16px"
@@ -3228,35 +3309,26 @@
   <!-- ══ HOME SCREEN ══ -->
   <div id="home" class="screen">
     <div class="home-header">
-      <!-- SOL: LOGO VE ROZET + İSİM -->
-      <div style="display:flex;flex-direction:column;gap:10px">
-        <div class="logo" style="display:flex;align-items:center;gap:10px">
-          <img src="Gig_Sync_Logo.png" alt="GigSync Logo"
-            style="width:28px;height:28px;border-radius:50%;object-fit:cover;box-shadow:0 0 10px rgba(79, 142, 247, 0.3);border:1px solid rgba(79, 142, 247, 0.25);flex-shrink:0">
-          <span>GIG<span style="color:#4f8ef7">SYNC</span></span>
-        </div>
-        <div class="home-badges">
-          <div id="role-badge"
-            style="font-family:var(--font-mono);font-size:10px;padding:3px 8px;border-radius:6px;letter-spacing:1px;font-weight:700;width:fit-content">
-          </div>
-          <span class="home-name" id="home-username-display" onclick="showNameModal()"
-            style="cursor:pointer; text-align:left; max-width:110px;"></span>
-        </div>
+      <!-- SOL: LOGO (AÇILIŞ EKRANINA DÖNER) -->
+      <div class="logo" onclick="showScreen('splash')" title="Açılış ekranı" style="display:flex;align-items:center;cursor:pointer">
+        <img src="Gig_Sync_Logo.png" alt="GigSync Logo"
+          style="width:32px;height:32px;border-radius:50%;object-fit:cover;box-shadow:0 0 10px rgba(79,142,247,0.3);border:1px solid rgba(79,142,247,0.25);flex-shrink:0">
       </div>
 
       <!-- SAĞ: BUTONLAR -->
       <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-end">
         <div class="header-actions">
-          <button class="btn btn-ghost" onclick="showScreen('splash')" title="Rol değiştir"
-            style="font-family:var(--font-mono);font-size:11px;letter-spacing:1px;padding:0 12px;height:38px;gap:6px;border-radius:10px">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
-              stroke-linecap="round">
-              <path d="M17 3l4 4-4 4" />
-              <path d="M3 11V7a4 4 0 0 1 4-4h14" />
-              <path d="M7 21l-4-4 4-4" />
-              <path d="M21 13v4a4 4 0 0 1-4 4H3" />
+          <div class="hist-btns">
+          <button class="btn btn-icon btn-ghost hist-undo" onclick="historyUndo()" title="Geri al (Ctrl+Z)" disabled style="width:38px;height:38px;border-radius:10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
+          <button class="btn btn-icon btn-ghost hist-redo" onclick="historyRedo()" title="İleri al (Ctrl+Y)" disabled style="width:38px;height:38px;border-radius:10px"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
+        </div>
+          <button class="btn btn-icon btn-ghost" onclick="showScreen('splash')" title="Açılış ekranı"
+            style="width:38px;height:38px;border-radius:10px">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 10.5L12 3l9 7.5"/>
+              <path d="M5 9.5V21h14V9.5"/>
+              <path d="M10 21v-6h4v6"/>
             </svg>
-            ROL
           </button>
           <button class="btn btn-icon btn-ghost" style="width:38px;height:38px;border-radius:10px"
             onclick="showSettingsModal()">
@@ -3291,7 +3363,7 @@
               <span>HIZLI SAHNE</span>
               <span id="qs-card-live-badge" class="live-badge on" style="display:none">● CANLI</span>
             </div>
-            <div class="quick-stage-card-sub" id="qs-card-count">Setlistsiz doğrudan repertuardan çal</div>
+            <div class="quick-stage-card-sub" id="qs-card-count"></div>
           </div>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
             <path d="M5 12h14M12 5l7 7-7 7"/>
@@ -3304,21 +3376,17 @@
           </div>
           <div style="flex:1;min-width:0">
             <div class="rep-edit-card-title">REPERTUAR DÜZENLE</div>
-            <div class="rep-edit-card-sub">Ton, BPM, not ve şarkı bilgilerini düzenle</div>
           </div>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--text-muted)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0">
             <path d="M9 18l6-6-6-6"/>
           </svg>
         </div>
 
-        <div id="setlists-section-hdr" class="setlists-section-hdr" style="display:none">
-          <div class="setlists-section-title">SETLİSTLER</div>
-          <button id="btn-new-setlist" class="btn-new-setlist" onclick="showCreateSetlistModal()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg>
-            YENİ SETLİST
-          </button>
+        <div id="setlists-section-hdr" class="setlists-section-hdr home-sec-hdr" style="display:none">
+          <div id="setlists-toggle" class="setlists-section-title home-sec-toggle" onclick="toggleHomeSection('setlists')"><span class="home-sec-chev">▶</span>SETLİSTLER <span class="home-sec-count" id="setlists-count"></span></div>
         </div>
         <div id="setlists-list"></div>
+        <div id="mashups-list"></div>
 
         <!-- GRUP CANLI BAĞLANTI -->
         <div id="crew-join-area" style="display:none; text-align:center; padding:40px 20px; flex-direction:column; align-items:center; gap:24px; justify-content:center; min-height:50dvh">
@@ -3332,7 +3400,6 @@
           </div>
           <div style="display:flex; flex-direction:column; gap:8px">
             <div style="font-size:18px; font-weight:700; color:var(--text); font-family: var(--font-sans)">Canlı Sahne Takibi</div>
-            <div style="font-size:13px; color:var(--text-muted); max-width:260px; margin:0 auto; line-height:1.6">Yöneticinin seçtiği şarkıları canlı takip etmek için tek dokunuşla bağlanın.</div>
           </div>
           <button class="btn btn-primary" onclick="joinRoomDirect()" style="width:100%; max-width:260px; box-shadow:0 0 24px var(--accent-glow); font-weight: 700; height: 48px; border-radius: 12px; font-family: var(--font-mono); letter-spacing: 2px;">
             CANLI SAHNEYE BAĞLAN
@@ -3344,7 +3411,7 @@
     </div>
 
     <button class="fab-ai" id="fab-ai" onclick="toggleAiChatModal()" title="AI Sahne Asistanı">
-      <span style="font-size:14px">✨</span> AI ASİSTAN
+      ✨ AI ASİSTAN
     </button>
   </div>
 
@@ -3353,8 +3420,7 @@
     <div class="leader-header">
       <div>
         <div class="leader-title" id="leader-setlist-name">—</div>
-        <div class="leader-sub"><span style="color:var(--text-muted)"
-            id="leader-username"></span> · <span id="leader-song-count" style="color:var(--accent)">0 şarkı</span></div>
+        <div class="leader-sub"><span id="leader-username" hidden></span><span id="leader-song-count" style="color:var(--accent)">0 şarkı</span></div>
         <span id="leader-code" style="display:none"></span>
       </div>
       <div class="hdr-actions">
@@ -3381,6 +3447,10 @@
           <span id="member-count-dot"
             style="position:absolute;top:4px;right:4px;min-width:16px;height:16px;background:var(--green);color:#000;font-family:var(--font-mono);font-size:9px;font-weight:700;border-radius:999px;display:none;align-items:center;justify-content:center;padding:0 3px">0</span>
         </button>
+        <div class="hist-btns">
+          <button class="btn btn-icon btn-ghost hist-undo" onclick="historyUndo()" title="Geri al (Ctrl+Z)" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
+          <button class="btn btn-icon btn-ghost hist-redo" onclick="historyRedo()" title="İleri al (Ctrl+Y)" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
+        </div>
         <button class="btn btn-icon btn-ghost" onclick="goBackFromLeader()" title="Geri">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"
             stroke-linecap="round">
@@ -3424,18 +3494,12 @@
   <!-- ══ QUICK STAGE (HOST) ══ -->
   <div id="quick-stage" class="screen">
     <div class="leader-header">
-      <div>
-        <div class="leader-title">⚡ HIZLI SAHNE</div>
-        <div class="leader-sub"><span id="qs-username" style="color:var(--text-muted)"></span> · <span id="qs-lib-count" style="color:var(--accent)">0 şarkı</span></div>
-      </div>
+      <div></div>
       <div class="hdr-actions" style="align-items:center">
         <div id="qs-live-btn" style="display:none" onclick="closeRoomFromLeader()">
           <div style="font-family:var(--font-mono);font-size:11px;padding:6px 14px;border-radius:999px;letter-spacing:1px;background:rgba(52,217,142,.15);color:var(--green);border:1px solid rgba(52,217,142,.3);cursor:pointer">
             ● CANLI · KAPAT</div>
         </div>
-        <div id="qs-ready-pill"
-          style="font-family:var(--font-mono);font-size:10px;padding:5px 10px;border-radius:999px;letter-spacing:1px;background:var(--surface2);color:var(--text-muted);border:1px solid var(--border)">
-          HAZIR</div>
         <button class="btn btn-icon btn-secondary" onclick="showMembersSheet()" title="Üyeler" style="position:relative">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
             <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
@@ -3446,6 +3510,10 @@
           <span id="qs-member-count-dot"
             style="position:absolute;top:4px;right:4px;min-width:16px;height:16px;background:var(--green);color:#000;font-family:var(--font-mono);font-size:9px;font-weight:700;border-radius:999px;display:none;align-items:center;justify-content:center;padding:0 3px">0</span>
         </button>
+        <div class="hist-btns">
+          <button class="btn btn-icon btn-ghost hist-undo" onclick="historyUndo()" title="Geri al (Ctrl+Z)" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
+          <button class="btn btn-icon btn-ghost hist-redo" onclick="historyRedo()" title="İleri al (Ctrl+Y)" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
+        </div>
         <button class="btn btn-icon btn-ghost" onclick="goBackFromQuickStage()" title="Geri">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
             <path d="M19 12H5M12 5l-7 7 7 7" />
@@ -3454,7 +3522,7 @@
       </div>
     </div>
 
-    <div id="qs-now-bar" class="qs-now-bar">
+    <div id="qs-now-bar" class="qs-now-bar" hidden>
       <div class="home-live-dot"></div>
       <div style="flex:1;min-width:0">
         <div class="qs-now-label">● ŞU AN EKRANDA</div>
@@ -3484,10 +3552,13 @@
     <div class="leader-header">
       <div>
         <div class="leader-title">REPERTUAR DÜZENLE</div>
-        <div class="leader-sub"><span id="rep-edit-count" style="color:var(--accent)">0 şarkı</span> · <span style="color:var(--text-muted)">Düzenlemek için şarkıya dokun</span></div>
+        <div class="leader-sub"><span id="rep-edit-count" style="color:var(--accent)">0 şarkı</span></div>
       </div>
       <div class="hdr-actions" style="align-items:center">
-        <button class="btn btn-primary btn-sm" onclick="openMashupEditor()" style="height:34px;padding:0 12px;font-size:12px;font-family:var(--font-mono);letter-spacing:.5px">+ Mashup</button>
+        <div class="hist-btns">
+          <button class="btn btn-icon btn-ghost hist-undo" onclick="historyUndo()" title="Geri al (Ctrl+Z)" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14L4 9l5-5"/><path d="M4 9h10.5a5.5 5.5 0 0 1 0 11H11"/></svg></button>
+          <button class="btn btn-icon btn-ghost hist-redo" onclick="historyRedo()" title="İleri al (Ctrl+Y)" disabled><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M15 14l5-5-5-5"/><path d="M20 9H9.5a5.5 5.5 0 0 0 0 11H13"/></svg></button>
+        </div>
         <button class="btn btn-icon btn-ghost" onclick="goBackFromRepEdit()" title="Geri">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
             <path d="M19 12H5M12 5l-7 7 7 7" />
@@ -3503,8 +3574,10 @@
           autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
         <button id="rep-edit-search-clear" class="qs-search-clear" style="right:10px;display:none" onclick="clearRepEditSearch()" title="Temizle">×</button>
       </div>
-      <button id="rep-edit-missing-btn" class="rep-edit-chip" onclick="toggleRepEditMissing()" title="Tonu veya BPM'i eksik olanlar">Eksik</button>
-      <button id="rep-edit-mashup-btn" class="rep-edit-chip" onclick="toggleRepEditMashup()" title="Sadece Mashup kayıtları">🔗 Mashup</button>
+      <div style="display:flex;gap:8px;flex:1 1 100%">
+      <button class="btn btn-secondary" style="flex:1;height:40px;font-size:11px;padding:0 10px;min-height:unset" onclick="closeSettingsModal();showAddSongModal()">＋ Yeni Şarkı Ekle</button>
+      <button class="btn btn-secondary" style="flex:1;height:40px;font-size:11px;padding:0 10px;min-height:unset" onclick="showPasteImportModal()">📋 Toplu Yapıştır</button>
+      </div>
     </div>
 
     <div id="rep-edit-list" class="rep-edit-list"></div>
@@ -3549,10 +3622,6 @@
       </div>
     </div>
     <div class="member-footer">
-      <span onclick="showNameModal()" style="cursor:pointer;display:inline-flex;align-items:center;gap:6px" title="Adını düzenle">
-        <span>👤</span>
-        <span id="member-username-display" style="color:var(--text);font-weight:600">Müzisyen</span>
-      </span>
       <button class="member-hdr-btn" onclick="joinRoomDirect(false)" title="Bağlantıyı yenile">↻ Yenile</button>
     </div>
   </div>
@@ -3595,14 +3664,16 @@
     style="z-index: 220;">
     <div class="sheet">
       <div class="sheet-handle"></div>
-      <div class="sheet-title">YENİ SETLİST</div>
+      <div class="sheet-title">+ SETLİST</div>
       <div class="form-group">
         <div class="form-label">Setlist Adı</div>
         <input id="new-setlist-name" class="form-input" type="text" placeholder="ör. Rixos Bodrum" maxlength="60" />
       </div>
-      <div class="form-group">
-        <div class="form-label">Grup / Sahne Adı</div>
-        <input id="new-setlist-band" class="form-input" type="text" placeholder="ör. Büşra Çim" maxlength="40" />
+      <input id="new-setlist-band" type="hidden" value="" />
+      <div class="form-group" id="cs-picker-group">
+        <div class="form-label">Şarkı ve Mashup Seç <span id="cs-pick-count" style="color:var(--accent)">(0)</span></div>
+        <input id="cs-search" class="form-input" type="search" placeholder="Şarkı veya sanatçı ara..." oninput="renderCreateSetlistPicker()" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+        <div id="cs-picker" class="me-picker-list" style="max-height:34dvh"></div>
       </div>
       <div style="display:flex;gap:10px;margin-top:8px">
         <button class="btn btn-ghost" style="flex:1" onclick="closeCreateSetlistModal()">İptal</button>
@@ -3640,6 +3711,10 @@
       <div class="sec-lbl" style="margin-bottom:8px">Tema</div>
       <div style="margin-bottom:14px">
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px" id="theme-grid">
+          <button onclick="applyTheme('stage')" class="theme-btn" id="theme-stage"
+            style="padding:16px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:linear-gradient(135deg,#000,#1a1a1a);grid-column:span 2">
+            <div style="font-size:15px;font-weight:600;color:#fff;margin-bottom:6px">⚡ STAGE MODE — Büyük Yazı</div>
+          </button>
           <button onclick="applyTheme('dark')" class="theme-btn" id="theme-dark"
             style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#060912">
             <div style="font-size:13px;font-weight:500;color:#e8edf5;margin-bottom:6px">Dark Blue</div>
@@ -3664,14 +3739,6 @@
                 style="flex:1;height:8px;border-radius:4px;background:#94a3b8"></span><span
                 style="flex:1;height:8px;border-radius:4px;background:#16181e"></span></div>
           </button>
-          <button onclick="applyTheme('orange')" class="theme-btn" id="theme-orange"
-            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#0e0a06">
-            <div style="font-size:13px;font-weight:500;color:#f5ede4;margin-bottom:6px">Midnight Orange</div>
-            <div style="display:flex;gap:4px"><span
-                style="flex:1;height:8px;border-radius:4px;background:#0e0a06;border:1px solid #3d2e1a"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#f97316"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#1a1208"></span></div>
-          </button>
           <button onclick="applyTheme('amber')" class="theme-btn" id="theme-amber"
             style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#0d0900">
             <div style="font-size:13px;font-weight:500;color:#fffbeb;margin-bottom:6px">Amber Warm</div>
@@ -3679,30 +3746,6 @@
                 style="flex:1;height:8px;border-radius:4px;background:#0d0900;border:1px solid #3d3000"></span><span
                 style="flex:1;height:8px;border-radius:4px;background:#f59e0b"></span><span
                 style="flex:1;height:8px;border-radius:4px;background:#1a1100"></span></div>
-          </button>
-          <button onclick="applyTheme('gold')" class="theme-btn" id="theme-gold"
-            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#0c0a00">
-            <div style="font-size:13px;font-weight:500;color:#f5f0d8;margin-bottom:6px">Warm Gold</div>
-            <div style="display:flex;gap:4px"><span
-                style="flex:1;height:8px;border-radius:4px;background:#0c0a00;border:1px solid #3d3200"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#f5c400"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#191400"></span></div>
-          </button>
-          <button onclick="applyTheme('red')" class="theme-btn" id="theme-red"
-            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#0d0608">
-            <div style="font-size:13px;font-weight:500;color:#fef2f2;margin-bottom:6px">Crimson Red</div>
-            <div style="display:flex;gap:4px"><span
-                style="flex:1;height:8px;border-radius:4px;background:#0d0608;border:1px solid #3d1a20"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#ef4444"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#180b0d"></span></div>
-          </button>
-          <button onclick="applyTheme('rose')" class="theme-btn" id="theme-rose"
-            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#0e060a">
-            <div style="font-size:13px;font-weight:500;color:#fff1f2;margin-bottom:6px">Rose Pink</div>
-            <div style="display:flex;gap:4px"><span
-                style="flex:1;height:8px;border-radius:4px;background:#0e060a;border:1px solid #4d1f30"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#f43f5e"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#1c0d14"></span></div>
           </button>
           <button onclick="applyTheme('green')" class="theme-btn" id="theme-green"
             style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#050d08">
@@ -3712,22 +3755,6 @@
                 style="flex:1;height:8px;border-radius:4px;background:#22c55e"></span><span
                 style="flex:1;height:8px;border-radius:4px;background:#0a1610"></span></div>
           </button>
-          <button onclick="applyTheme('cyan')" class="theme-btn" id="theme-cyan"
-            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#040e0f">
-            <div style="font-size:13px;font-weight:500;color:#ecfeff;margin-bottom:6px">Cyan Teal</div>
-            <div style="display:flex;gap:4px"><span
-                style="flex:1;height:8px;border-radius:4px;background:#040e0f;border:1px solid #1a3d42"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#06b6d4"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#071a1c"></span></div>
-          </button>
-          <button onclick="applyTheme('indigo')" class="theme-btn" id="theme-indigo"
-            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#06080f">
-            <div style="font-size:13px;font-weight:500;color:#eef2ff;margin-bottom:6px">Indigo Deep</div>
-            <div style="display:flex;gap:4px"><span
-                style="flex:1;height:8px;border-radius:4px;background:#06080f;border:1px solid #22284d"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#6366f1"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#0d1020"></span></div>
-          </button>
           <button onclick="applyTheme('violet')" class="theme-btn" id="theme-violet"
             style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#0a0612">
             <div style="font-size:13px;font-weight:500;color:#f3e8ff;margin-bottom:6px">Violet Purple</div>
@@ -3735,43 +3762,6 @@
                 style="flex:1;height:8px;border-radius:4px;background:#0a0612;border:1px solid #3a1d5e"></span><span
                 style="flex:1;height:8px;border-radius:4px;background:#a855f7"></span><span
                 style="flex:1;height:8px;border-radius:4px;background:#170a26"></span></div>
-          </button>
-          <button onclick="applyTheme('ocean')" class="theme-btn" id="theme-ocean"
-            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#021018">
-            <div style="font-size:13px;font-weight:500;color:#e0f7ff;margin-bottom:6px">Ocean Deep</div>
-            <div style="display:flex;gap:4px"><span
-                style="flex:1;height:8px;border-radius:4px;background:#021018;border:1px solid #1a5266"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#06b6d4"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#062029"></span></div>
-          </button>
-          <button onclick="applyTheme('sunset')" class="theme-btn" id="theme-sunset"
-            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#150810">
-            <div style="font-size:13px;font-weight:500;color:#ffe4ec;margin-bottom:6px">Sunset</div>
-            <div style="display:flex;gap:4px"><span
-                style="flex:1;height:8px;border-radius:4px;background:#150810;border:1px solid #5e2645"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#fb7185"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#240e1a"></span></div>
-          </button>
-          <button onclick="applyTheme('mint')" class="theme-btn" id="theme-mint"
-            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#051210">
-            <div style="font-size:13px;font-weight:500;color:#e0fff8;margin-bottom:6px">Mint Fresh</div>
-            <div style="display:flex;gap:4px"><span
-                style="flex:1;height:8px;border-radius:4px;background:#051210;border:1px solid #1f5a51"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#2dd4bf"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#0a2421"></span></div>
-          </button>
-          <button onclick="applyTheme('midnight')" class="theme-btn" id="theme-midnight"
-            style="padding:12px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:#000000">
-            <div style="font-size:13px;font-weight:500;color:#ffffff;margin-bottom:6px">Midnight</div>
-            <div style="display:flex;gap:4px"><span
-                style="flex:1;height:8px;border-radius:4px;background:#000000;border:1px solid #25252e"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#e0e0ff"></span><span
-                style="flex:1;height:8px;border-radius:4px;background:#0a0a0f"></span></div>
-          </button>
-          <button onclick="applyTheme('stage')" class="theme-btn" id="theme-stage"
-            style="padding:16px;border-radius:12px;border:2px solid transparent;cursor:pointer;text-align:left;background:linear-gradient(135deg,#000,#1a1a1a);grid-column:span 2">
-            <div style="font-size:15px;font-weight:600;color:#fff;margin-bottom:6px">⚡ STAGE MODE — Büyük Yazı</div>
-            <div style="font-size:11px;color:#888;font-family:var(--font-mono);letter-spacing:1px">Sahne için maksimum okunabilirlik</div>
           </button>
         </div>
       </div>
@@ -3781,7 +3771,6 @@
       <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:14px">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px">
           <span style="font-size:12px;color:var(--text-muted);font-family:var(--font-mono)">Worker API &amp; WebSocket</span>
-          <span id="worker-status-badge" style="font-size:10px;padding:2px 8px;border-radius:999px;background:rgba(34,197,94,0.15);color:#22c55e;font-family:var(--font-mono);font-weight:700">SIFIR PAUSE</span>
         </div>
         <input type="text" id="settings-worker-url" placeholder="https://gigsync.umutyenilmez.workers.dev" style="width:100%;height:38px;background:var(--surface);border:1px solid var(--border);border-radius:8px;color:var(--text);font-family:var(--font-mono);font-size:12px;padding:0 12px;outline:none;margin-bottom:8px">
         <div style="display:flex;gap:8px">
@@ -3812,34 +3801,9 @@
           📜 İlk Kök Kopyaya Dön (1867)
         </button>
       </div>
-
-      <!-- REPERTUAR YÖNETİMİ (EKLE / TOPLU YAPIŞTIR) -->
-      <div class="sec-lbl" style="margin-top:8px;margin-bottom:8px">Repertuar Yönetimi</div>
-      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:14px">
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;line-height:1.4">
-          Mevcut şarkıları ana ekrandaki <b>Repertuar Düzenle</b> kartından güncelleyebilir, buradan yeni şarkı ekleyebilirsiniz.
-        </div>
-        <div style="display:flex;gap:8px">
-          <button class="btn btn-secondary" style="flex:1;height:36px;font-size:11px;padding:0;min-height:unset" onclick="closeSettingsModal();showAddSongModal()">
-            ＋ Yeni Şarkı Ekle
-          </button>
-          <button class="btn btn-secondary" style="flex:1;height:36px;font-size:11px;padding:0;min-height:unset" onclick="closeSettingsModal();showPasteImportModal()">
-            📋 Toplu Yapıştır
-          </button>
-        </div>
-      </div>
-
       <!-- REPERTUAR & SETLIST YEDEKLEME -->
       <div class="sec-lbl" style="margin-top:8px;margin-bottom:8px">Repertuar &amp; Setlist Yedekleme</div>
       <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:14px">
-        <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px;line-height:1.4">
-          Şarkılarınızı ve setlistlerinizi cihazınıza dosya olarak indirebilir veya tek tuşla Cloudflare bulutuna yedekleyebilirsiniz.
-        </div>
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px">
-          <span style="font-size:12px;color:var(--text-muted)">Bulut durumu</span>
-          <span id="cloud-sync-status" onclick="triggerManualCloudSync()"
-            style="cursor:pointer;font-family:var(--font-mono);font-size:11px;padding:4px 10px;border-radius:6px;background:rgba(34,197,94,0.12);color:#22c55e;font-weight:700" title="Dokun: Şimdi Eşitle">☁️ EŞİTLENDİ</span>
-        </div>
         <div style="display:flex;gap:8px;margin-bottom:8px">
           <button class="btn btn-secondary" style="flex:1;height:36px;font-size:11px;padding:0;min-height:unset" onclick="downloadBackupJson()">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="margin-right:4px"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg>
@@ -3859,16 +3823,6 @@
             📥 Buluttan Çek
           </button>
         </div>
-      </div>
-
-      <!-- AI SAHNE ASİSTANI GÜVENLİK DURUMU -->
-      <div class="sec-lbl" style="margin-top:8px;margin-bottom:8px">AI Sahne Asistanı Durumu</div>
-      <div style="background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:center;justify-content:space-between">
-        <div>
-          <div style="font-size:13px;font-weight:600;color:var(--text);margin-bottom:2px">Google Gemini 3.5 Flash</div>
-          <div style="font-size:11px;color:var(--text-muted)">Cloudflare sunucu kasası üzerinden şifreli ve güvenli bağlı</div>
-        </div>
-        <span style="font-size:11px;padding:4px 10px;border-radius:999px;background:rgba(34,197,94,0.15);color:#22c55e;font-family:var(--font-mono);font-weight:700">AKTİF &amp; GÜVENLİ 🛡️</span>
       </div>
 
       <button class="btn btn-secondary" style="width:100%;margin-top:4px;height:40px" onclick="closeSettingsModal()">Kapat</button>
@@ -4058,13 +4012,13 @@
   <div class="overlay hidden" id="mashup-editor-modal" onclick="if(event.target===this)closeMashupEditor()" style="z-index: 238;">
     <div class="sheet" style="max-height:92dvh;overflow-y:auto">
       <div class="sheet-handle"></div>
-      <div class="sheet-title" id="me-modal-title">YENİ MASHUP</div>
+      <div class="sheet-title" id="me-modal-title">+ MASHUP</div>
       <div class="form-group">
         <div class="form-label">Mashup Adı</div>
         <input id="me-title" class="form-input" type="text" maxlength="80" placeholder="ör. Roman Potpuri / 90'lar Pop" autocomplete="off" />
       </div>
       <div class="form-group">
-        <div class="form-label" id="me-parts-count">Sıralı Parçalar (0) — Ton ve BPM sadece bu mashup için değişir</div>
+        <div class="form-label" id="me-parts-count" style="display:none"></div>
         <div id="me-parts-list"></div>
       </div>
       <div class="form-group">
@@ -4261,6 +4215,30 @@
       return { key, bpm, artist };
     }
 
+    // ══ ORTAK ŞARKI SATIRI ŞABLONU: Şarkı adı / altında sanatçı · sağda Ton + BPM kutuları ══
+    function songKeyBpm(s) {
+      if (isMashupSong(s)) {
+        const sum = computeMashupSummary(s.parts);
+        return { key: sum.key, bpm: sum.bpm };
+      }
+      return { key: String((s && s.key) || '').trim(), bpm: String((s && s.bpm) || '').trim() };
+    }
+    function songTagsHtml(s) {
+      const { key, bpm } = songKeyBpm(s);
+      return `<span class="rep-tag${key ? '' : ' miss'}">${key ? esc(key) : 'Ton'}</span>`
+        + `<span class="rep-tag${bpm ? '' : ' miss'}">${bpm ? esc(bpm) + ' BPM' : 'BPM'}</span>`;
+    }
+    function songSubHtml(s) {
+      if (isMashupSong(s)) {
+        const parts = Array.isArray(s.parts) ? s.parts : [];
+        return `<span class="mashup-badge">🔗 MASHUP</span> ${esc(parts.map(p => p.title || 'Şarkı').join(' → ') || '—')}`;
+      }
+      return esc((s && s.artist) || '—');
+    }
+    function songMainHtml(s) {
+      return `<div class="rep-edit-row-main"><div class="rep-edit-row-title">${esc((s && s.title) || '—')}</div><div class="rep-edit-row-meta">${songSubHtml(s)}</div></div>`;
+    }
+
     function matchesSongQuery(s, normQ) {
       if (!normQ) return true;
       if (!s) return false;
@@ -4307,9 +4285,7 @@
       const countLabel = mashupCount > 0 ? `${songCount} şarkı · ${mashupCount} mashup` : `${songCount} şarkı`;
       const cardSub = document.getElementById('qs-card-count');
       if (cardSub) {
-        cardSub.textContent = all.length > 0
-          ? `${countLabel} · Setlistsiz doğrudan ara ve çal`
-          : 'Setlistsiz doğrudan repertuardan çal';
+        cardSub.textContent = all.length > 0 ? countLabel : '';
       }
       const qsCount = document.getElementById('qs-lib-count');
       if (qsCount) qsCount.textContent = countLabel;
@@ -4317,16 +4293,118 @@
 
     const currentLib = () => (S.libraries[S.activeLibId] || S.libraries['default']).songs;
     const saveLibraries = (syncOpts = {}) => {
+      historyCapture();
       S.isDefaultLibraryOnly = isOnlyDefaultLibrary(S.libraries, S.setlists);
       LS.set('gs_libraries', S.libraries);
       updateQuickStageCount();
       if (window.autoSyncToCloud) window.autoSyncToCloud(false, syncOpts);
     };
     const saveSetlists = () => {
+      historyCapture();
       S.isDefaultLibraryOnly = isOnlyDefaultLibrary(S.libraries, S.setlists);
       LS.set('gs_setlists', S.setlists);
       if (window.autoSyncToCloud) window.autoSyncToCloud();
     };
+
+    // ══════════ GERİ AL / İLERİ AL ══════════
+    // Repertuar (şarkılar + mashuplar) ve setlistlerin anlık görüntüleri tutulur.
+    // Her kaydetme bir adımdır; 0.8 sn içindeki art arda kayıtlar tek adım sayılır.
+    var _histUndo = [];
+    var _histRedo = [];
+    var _histLast = null;
+    var _histLastPushAt = 0;
+    var _histRestoring = false;
+    var HIST_LIMIT = 40;
+
+    function historySnapshot() {
+      return JSON.stringify({ libraries: S.libraries || {}, setlists: S.setlists || {} });
+    }
+
+    function historyRebase() {
+      _histLast = historySnapshot();
+      updateHistoryButtons();
+    }
+
+    function historyCapture() {
+      if (_histRestoring) return;
+      const cur = historySnapshot();
+      if (_histLast === null) { _histLast = cur; return; }
+      if (cur === _histLast) return;
+      const now = Date.now();
+      if (!(_histUndo.length && now - _histLastPushAt < 800)) {
+        _histUndo.push(_histLast);
+        if (_histUndo.length > HIST_LIMIT) _histUndo.shift();
+        _histLastPushAt = now;
+      }
+      _histRedo = [];
+      _histLast = cur;
+      updateHistoryButtons();
+    }
+
+    function historyApply(snapJson) {
+      const snap = JSON.parse(snapJson);
+      const prevIds = Object.keys(S.setlists || {});
+      _histRestoring = true;
+      try {
+        S.libraries = snap.libraries || {};
+        S.setlists = snap.setlists || {};
+        if (!S.deletedSetlists || typeof S.deletedSetlists !== 'object') S.deletedSetlists = {};
+        const now = Date.now();
+        // Geri gelen setlistler, silinme kaydı yüzünden buluttan tekrar silinmesin
+        Object.keys(S.setlists).forEach(id => {
+          if (S.deletedSetlists[id] && S.setlists[id]) {
+            delete S.deletedSetlists[id];
+            S.setlists[id].restoredAt = now;
+          }
+        });
+        // Geri alma ile kaybolan setlistler, diğer cihazlardan geri gelmesin
+        const gone = prevIds.filter(id => !S.setlists[id]);
+        if (gone.length) applySetlistDeletions(Object.fromEntries(gone.map(id => [id, now])));
+        LS.set('gs_deleted_setlists', S.deletedSetlists);
+
+        const leaderOpen = document.getElementById('leader')?.classList.contains('active');
+        if (S.activeSetlistId && S.setlists[S.activeSetlistId]) {
+          S.liveSongs = [...(S.setlists[S.activeSetlistId].songs || [])];
+        }
+        afterRepertoireChange(true, false);
+        if (leaderOpen && S.activeSetlistId && !S.setlists[S.activeSetlistId]) goBackFromLeader();
+      } finally {
+        _histRestoring = false;
+      }
+      _histLast = historySnapshot();
+      _histLastPushAt = 0;
+      updateHistoryButtons();
+    }
+
+    window.historyUndo = () => {
+      if (!_histUndo.length) { showToast('Geri alınacak işlem yok'); return; }
+      _histRedo.push(historySnapshot());
+      historyApply(_histUndo.pop());
+      showToast('↶ Geri alındı');
+    };
+
+    window.historyRedo = () => {
+      if (!_histRedo.length) { showToast('İleri alınacak işlem yok'); return; }
+      _histUndo.push(historySnapshot());
+      historyApply(_histRedo.pop());
+      showToast('↷ İleri alındı');
+    };
+
+    function updateHistoryButtons() {
+      document.querySelectorAll('.hist-undo').forEach(b => { b.disabled = !_histUndo.length; });
+      document.querySelectorAll('.hist-redo').forEach(b => { b.disabled = !_histRedo.length; });
+    }
+
+    // Klavye: Ctrl+Z geri, Ctrl+Y / Ctrl+Shift+Z ileri (yazı alanlarında tarayıcının kendi geri alması çalışır)
+    document.addEventListener('keydown', (e) => {
+      if (!(e.ctrlKey || e.metaKey) || e.altKey) return;
+      if (S.userRole !== 'host') return;
+      const t = e.target;
+      if (t && (t.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName))) return;
+      const k = String(e.key || '').toLowerCase();
+      if (k === 'z' && !e.shiftKey) { e.preventDefault(); historyUndo(); }
+      else if (k === 'y' || (k === 'z' && e.shiftKey)) { e.preventDefault(); historyRedo(); }
+    });
 
     // Silinen setlist kayıtları ({ id: silinmeZamanı }). Başka bir cihazın eski kopyası
     // buluta yazılsa bile silinen setlistler geri gelmez. Bir şey kaldırıldıysa true döner.
@@ -4523,6 +4601,7 @@
       if (!S.groupKeys.includes(S.groupKey)) S.groupKeys.push(S.groupKey);
       healTurkishData();
       updateQuickStageCount();
+      historyRebase();
     }
 
     window.selectRole = (role) => {
@@ -4577,8 +4656,11 @@
       if (slHdr) slHdr.style.display = isHost ? 'flex' : 'none';
       const setlistsList = document.getElementById('setlists-list');
       if (setlistsList) setlistsList.style.display = isHost ? '' : 'none';
+      const mashupsList = document.getElementById('mashups-list');
+      if (mashupsList) mashupsList.style.display = isHost ? '' : 'none';
       const crewArea = document.getElementById('crew-join-area');
       if (crewArea) crewArea.style.display = isHost ? 'none' : 'flex';
+      document.querySelectorAll('.hist-btns').forEach(el => { el.style.display = isHost ? '' : 'none'; });
 
       const badge = document.getElementById('role-badge');
       if (badge) {
@@ -4696,7 +4778,7 @@
 
       if (!filtered.length) {
         const emptyMsg = repEditMashupOnly
-          ? (q ? 'Eşleşen mashup bulunamadı' : 'Henüz mashup yok — sağ üstteki "+ Mashup" ile ekle')
+          ? (q ? 'Eşleşen mashup bulunamadı' : 'Henüz mashup yok')
           : (repEditMissingOnly ? 'Eksik bilgili şarkı yok 🎉' : 'Şarkı bulunamadı');
         list.innerHTML = `<div class="rep-edit-note">${emptyMsg}</div>`;
         return;
@@ -4706,20 +4788,7 @@
       const rows = shown.map(s => {
         const hasNotes = Boolean(String(s.notes || '').trim());
         if (isMashupSong(s)) {
-          const parts = Array.isArray(s.parts) ? s.parts : [];
-          const flowPreview = parts.map(p => `${p.title}${p.key ? ' (' + p.key + ')' : ''}`).join(' → ');
-          const missPill = isRepSongMissing(s) ? '<span class="rep-tag miss">Eksik</span>' : '';
-          return `
-            <div class="rep-edit-row" data-id="${esc(s.id)}" onclick="openMashupEditor(this.dataset.id)">
-              <div class="rep-edit-row-main">
-                <div class="rep-edit-row-title">${esc(s.title || '—')}</div>
-                <div class="rep-edit-row-meta">${esc(flowPreview || '—')}${hasNotes ? ' · 📝 Not' : ''}</div>
-              </div>
-              <div class="rep-edit-tags">
-                ${missPill}
-                <span class="mashup-badge">🔗 ${parts.length} parça</span>
-              </div>
-            </div>`;
+          return mashupListRowHtml(s);
         }
         const key = String(s.key || '').trim();
         const bpm = String(s.bpm || '').trim();
@@ -4881,6 +4950,7 @@
     // ══════════ MASHUP OLUŞTURUCU / DÜZENLEYİCİ ══════════
     let meEditingId = null;
     let meDraftParts = [];
+    let meReplaceIdx = null;
 
     window.openMashupEditor = (id = null) => {
       const repMatch = id ? findRepSong(id) : null;
@@ -4889,10 +4959,11 @@
         : null;
       const existing = repMatch || setlistMatch || null;
 
+      meReplaceIdx = null;
       meEditingId = existing ? (repMatch ? repMatch.id : existing.id) : null;
       meDraftParts = existing && Array.isArray(existing.parts) ? cloneMashupParts(existing.parts) : [];
 
-      document.getElementById('me-modal-title').textContent = existing ? 'MASHUP DÜZENLE' : 'YENİ MASHUP';
+      document.getElementById('me-modal-title').textContent = existing ? 'MASHUP DÜZENLE' : '+ MASHUP';
       document.getElementById('me-title').value = existing ? (existing.title || '') : '';
       document.getElementById('me-notes').value = existing ? (existing.notes || '') : '';
       const delBtn = document.getElementById('me-delete-btn');
@@ -4910,6 +4981,7 @@
     };
 
     window.closeMashupEditor = () => {
+      meReplaceIdx = null;
       meEditingId = null;
       meDraftParts = [];
       document.getElementById('mashup-editor-modal').classList.add('hidden');
@@ -4938,31 +5010,33 @@
       const list = document.getElementById('me-parts-list');
       const countLbl = document.getElementById('me-parts-count');
       if (countLbl) {
-        countLbl.textContent = `Sıralı Parçalar (${meDraftParts.length}) — Ton ve BPM sadece bu mashup için değişir`;
+        countLbl.textContent = meReplaceIdx !== null ? `${meReplaceIdx + 1}. parçanın yerine aşağıdan şarkı seç` : '';
+        countLbl.style.display = meReplaceIdx !== null ? '' : 'none';
       }
       if (!list) return;
       if (!meDraftParts.length) {
-        list.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:12px;padding:14px 8px;border:1px dashed var(--border);border-radius:10px">Aşağıdan sırayla en az 2 şarkı ekle</div>';
+        list.innerHTML = '';
         return;
       }
-      list.innerHTML = meDraftParts.map((p, i) => `
-        <div class="me-part-card">
-          <div class="me-part-hdr">
-            <span class="me-part-num">${i + 1}.</span>
-            <div class="me-part-title">${esc(p.title)}${p.artist ? ` <span style="font-weight:400;color:var(--text-muted);font-size:12px">· ${esc(p.artist)}</span>` : ''}</div>
-            <div class="me-part-btns">
-              <button type="button" class="me-icon-btn" onclick="moveMashupPart(${i}, -1)" ${i === 0 ? 'disabled style="opacity:.35"' : ''} title="Yukarı">↑</button>
-              <button type="button" class="me-icon-btn" onclick="moveMashupPart(${i}, 1)" ${i === meDraftParts.length - 1 ? 'disabled style="opacity:.35"' : ''} title="Aşağı">↓</button>
-              <button type="button" class="me-icon-btn del" onclick="removeMashupPart(${i})" title="Çıkar">×</button>
-            </div>
+      list.innerHTML = '<div class="me-parts-box">' + meDraftParts.map((p, i) => `
+        <div class="me-part-row${meReplaceIdx === i ? ' is-replacing' : ''}">
+          <span class="me-part-num">${i + 1}</span>
+          <div class="rep-edit-row-main">
+            <div class="rep-edit-row-title">${esc(p.title || '—')}</div>
+            <div class="rep-edit-row-meta">${esc(p.artist || '—')}</div>
           </div>
-          <div class="me-part-fields">
-            <input class="form-input" style="width:66px;flex-shrink:0" type="text" maxlength="10" placeholder="Ton" value="${esc(p.key || '')}" oninput="updateMashupPartField(${i}, 'key', this.value)" />
-            <input class="form-input" style="width:70px;flex-shrink:0" type="number" inputmode="numeric" min="0" max="400" placeholder="BPM" value="${esc(p.bpm || '')}" oninput="updateMashupPartField(${i}, 'bpm', this.value)" />
-            <input class="form-input" style="flex:1;min-width:0" type="text" maxlength="80" placeholder="Geçiş notu (ör. 4 mezür davul)" value="${esc(p.cue || '')}" oninput="updateMashupPartField(${i}, 'cue', this.value)" />
+          <div class="rep-edit-tags">
+            <input class="rep-tag me-tag-input" type="text" maxlength="6" placeholder="Ton" value="${esc(p.key || '')}" oninput="updateMashupPartField(${i}, 'key', this.value)" />
+            <input class="rep-tag me-tag-input" type="text" inputmode="numeric" maxlength="3" placeholder="BPM" value="${esc(p.bpm || '')}" oninput="updateMashupPartField(${i}, 'bpm', this.value)" />
+          </div>
+          <div class="me-part-btns">
+            <button type="button" class="me-icon-btn" onclick="moveMashupPart(${i}, -1)" ${i === 0 ? 'disabled style="opacity:.3"' : ''} title="Yukarı">↑</button>
+            <button type="button" class="me-icon-btn" onclick="moveMashupPart(${i}, 1)" ${i === meDraftParts.length - 1 ? 'disabled style="opacity:.3"' : ''} title="Aşağı">↓</button>
+            <button type="button" class="me-icon-btn" onclick="startReplaceMashupPart(${i})" title="Parçayı değiştir">⇄</button>
+            <button type="button" class="me-icon-btn del" onclick="removeMashupPart(${i})" title="Çıkar">×</button>
           </div>
         </div>
-      `).join('');
+      `).join('') + '</div>';
     };
 
     window.renderMashupSongPicker = () => {
@@ -4970,37 +5044,40 @@
       if (!resultsEl) return;
       const q = trNormalize((document.getElementById('me-song-search')?.value || '').trim());
       const candidates = sortRepertoireSongs(
-        getAllRepertoireSongs().filter(s => s && s.id && !isMashupSong(s) && matchesSongQuery(s, q))
-      ).slice(0, 25);
+        getAllRepertoireSongs().filter(s => s && s.id && !isMashupSong(s) && matchesSongQuery(s, q)));
 
       if (!candidates.length) {
         resultsEl.innerHTML = '<div style="text-align:center;color:var(--text-muted);font-size:12px;padding:14px">Eşleşen şarkı yok</div>';
         return;
       }
 
-      resultsEl.innerHTML = candidates.map(s => `
+      resultsEl.innerHTML = candidates.map(s => {
+        const cnt = meDraftParts.filter(p => p.libId === s.id).length;
+        return `
         <div class="me-picker-row" data-id="${esc(s.id)}" onclick="addSongToMashupDraft(this.dataset.id)">
-          <div style="flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">
-            <span style="font-weight:600">${esc(s.title)}</span>
-            ${s.artist ? `<span style="color:var(--text-muted);font-size:11px"> · ${esc(s.artist)}</span>` : ''}
-          </div>
-          <span style="font-family:var(--font-mono);font-size:11px;color:var(--accent);flex-shrink:0">${esc(s.key || '')}${s.bpm ? ' · ' + esc(s.bpm) : ''}</span>
-          <span style="color:var(--accent);font-weight:700;font-size:16px;line-height:1">+</span>
-        </div>
-      `).join('');
+          ${songMainHtml(s)}
+          <div class="rep-edit-tags">${cnt ? `<span class="rep-tag">×${cnt}</span>` : ''}${songTagsHtml(s)}</div>
+          <span style="color:var(--accent);font-weight:700;font-size:16px;line-height:1;flex-shrink:0">+</span>
+        </div>`;
+      }).join('');
+    };
+
+    window.startReplaceMashupPart = (idx) => {
+      meReplaceIdx = meReplaceIdx === idx ? null : idx;
+      renderMashupEditorParts();
+      renderMashupSongPicker();
     };
 
     window.addSongToMashupDraft = (libId) => {
       const s = findRepSong(libId);
       if (!s || isMashupSong(s)) return;
-      meDraftParts.push({
-        libId: s.id,
-        title: s.title || 'Şarkı',
-        artist: s.artist || '',
-        key: s.key || '',
-        bpm: s.bpm || '',
-        cue: ''
-      });
+      const part = { libId: s.id, title: s.title || 'Şarkı', artist: s.artist || '', key: s.key || '', bpm: s.bpm || '', cue: '' };
+      if (meReplaceIdx !== null && meDraftParts[meReplaceIdx]) {
+        meDraftParts[meReplaceIdx] = part;
+        meReplaceIdx = null;
+      } else {
+        meDraftParts.push(part);
+      }
       const searchEl = document.getElementById('me-song-search');
       if (searchEl) searchEl.value = '';
       renderMashupEditorParts();
@@ -5048,6 +5125,7 @@
         currentLib().unshift(mashupObj);
       }
 
+      if (!existingRep) LS.set('gs_home_open_mashups', true);
       afterRepertoireChange(setlistsChanged, quickChanged);
       closeMashupEditor();
       if (document.getElementById('rep-edit')?.classList.contains('active')) renderRepEditList(false);
@@ -5382,11 +5460,50 @@
       document.getElementById('add-song-modal').classList.add('hidden');
     };
 
+    // ══ CREATE SETLIST · ŞARKI / MASHUP SEÇİMİ ══
+    let csSelectedIds = [];
+
+    window.toggleCreateSetlistSong = (id) => {
+      const i = csSelectedIds.indexOf(id);
+      if (i >= 0) csSelectedIds.splice(i, 1);
+      else csSelectedIds.push(id);
+      renderCreateSetlistPicker();
+    };
+
+    window.renderCreateSetlistPicker = () => {
+      const el = document.getElementById('cs-picker');
+      if (!el) return;
+      const countEl = document.getElementById('cs-pick-count');
+      if (countEl) countEl.textContent = `(${csSelectedIds.length})`;
+      const q = trNormalize((document.getElementById('cs-search')?.value || '').trim());
+      const all = sortRepertoireSongs(getAllRepertoireSongs().filter(x => x && x.id && matchesSongQuery(x, q)));
+      const ordered = [...all.filter(isMashupSong), ...all.filter(x => !isMashupSong(x))];
+      if (!ordered.length) {
+        el.innerHTML = '<div class="rep-edit-note">Eşleşen şarkı yok</div>';
+        return;
+      }
+      el.innerHTML = ordered.map(x => {
+        const idx = csSelectedIds.indexOf(x.id);
+        const sel = idx >= 0;
+        return `<div class="me-picker-row" data-id="${esc(x.id)}" onclick="toggleCreateSetlistSong(this.dataset.id)" style="${sel ? 'background:var(--accent-glow);' : ''}">
+          ${songMainHtml(x)}
+          <div class="rep-edit-tags">${songTagsHtml(x)}</div>
+          <span style="font-family:var(--font-mono);font-size:12px;font-weight:700;color:${sel ? 'var(--accent)' : 'var(--text-dim)'};flex-shrink:0;min-width:26px;text-align:right">${sel ? '#' + (idx + 1) : '+'}</span>
+        </div>`;
+      }).join('');
+    };
+
     // ══ CREATE SETLIST ══
     let _saveQuickStagePending = false;
 
     window.showCreateSetlistModal = () => {
       _saveQuickStagePending = false;
+      csSelectedIds = [];
+      const pickGroup = document.getElementById('cs-picker-group');
+      if (pickGroup) pickGroup.style.display = '';
+      const csSearch = document.getElementById('cs-search');
+      if (csSearch) csSearch.value = '';
+      renderCreateSetlistPicker();
       document.getElementById('new-setlist-name').value = '';
       document.getElementById('new-setlist-band').value = '';
       document.getElementById('create-setlist-modal').classList.remove('hidden');
@@ -5407,10 +5524,22 @@
             id: `live_${Date.now()}_${i}`,
             order: i
           }))
-        : [];
+        : csSelectedIds.map((id, i) => {
+            const src = getAllRepertoireSongs().find(x => x && x.id === id);
+            if (!src) return null;
+            return {
+              ...src,
+              ...(isMashupSong(src) ? { type: 'mashup', parts: cloneMashupParts(src.parts) } : {}),
+              libId: src.id,
+              id: `live_${Date.now()}_${i}`,
+              order: i
+            };
+          }).filter(Boolean);
+      csSelectedIds = [];
       _saveQuickStagePending = false;
       const id = `sl_${Date.now()}`;
       S.setlists[id] = { id, name, band, songs, createdAt: Date.now() };
+      LS.set('gs_home_open_setlists', true);
       saveSetlists();
       closeCreateSetlistModal();
       document.getElementById('new-setlist-name').value = '';
@@ -5471,27 +5600,14 @@
         return;
       }
 
-      list.innerHTML = filtered.map(s => {
-        const isMsh = isMashupSong(s);
-        const parts = isMsh && Array.isArray(s.parts) ? s.parts : [];
-        const meta = isMsh
-          ? parts.map(p => `${p.title}${p.key ? ' (' + p.key + ')' : ''}`).join(' → ')
-          : (s.artist || '—');
-        const badge = isMsh
-          ? `<span class="mashup-badge">🔗 ${parts.length} parça</span>`
-          : `<div style="font-family:var(--font-mono);font-size:13px;color:var(--accent);flex-shrink:0">${esc(s.key || '')}</div>`;
-        return `
+      list.innerHTML = filtered.map(s => `
         <div onclick="addOneToSetlist('${s.id}')"
-          style="display:flex;align-items:center;gap:12px;padding:12px 14px;border-radius:12px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);margin-bottom:8px;active:background:var(--surface3)">
-          <div style="flex:1;min-width:0">
-            <div style="font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(s.title)}</div>
-            <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(meta)}</div>
-          </div>
-          ${badge}
+          style="display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;cursor:pointer;border:1px solid var(--border);background:var(--surface2);margin-bottom:8px">
+          ${songMainHtml(s)}
+          <div class="rep-edit-tags">${songTagsHtml(s)}</div>
           <div style="color:var(--accent);font-size:20px;flex-shrink:0;line-height:1">+</div>
         </div>
-      `;
-      }).join('');
+      `).join('');
     };
 
     window.addOneToSetlist = (libId) => {
@@ -5721,22 +5837,129 @@
       showToast(`${added} şarkı eklendi`);
     };
 
+    function mashupListRowHtml(m, withMenu = false) {
+      const menuBtn = withMenu
+        ? `<button data-id="${esc(m.id)}" onclick="event.stopPropagation();showMashupEditMenu(this.dataset.id)" title="Düzenle"
+            style="background:transparent;border:1px solid var(--border);color:var(--text-muted);padding:8px 10px;border-radius:8px;cursor:pointer;flex-shrink:0">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+              <circle cx="12" cy="5" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="19" r="1.5" fill="currentColor"/>
+            </svg>
+          </button>`
+        : '';
+      return `
+        <div class="rep-edit-row" data-id="${esc(m.id)}" onclick="openMashupEditor(this.dataset.id)">
+          ${songMainHtml(m)}
+          ${withMenu ? '' : `<div class="rep-edit-tags">${songTagsHtml(m)}</div>`}
+          ${menuBtn}
+        </div>`;
+    }
+
+    // Mashup 3 nokta menüsü: ad değiştir (Kaydet) · Sil · İptal
+    window.showMashupEditMenu = (id) => {
+      const m = findRepSong(id);
+      if (!m || !isMashupSong(m)) return;
+      let modal = document.getElementById('mashup-edit-menu');
+      if (!modal) {
+        modal = document.createElement('div');
+        modal.id = 'mashup-edit-menu';
+        modal.className = 'overlay hidden';
+        modal.style.zIndex = '230';
+        modal.onclick = (e) => { if (e.target === modal) modal.classList.add('hidden'); };
+        modal.innerHTML = `
+          <div class="sheet">
+            <div class="sheet-handle"></div>
+            <div class="sheet-title">DÜZENLE</div>
+            <div class="form-group">
+              <div class="form-label">Mashup Adı</div>
+              <input id="mm-name" class="form-input" type="text" maxlength="80" />
+            </div>
+            <button class="btn btn-primary" style="width:100%;margin-bottom:10px" onclick="saveMashupEditMenu()">Kaydet</button>
+            <button class="btn btn-danger" style="width:100%;margin-bottom:10px" onclick="deleteMashupFromMenu()">Mashup'ı Sil</button>
+            <button class="btn btn-ghost" style="width:100%" onclick="document.getElementById('mashup-edit-menu').classList.add('hidden')">İptal</button>
+          </div>`;
+        document.body.appendChild(modal);
+      }
+      modal.dataset.mashupId = id;
+      document.getElementById('mm-name').value = m.title || '';
+      modal.classList.remove('hidden');
+    };
+
+    window.saveMashupEditMenu = () => {
+      const modal = document.getElementById('mashup-edit-menu');
+      const m = modal ? findRepSong(modal.dataset.mashupId) : null;
+      if (!m) return;
+      const name = document.getElementById('mm-name').value.trim();
+      if (!name) { showToast('Ad boş olamaz'); return; }
+      const res = patchMashupRecord(m.id, { ...m, title: name, parts: cloneMashupParts(m.parts) });
+      afterRepertoireChange(res.setlistsChanged, res.quickChanged);
+      modal.classList.add('hidden');
+      showToast('Güncellendi');
+    };
+
+    window.deleteMashupFromMenu = () => {
+      const modal = document.getElementById('mashup-edit-menu');
+      const m = modal ? findRepSong(modal.dataset.mashupId) : null;
+      if (!m) return;
+      if (!confirm(`"${m.title}" mashup'ı silinsin mi?`)) return;
+      Object.values(S.libraries || {}).forEach(lib => {
+        if (lib && Array.isArray(lib.songs)) lib.songs = lib.songs.filter(x => !x || x.id !== m.id);
+      });
+      afterRepertoireChange(false, false);
+      modal.classList.add('hidden');
+      if (document.getElementById('rep-edit')?.classList.contains('active')) renderRepEditList(false);
+      showToast(`"${m.title}" silindi`);
+    };
+
+    function renderMashupCards() {
+      const el = document.getElementById('mashups-list');
+      if (!el) return;
+      const mashups = getAllRepertoireSongs().filter(isMashupSong)
+        .sort((a, b) => (b.createdAt || 0) - (a.createdAt || 0));
+      el.innerHTML = `
+        <div class="setlists-section-hdr home-sec-hdr" style="margin-top:14px">
+          <div id="mashups-toggle" class="setlists-section-title home-sec-toggle" onclick="toggleHomeSection('mashups')"><span class="home-sec-chev">▶</span>MASHUPLAR <span class="home-sec-count">${mashups.length}</span></div>
+        </div>
+        <div id="mashups-body"><div class="home-add-row" onclick="openMashupEditor()">+ Yeni Mashup</div>${mashups.length
+          ? `<div class="mashup-home-list">${mashups.map(m => mashupListRowHtml(m, true)).join('')}</div>`
+          : ''}</div>`;
+      applyHomeSections();
+    }
+
+    // Ana ekran bölümleri (Setlistler / Mashuplar) açılır-kapanır; durum cihazda hatırlanır
+    function isHomeSecOpen(k) { return LS.get('gs_home_open_' + k) === true; }
+    window.toggleHomeSection = (k) => {
+      LS.set('gs_home_open_' + k, !isHomeSecOpen(k));
+      applyHomeSections();
+    };
+    function applyHomeSections() {
+      const so = isHomeSecOpen('setlists');
+      document.getElementById('setlists-toggle')?.classList.toggle('open', so);
+      document.getElementById('setlists-list')?.classList.toggle('home-collapsed', !so);
+      const mo = isHomeSecOpen('mashups');
+      document.getElementById('mashups-toggle')?.classList.toggle('open', mo);
+      document.getElementById('mashups-body')?.classList.toggle('home-collapsed', !mo);
+    }
+
     function renderSetlistCards() {
+      renderMashupCards();
+      const slCountEl = document.getElementById('setlists-count');
+      if (slCountEl) slCountEl.textContent = Object.keys(S.setlists || {}).length;
       const list = document.getElementById('setlists-list');
       const localSl = Object.values(S.setlists).sort((a, b) => b.createdAt - a.createdAt);
 
+      const slAddRow = '<div class="home-add-row" onclick="showCreateSetlistModal()">+ Yeni Setlist</div>';
       if (localSl.length === 0) {
-        list.innerHTML = `<div style="text-align:center;padding:28px 16px;color:var(--text-muted);font-size:13px;line-height:1.6">Kayıtlı setlist yok — yukarıdan <strong style="color:var(--text)">Hızlı Sahne</strong> açabilir veya hemen üstteki <strong style="color:var(--text)">+ YENİ SETLİST</strong> butonuna dokunabilirsin.</div>`;
+        list.innerHTML = slAddRow;
         return;
       }
 
-      list.innerHTML = localSl.map(sl => {
+      list.innerHTML = slAddRow + localSl.map(sl => {
         const isLive = S.activeRoomCode === 'LIVE' && S.liveMode === 'setlist' && S.liveSetlistId === sl.id;
         return `
     <div class="setlist-card${isLive ? ' live' : ''}" style="display:flex;align-items:center;gap:8px">
       <div class="setlist-card-info" onclick="openLeader('${sl.id}')" style="flex:1;cursor:pointer">
         <div class="setlist-card-name">${esc(sl.name)}${isLive ? ' <span class="live-badge on" style="margin-left:8px;vertical-align:middle">● CANLI</span>' : ''}</div>
-        <div class="setlist-card-meta">${esc(sl.band || '—')} · ${(sl.songs || []).length} şarkı</div>
+        <div class="setlist-card-meta">${sl.band ? esc(sl.band) + ' · ' : ''}${(sl.songs || []).length} şarkı</div>
       </div>
       <button onclick="event.stopPropagation();showSetlistEditMenu('${sl.id}')" title="Düzenle"
         style="background:transparent;border:1px solid var(--border);color:var(--text-muted);padding:8px 10px;border-radius:8px;cursor:pointer;flex-shrink:0">
@@ -5871,11 +6094,8 @@
         <div class="drag-row" data-id="${s.id}"
           style="display:flex;align-items:center;gap:14px;padding:12px 14px;border-radius:12px;cursor:grab;border:1px solid ${isRowActive ? 'var(--accent)' : 'var(--border)'};background:${isRowActive ? 'rgba(79,142,247,0.12)' : 'var(--surface2)'};margin-bottom:8px;user-select:none;will-change:transform;touch-action:none">
           <div style="font-family:var(--font-display);font-size:22px;font-weight:700;color:var(--accent);min-width:32px;text-align:center;flex-shrink:0">${i + 1}</div>
-          <div style="flex:1;min-width:0">
-            <div style="font-size:15px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(s.title)}</div>
-            <div style="font-family:var(--font-mono);font-size:10px;color:var(--text-muted);margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${esc(metaText)}</div>
-          </div>
-          ${rightTag}
+          ${songMainHtml(s)}
+          <div class="rep-edit-tags">${songTagsHtml(s)}</div>
           <button class="row-action-btn" onclick="event.stopPropagation();openEditSetlistSong('${s.id}')"
             style="background:transparent;border:none;color:var(--text-muted);padding:8px 6px;cursor:pointer;flex-shrink:0;line-height:1;border-radius:8px;transition:color .15s;touch-action:manipulation" title="Düzenle"
             onmouseenter="this.style.color='var(--accent)'" onmouseleave="this.style.color='var(--text-muted)'">
@@ -6601,16 +6821,9 @@
     }
 
     function formatStageRowFields(s) {
-      if (isMashupSong(s)) {
-        const parts = Array.isArray(s.parts) ? s.parts : [];
-        return {
-          meta: parts.map(p => `${p.title}${p.key ? ' (' + p.key + ')' : ''}`).join(' → ') || '—',
-          tagsHtml: `<span class="mashup-badge">🔗 ${parts.length}</span>`
-        };
-      }
       return {
-        meta: s.artist || '—',
-        tagsHtml: `<div class="qs-row-key">${esc(s.key || '')}</div>${s.bpm ? `<div class="qs-row-bpm">${esc(s.bpm)} BPM</div>` : ''}`
+        meta: songSubHtml(s),
+        tagsHtml: songTagsHtml(s)
       };
     }
 
@@ -6669,7 +6882,7 @@
               <div class="qs-row${played ? ' played' : ''}" onclick="playQuickStageResult(${i})">
                 <div class="qs-row-info">
                   <div class="qs-row-title">${esc(s.title)}</div>
-                  <div class="qs-row-meta">${esc(rowF.meta)}</div>
+                  <div class="qs-row-meta">${rowF.meta}</div>
                 </div>
                 <div class="qs-row-tags">
                   ${rowF.tagsHtml}
@@ -6703,7 +6916,7 @@
                 </div>
                 <div class="qs-row-info">
                   <div class="qs-row-title">${esc(entry.title)}</div>
-                  <div class="qs-row-meta">${esc(rowF.meta)}</div>
+                  <div class="qs-row-meta">${rowF.meta}</div>
                 </div>
                 <div class="qs-row-tags">
                   ${rowF.tagsHtml}
@@ -6731,7 +6944,7 @@
           <div class="qs-row" onclick="playQuickStageBrowse(${i})">
             <div class="qs-row-info">
               <div class="qs-row-title">${esc(s.title)}</div>
-              <div class="qs-row-meta">${esc(rowF.meta)}</div>
+              <div class="qs-row-meta">${rowF.meta}</div>
             </div>
             <div class="qs-row-tags">
               ${rowF.tagsHtml}
@@ -7042,6 +7255,8 @@
     window.saveQuickStageAsSetlist = () => {
       if (!S.quickSongs.length) { showToast('Henüz çalınan şarkı yok'); return; }
       _saveQuickStagePending = true;
+      const pickGroup = document.getElementById('cs-picker-group');
+      if (pickGroup) pickGroup.style.display = 'none';
       document.getElementById('new-setlist-name').value = 'Sahne ' + new Date().toLocaleDateString('tr-TR');
       document.getElementById('new-setlist-band').value = '';
       document.getElementById('create-setlist-modal').classList.remove('hidden');
@@ -7205,23 +7420,17 @@
             listEl.innerHTML = parts.map((p, i) => {
               const cls = i < step ? 'is-done' : (i === step ? 'is-current' : 'is-upcoming');
               const numTxt = i === step ? '●' : `${i + 1}.`;
-              const cueTxt = String(p.cue || '').trim();
-              const arrow = i < parts.length - 1
-                ? `<div class="mashup-arrow${i < step ? ' is-done' : ''}">↓</div>`
-                : '';
               return `
                 <div class="mashup-step-row ${cls}">
                   <div class="mashup-step-num">${numTxt}</div>
                   <div class="mashup-step-main">
                     <div class="mashup-step-title">${esc(p.title || '—')}</div>
-                    ${cueTxt ? `<div class="mashup-step-cue">${esc(cueTxt)}</div>` : ''}
                   </div>
                   <div class="mashup-step-tags">
-                    ${p.key ? `<div class="mashup-step-key">${esc(p.key)}</div>` : ''}
-                    ${p.bpm ? `<div class="mashup-step-bpm">${esc(p.bpm)} BPM</div>` : ''}
+                    <div class="mashup-step-key">${p.key ? 'Ton ' + esc(p.key) : 'Ton —'}</div>
+                    <div class="mashup-step-bpm">${p.bpm ? esc(p.bpm) + ' BPM' : '— BPM'}</div>
                   </div>
                 </div>
-                ${arrow}
               `;
             }).join('');
           }
@@ -7505,7 +7714,9 @@
     };
 
     function loadTheme() {
-      const saved = LS.get('gs_theme') || 'dark';
+      const savedRaw = LS.get('gs_theme') || 'dark';
+      const allowedThemes = ['dark', 'light', 'grey', 'amber', 'violet', 'green', 'stage'];
+      const saved = allowedThemes.includes(savedRaw) ? savedRaw : 'dark';
       applyTheme(saved);
     }
 
@@ -8811,6 +9022,7 @@
             LS.set('gs_deleted_setlists', S.deletedSetlists);
             S.setlists = imported;
             LS.set("gs_setlists", S.setlists);
+            historyCapture();
           }
           if (data.groupKeys) {
             S.groupKeys = data.groupKeys;
@@ -9080,6 +9292,7 @@
           }
           // Buluttan gelen kopyada, bu cihazda silinmiş setlist kalmasın
           applySetlistDeletions(S.deletedSetlists);
+          historyRebase();
           if (data.groupKeys) {
             S.groupKeys = data.groupKeys;
             LS.set('gs_group_keys', S.groupKeys);
