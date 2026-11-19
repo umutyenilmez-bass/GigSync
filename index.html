@@ -1186,6 +1186,45 @@
     .qs-row.played {
       opacity: 0.72;
     }
+    .qs-drag-row {
+      user-select: none;
+      will-change: transform;
+    }
+    .qs-drag-row.dragging {
+      opacity: 0.55;
+      border-color: var(--accent);
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+    }
+    .qs-drag-handle {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      touch-action: none;
+      cursor: grab;
+      flex-shrink: 0;
+      padding-right: 4px;
+    }
+    .qs-grip {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      opacity: 0.45;
+    }
+    .qs-grip span {
+      display: block;
+      width: 14px;
+      height: 2px;
+      background: var(--text-muted);
+      border-radius: 1px;
+    }
+    .qs-actions-bar {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin: 0 0 10px 0;
+    }
     .qs-played-badge {
       font-family: var(--font-mono);
       font-size: 10px;
@@ -5132,17 +5171,20 @@
 
       const isQuickLive = S.activeRoomCode === 'LIVE' && S.liveMode === 'quick';
       const historyActions = S.quickSongs.length > 0 ? `
-        <div style="display:flex;gap:6px;flex-wrap:wrap">
+        <div class="qs-actions-bar">
           <button id="qs-save-setlist-btn" class="qs-mini-btn" onclick="saveQuickStageAsSetlist()">Setlist Olarak Kaydet</button>
           <button class="qs-mini-btn danger" onclick="clearQuickStageHistory()">Temizle</button>
         </div>` : '';
 
       const historyHtml = S.quickSongs.length > 0
-        ? S.quickSongs.map((entry, idx) => {
+        ? `<div id="qs-history-list">${S.quickSongs.map((entry, idx) => {
             const isActive = isQuickLive && S.liveActiveSong === entry.id;
             return `
-              <div class="qs-row${isActive ? ' active' : ''}" data-entry-id="${esc(entry.id)}" onclick="selectQuickHistorySong(this.dataset.entryId)">
-                <div style="font-family:var(--font-display);font-size:20px;font-weight:700;color:${isActive ? 'var(--green)' : 'var(--accent)'};min-width:26px;text-align:center;flex-shrink:0">${idx + 1}</div>
+              <div class="qs-row qs-drag-row${isActive ? ' active' : ''}" data-entry-id="${esc(entry.id)}">
+                <div class="qs-drag-handle" title="Sırayı değiştirmek için sürükle">
+                  <div class="qs-grip"><span></span><span></span><span></span></div>
+                  <div style="font-family:var(--font-display);font-size:20px;font-weight:700;color:${isActive ? 'var(--green)' : 'var(--accent)'};min-width:24px;text-align:center">${idx + 1}</div>
+                </div>
                 <div class="qs-row-info">
                   <div class="qs-row-title">${esc(entry.title)}</div>
                   <div class="qs-row-meta">${esc(entry.artist || '—')}</div>
@@ -5151,19 +5193,16 @@
                 <button class="qs-row-del" data-entry-id="${esc(entry.id)}" onclick="event.stopPropagation();removeQuickHistorySong(this.dataset.entryId)" title="Listeden çıkar">×</button>
               </div>
             `;
-          }).join('')
-        : `<div style="text-align:center;padding:22px 14px;border:1px dashed var(--border2);border-radius:12px;color:var(--text-muted);font-size:13px;line-height:1.5;margin-bottom:16px">
-            Yukarıdan arayıp şarkıya dokun — canlı sahne otomatik açılır.
-          </div>`;
+          }).join('')}</div>`
+        : '';
 
       const unplayedSongs = allSongs.filter(s => !isSongPlayedTonight(s));
       _qsBrowseResults = unplayedSongs.slice(0, 40);
-      const browseTitle = S.quickSongs.length > 0 ? 'KALAN REPERTUAR' : 'REPERTUAR';
-      const browseCountText = unplayedSongs.length > 40 ? 'İLK 40 · ARAMA İLE TÜMÜ' : unplayedSongs.length;
+      const dividerHtml = (S.quickSongs.length > 0 && _qsBrowseResults.length > 0)
+        ? '<div class="divider" style="margin:14px 0"></div>'
+        : '';
       const browseHtml = _qsBrowseResults.length > 0 ? `
-        <div class="qs-section-hdr" style="margin-top:16px">
-          <div class="qs-section-title">${browseTitle} (${browseCountText})</div>
-        </div>
+        ${dividerHtml}
         ${_qsBrowseResults.map((s, i) => `
           <div class="qs-row" onclick="playQuickStageBrowse(${i})">
             <div class="qs-row-info">
@@ -5176,14 +5215,193 @@
       ` : '';
 
       container.innerHTML = `
-        <div class="qs-section-hdr">
-          <div class="qs-section-title">BU AKŞAM ÇALINANLAR (${S.quickSongs.length})</div>
-          ${historyActions}
-        </div>
+        ${historyActions}
         ${historyHtml}
         ${browseHtml}
       `;
+
+      const historyListEl = document.getElementById('qs-history-list');
+      if (historyListEl) {
+        attachQuickStageDrag(historyListEl, container);
+      }
     };
+
+    function attachQuickStageDrag(historyListEl, scrollEl) {
+      let dragRow = null;
+      let startClientY = 0;
+      let startClientX = 0;
+      let startScrollTop = 0;
+      let lastClientY = 0;
+      let dragHeight = 0;
+      let rowsArr = [];
+      let originalIdx = -1;
+      let currentIdx = -1;
+      let isDragging = false;
+      let autoScrollRaf = null;
+      const DRAG_THRESHOLD_PX = 6;
+
+      function updatePositions() {
+        if (!dragRow) return;
+        const dy = (lastClientY - startClientY) + (scrollEl.scrollTop - startScrollTop);
+        dragRow.style.transform = `translateY(${dy}px)`;
+
+        const slotShift = Math.round(dy / dragHeight);
+        const newIdx = Math.max(0, Math.min(rowsArr.length - 1, originalIdx + slotShift));
+        if (newIdx === currentIdx) return;
+        currentIdx = newIdx;
+
+        rowsArr.forEach((r, i) => {
+          if (r === dragRow) return;
+          let shift = 0;
+          if (originalIdx < newIdx) {
+            if (i > originalIdx && i <= newIdx) shift = -dragHeight;
+          } else if (originalIdx > newIdx) {
+            if (i >= newIdx && i < originalIdx) shift = dragHeight;
+          }
+          r.style.transition = 'transform 0.18s cubic-bezier(.2,.8,.2,1)';
+          r.style.transform = shift ? `translateY(${shift}px)` : '';
+        });
+      }
+
+      function autoScrollStep() {
+        if (!isDragging || !dragRow) {
+          autoScrollRaf = null;
+          return;
+        }
+        const rect = scrollEl.getBoundingClientRect();
+        const edge = 55;
+        let delta = 0;
+        if (lastClientY < rect.top + edge) {
+          delta = -Math.max(3, Math.round((rect.top + edge - lastClientY) / 5));
+        } else if (lastClientY > rect.bottom - edge) {
+          delta = Math.max(3, Math.round((lastClientY - (rect.bottom - edge)) / 5));
+        }
+        if (delta !== 0) {
+          const prevTop = scrollEl.scrollTop;
+          scrollEl.scrollTop += delta;
+          if (scrollEl.scrollTop !== prevTop) updatePositions();
+        }
+        autoScrollRaf = requestAnimationFrame(autoScrollStep);
+      }
+
+      historyListEl.querySelectorAll('.qs-drag-row').forEach(row => {
+        row.addEventListener('pointerdown', e => {
+          if (e.target.closest('.qs-row-del')) return;
+          if (e.pointerType === 'mouse' && e.button !== 0) return;
+
+          startClientY = e.clientY;
+          startClientX = e.clientX;
+          lastClientY = e.clientY;
+          startScrollTop = scrollEl.scrollTop;
+          isDragging = false;
+          let movedTooFar = false;
+          let longPressTimer = null;
+
+          const startedOnHandle = Boolean(e.target.closest('.qs-drag-handle'));
+          const canImmediateDrag = e.pointerType === 'mouse' || startedOnHandle;
+
+          const activateDrag = () => {
+            if (isDragging) return;
+            isDragging = true;
+            dragRow = row;
+            try { row.setPointerCapture(e.pointerId); } catch (err) {}
+
+            rowsArr = [...historyListEl.querySelectorAll('.qs-drag-row')];
+            originalIdx = rowsArr.indexOf(dragRow);
+            currentIdx = originalIdx;
+            if (rowsArr.length > 1) {
+              const r0 = rowsArr[0].getBoundingClientRect();
+              const r1 = rowsArr[1].getBoundingClientRect();
+              dragHeight = Math.max(40, r1.top - r0.top);
+            } else {
+              dragHeight = dragRow.offsetHeight + 8;
+            }
+
+            dragRow.classList.add('dragging');
+            dragRow.style.transition = 'none';
+            dragRow.style.zIndex = '100';
+            dragRow.style.position = 'relative';
+            dragRow.style.cursor = 'grabbing';
+            if (!autoScrollRaf) autoScrollRaf = requestAnimationFrame(autoScrollStep);
+          };
+
+          if (!canImmediateDrag) {
+            longPressTimer = setTimeout(() => {
+              if (!movedTooFar) activateDrag();
+            }, 220);
+          }
+
+          const onMove = (ev) => {
+            lastClientY = ev.clientY;
+            const rawDy = ev.clientY - startClientY;
+            const rawDx = ev.clientX - startClientX;
+            if (Math.abs(rawDy) > 8 || Math.abs(rawDx) > 8) movedTooFar = true;
+
+            if (!isDragging) {
+              if (canImmediateDrag && Math.abs(rawDy) > DRAG_THRESHOLD_PX) {
+                activateDrag();
+              } else {
+                if (!canImmediateDrag && movedTooFar && longPressTimer) {
+                  clearTimeout(longPressTimer);
+                  longPressTimer = null;
+                }
+                return;
+              }
+            }
+
+            try { ev.preventDefault(); } catch (err) {}
+            updatePositions();
+          };
+
+          const onEnd = (ev) => {
+            if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+            if (autoScrollRaf) { cancelAnimationFrame(autoScrollRaf); autoScrollRaf = null; }
+            window.removeEventListener('pointermove', onMove);
+            window.removeEventListener('pointerup', onEnd);
+            window.removeEventListener('pointercancel', onEnd);
+            try { row.releasePointerCapture(ev.pointerId); } catch (err) {}
+
+            if (!isDragging) {
+              if (!movedTooFar && ev.type === 'pointerup') {
+                selectQuickHistorySong(row.dataset.entryId);
+              }
+              return;
+            }
+
+            rowsArr.forEach(r => { r.style.transition = ''; r.style.transform = ''; });
+            if (dragRow) {
+              dragRow.classList.remove('dragging');
+              dragRow.style.zIndex = '';
+              dragRow.style.position = '';
+              dragRow.style.cursor = '';
+            }
+
+            const movedIdx = currentIdx;
+            const fromIdx = originalIdx;
+            dragRow = null;
+            rowsArr = [];
+            originalIdx = -1;
+            currentIdx = -1;
+            isDragging = false;
+
+            if (fromIdx !== -1 && movedIdx !== -1 && movedIdx !== fromIdx) {
+              const [moved] = S.quickSongs.splice(fromIdx, 1);
+              S.quickSongs.splice(movedIdx, 0, moved);
+              S.quickSongs.forEach((s, i) => { s.order = i; });
+              const prevScroll = scrollEl.scrollTop;
+              renderQuickStageView();
+              scrollEl.scrollTop = prevScroll;
+              updateHomeLiveBanner();
+              syncQuickStageOrderToWorker();
+            }
+          };
+
+          window.addEventListener('pointermove', onMove, { passive: false });
+          window.addEventListener('pointerup', onEnd);
+          window.addEventListener('pointercancel', onEnd);
+        });
+      });
+    }
 
     window.playQuickStageResult = (idx) => {
       const song = _qsSearchResults[idx];
@@ -5314,6 +5532,25 @@
       renderSetlistCards();
       updateHomeLiveBanner();
       showToast(`🔴 CANLI: ${activeSong.title}`);
+    }
+
+    async function syncQuickStageOrderToWorker() {
+      if (S.activeRoomCode !== 'LIVE' || S.liveMode !== 'quick') return;
+      const songsArr = S.quickSongs.map((s, i) => ({ ...s, order: i }));
+      if (leaderWs && leaderWs.readyState === WebSocket.OPEN) {
+        try {
+          leaderWs.send(JSON.stringify({ type: 'UPDATE_SETLIST', songs: songsArr }));
+        } catch (e) {}
+      }
+      try {
+        await fetch(`${getWorkerUrl()}/api/room/${S.activeRoomCode}/setlist`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ songs: songsArr })
+        });
+      } catch (err) {
+        console.warn('Hızlı Sahne sıra senkronizasyon hatası:', err);
+      }
     }
 
     // ══════════ CREW: SIFIR TIK CANLI SAHNE ══════════
